@@ -1,9 +1,9 @@
 
 #include "acGLWrapper.h"
 	
-static unsigned char* buffer = NULL;
-static long bufferSize = 0;
-static long bufferAllocSize = 0; 
+unsigned char* buffer = NULL;
+long bufferSize = 0;
+long bufferAllocSize = 0; 
 
 /*---------------------- wrapper utility ---------------*/
 

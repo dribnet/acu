@@ -14,7 +14,7 @@ public:
   void Apply();
 
 protected:
-  unsigned char* buffer;
-  long bufferSize;
-  long bufferAllocSize; 
+  unsigned char* unbuffer;
+  long unbufferSize;
+  long unbufferAllocSize; 
 };

@@ -9,14 +9,16 @@ ACLIB_DIR = /acg/lib
 
 default: lib
 
+extralibs = -lsocket -lpthread
+
 CC=CC
 OPTIONS=-g -DACU_IRIX -DAC_GLWRAP  -LANG:ansi-for-init-scope=ON
 
 .c.o:
-	$(CC) $(OPTIONS) -c $<
+	$(CC) $(OPTIONS) $(extralibs) -c $<
 
 %.o : %.cpp
-	$(CC) $(OPTIONS) -c $<
+	$(CC) $(OPTIONS) $(extralibs)  -c $<
 
 OBJS=\
 	acApp.o acVec3f.o acVec4f.o acMatrix4f.o ai.o acx.o \

@@ -189,6 +189,7 @@ static bool QUIT_NOW = false;
 
 void acApp::wrapStart( char* hostname )
 {
+  theApp = this;
   // ---------------- prelaunch ------------------
   int sockfd;
   long wrapFrameCount = 0;
@@ -242,7 +243,6 @@ void acApp::wrapStart( char* hostname )
 
   pthread_create( &thread, NULL, waitforquit, (void*)NULL );
 
-
   // ---------------- postlaunch ------------------
 
   float lastTime = getTime();
@@ -251,6 +251,7 @@ void acApp::wrapStart( char* hostname )
   
   while( true )
     {
+      // printf("test3\n");
       if ( getTime() - lastTime > TIME_CONVERT*0.005 )
 	{
 	  idle();
@@ -268,7 +269,7 @@ void acApp::wrapStart( char* hostname )
 	    goto closelabel;
 	  frameNum++;
 	  if ( frameNum%100==50 )
-	    {
+	   {
 	      long nowTime = ((float)getTime());
 	      float rate = (float) frameNum * TIME_CONVERT;
 	      rate /= (float)(nowTime-timeStart);
@@ -284,7 +285,7 @@ void acApp::wrapStart( char* hostname )
       sleep(0);
     }
 closelabel:
-  printf("closing connection: %d\n", sockfd );
+  printf("closing draw connection: %d\n", sockfd );
   close(sockfd);
 }
 
@@ -351,7 +352,7 @@ void* eventcaller( void* arg )
       
       if ( Readn( esockfd, &events, sizeof(events) )==0 )
 	goto closelabel;
-
+      
       if ( checkCount!=0 && !callMouseDown && 
 	   events.mouseIsDown && !lastEvents.mouseIsDown )
 	callMouseDown = true;
@@ -359,7 +360,7 @@ void* eventcaller( void* arg )
       if ( checkCount!=0 && !callMouseUp && 
 	   !events.mouseIsDown && lastEvents.mouseIsDown )
 	callMouseUp = true;
-      
+
       if ( checkCount!=0 && ! callKeyDown && 
 	   events.keyDown != lastEvents.keyDown )
 	callKeyDown = true;
@@ -384,7 +385,7 @@ void* eventcaller( void* arg )
     }
   
 closelabel:
-  printf("closing connection: %d\n", esockfd );
+  printf("closing event connection: %d\n", esockfd );
   close(esockfd);
   return NULL;
 }
