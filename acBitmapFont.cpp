@@ -86,6 +86,10 @@ acBitmapFont::acBitmapFont(const char *filename) {
   valid = TRUE;
 }
 
+int acBitmapFont::getFormat() {
+  return ACU_BITMAP_FONT;
+}
+
 float acBitmapFont::getDescent() {
   return (float)(height['p'-33] - topExtent['p'-33]) / 64.0f;
 }

@@ -113,6 +113,9 @@ acVectorFont::acVectorFont(const char* filename) {
   valid = TRUE;
 }
 
+int acVectorFont::getFormat() {
+  return ACU_VECTOR_FONT;
+}
 
 void acVectorFont::drawChar(char c, float tx, float ty) {
   glBegin(GL_LINE_STRIP);

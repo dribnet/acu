@@ -22,6 +22,7 @@ public:
   //float kernWidth(char a, char b);
   void drawChar(char c, float x, float y);
   float getDefaultLeading();
+  int getFormat();
 
 protected:
   float x[256][50];

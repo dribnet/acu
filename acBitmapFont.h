@@ -15,7 +15,7 @@ public:
   float charHeight(char c);
   boolean charExists(char c);
   void drawChar(char c, float x, float y);
-
+  int getFormat();
   unsigned char* getCharData(char c, float *x, float *y, 
 			     float *w, float *h);
 protected:

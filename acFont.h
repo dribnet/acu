@@ -17,6 +17,7 @@ public:
   virtual boolean charExists(char c) { return FALSE; }
   virtual void drawChar(char c, float x, float y) { }
   virtual float kernWidth(char a, char b) { return 0; }
+  virtual int getFormat() { return ACU_ERROR; }
   virtual boolean isValid() { return valid; }
 
   virtual float stringWidth(char *s) {

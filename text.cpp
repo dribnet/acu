@@ -49,6 +49,9 @@ int acuFindFont(char *filename) {
 int acuLoadFont(char *filename) {
   if (!acuTextInited) acuTextInit();
 
+  int which = acuFindFont(filename);
+  if (which != ACU_ERROR) return which;
+
   // construct it depending on what type of font it is
   acFont *newbie = NULL;
   if (strstr(filename, ".jvf") || strstr(filename, ".JVF")) {
@@ -85,6 +88,11 @@ void acuSetFont(int index) {
     sprintf(acuDebugStr, "Index %d is not a valid font.", index);
     acuDebugString(ACU_DEBUG_PROBLEM);
   }
+}
+
+
+void* acuGetFont(int index) {
+  return acutFontList[index];
 }
 
 
