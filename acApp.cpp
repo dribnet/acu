@@ -9,6 +9,20 @@ int lastModifiers = 0;
 extern "C" GLint acuWindowHeight;
 extern "C" GLint acuWindowWidth;
 
+
+/* This is some glue that connects the app to the window system */
+
+#ifdef ACU_WIN32
+#include "ansi_prefix.win32.h"
+#include <windows.h>
+#include <stdio.h>
+#define ExternalApp extern "C" __declspec(dllexport) acApp
+#define ExternalType extern "C" __declspec(dllexport) char
+#else
+#define ExternalApp extern "C" acApp
+#define ExternalType extern "C" char
+#endif
+
 acApp::acApp()
 {
   grabCount = -1;
