@@ -12,8 +12,9 @@ default: lib
 #jarold extralibs = -lsocket -lpthread
 extralibs =
 
-CC=gcc
-OPTIONS=-g -DACU_LINUX -DAC_GLWRAP -LANG:ansi-for-init-scope=ON
+CC=CC
+#OPTIONS=-g -DACU_LINUX -DAC_GLWRAP -LANG:ansi-for-init-scope=ON
+OPTIONS=-g -DACU_IRIX -DAC_GLWRAP -LANG:ansi-for-init-scope=ON
 
 .c.o:
 	$(CC) $(OPTIONS) $(extralibs) -c $<

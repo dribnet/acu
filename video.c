@@ -382,6 +382,7 @@ void acuvIrixGetFrame(unsigned char *frame) {
 
 
 void acuvLinuxGetFrame(unsigned char *frame) {
+#ifdef ACU_LINUX
   int srcOffset, srcIndex, destIndex;
   int i, j, iw, ih;
   int bytesRead;
@@ -436,6 +437,7 @@ void acuvLinuxGetFrame(unsigned char *frame) {
       destIndex += (acuVideoArrayWidth - acuVideoWidth)*3;
     }
   }
+#endif
 }
 
 
