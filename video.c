@@ -605,6 +605,8 @@ void acuGetVideoFrame(unsigned char *frame) {
 
 
 void acuCloseVideo() {
+  if (!acuVideoOpened) return;
+
   if (acuvProxy) {
     acuVideoProxyCount = -1;
     return;
@@ -633,4 +635,6 @@ void acuCloseVideo() {
   DestroyWindow(acuvVideoWindow);
 #endif
 #endif /* ACU_WIN32 */
+
+  acuVideoOpened = FALSE;
 }

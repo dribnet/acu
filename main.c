@@ -130,6 +130,9 @@ void acuGlobalGLSettings(void) {
  * Close the window and exit the application
  */
 void acuClose() {
+  if (acuVideoOpened) {  /* otherwise win32 video gets upset */
+    acuCloseVideo();
+  }
   exit(0);
 }
 
