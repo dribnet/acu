@@ -73,7 +73,7 @@ acVectorFont::acVectorFont(const char* filename) {
       break;
 
     case 'D':  // leading
-      sscanf("D %f\n", &leading);
+      sscanf(str, "D %f\n", &leading);
       break;
 
     case 0:  // blank line
@@ -152,6 +152,6 @@ boolean acVectorFont::charExists(char c) {
 }
 
 
-float getDefaultLeading() { 
+float acVectorFont::getDefaultLeading() { 
   return leading;
 }
