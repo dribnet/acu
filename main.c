@@ -99,10 +99,11 @@ void acuOpen() {
 #else
   acuScreenGrabFormat = ACU_FILE_FORMAT_RAW;
 #endif
-  /*acuTimeStep = 1;*/
 
   /* seed random number generator (on irix) */
+#ifdef ACU_IRIX
   srandom(time(NULL));
+#endif
 }
 
 
