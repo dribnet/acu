@@ -9,55 +9,10 @@
 
 GLint acuTimeStep = 1;
 
-
-/* current time in milliseconds, system-specific
- * irix returns clock in microseconds
- * would use (CLOCKS_PER_SEC/1000), but 
- * it's not the correct value with cygwin b20.1
- */
-GLuint acuOldCurrentTimeMillis() {
-#ifdef ACU_WIN32
-  return (GLuint) (clock() / acuTimeStep);
-#endif
-
-#ifdef ACU_MAC
-  return (GLuint) (clock() / acuTimeStep);
-#endif
-
-#ifdef ACU_IRIX
-  return (GLuint) ((clock() / 1000) / acuTimeStep);
-#endif
-}
-
 GLuint acuCurrentTimeMillis() {
-	/* exactly what you need, when you need it */
-	return glutGet(GLUT_ELAPSED_TIME);
+  /* exactly what you need, when you need it */
+  return glutGet(GLUT_ELAPSED_TIME) / acuTimeStep;
 }
-
-/*
- * OK, Tom's issues with acuCurrentTimeMillis
- *
- * 1) clock() is based on amount of time process has gotten, not absolute time
- * 2) resolution of clock() was bad (typical irix run: 110, 120, 120, 140, 150, 150...)
- * 3) clock rolled over after 36 minutes of processor time
- *
- * So here is my acuCurrentTime(). Each clock tick represents 1/100 of a second,
- * and the offset is from the first time it is called.  acuTimeStep still scales.
- * BLAH BLAH BLAH BLAH
- */
- /* TOM commented this out because it is not windows friendly
-long timeEpoch = 0;
-GLuint acuCurrentTime() {
-  long t;
-  static struct timeval tp;
-
-  gettimeofday(&tp, 0);
-  t = (tp.tv_sec%86400) * 100;
-  t += (long)tp.tv_usec/10000;
-  if(timeEpoch == 0) timeEpoch = t;
-  return ((t-timeEpoch)/acuTimeStep);
-}
-*/
 
 
 // hsb/rgb functions stolen from java awt

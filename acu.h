@@ -92,6 +92,7 @@ typedef int boolean;
 typedef enum acuEnum {
   ACU_NO_ERROR = 0,
   ACU_ERROR = -1, 
+  ACU_UNKNOWN = -1, 
   ACU_FILE_NOT_FOUND = -2,
   ACU_HOST_NOT_FOUND = -3,
 
@@ -418,9 +419,11 @@ void acuTextInit();
  * if you need all those things.
  */
 int acuLoadFont(char *fontname);
-void acuUnloadFont(int index); /* may just be temporary */
-int acuFindFont(char *fontname);
 void acuSetFont(int index);
+
+/* Advanced features, you probably won't need these */
+void acuUnloadFont(int index);
+int acuFindFont(char *fontname);
 void* acuGetFont(int index);
 
 /* Draw characters and strings to the screen */

@@ -1,6 +1,9 @@
 #include "acx.h"
 
 
+// TODO add code from meta app for pop-up key list helper
+//      or maybe not, just make 'u' a usage key
+
 
 ////////////////////////////////////////////////////////////
 
@@ -150,9 +153,9 @@ void acxDrawBezier(int pointCount, float *xpoints, float *ypoints) {
 
 // can't be used with multiple apps
 float acxFPS = 10.0f;
-long acxLastTime = 0;
+int acxLastTime = 0;
 float acxFrameRate() {
-  long currentTime = acuCurrentTimeMillis();
+  int currentTime = acuCurrentTimeMillis();
   if (acxLastTime != 0) {
     float elapsed = currentTime - acxLastTime;
     acxFPS = (acxFPS * 0.9f) + ((1.0f / (elapsed / 1000.0f)) * 0.1f);
@@ -161,10 +164,36 @@ float acxFrameRate() {
   return acxFPS;
 }
 
+int acxLastDelayTime = 0;
+void acxFrameRateDelay(int targetFPS) {
+  if (acxLastDelayTime == 0) {
+    acxLastDelayTime = acuCurrentTimeMillis();
+    return;
+  }
+  int timeToLeave = acxLastDelayTime + (1000 / targetFPS);
+  while (TRUE) {
+    int now = acuCurrentTimeMillis();
+    if (now >= timeToLeave) {
+      acxLastDelayTime = now;
+      return;
+    }
+  }
+}
+
 
 ////////////////////////////////////////////////////////////
 
 // FILE I/O
+
+int acxLoadFontOrDie(char *filename) {
+  int which = acuLoadFont(filename);
+  if (which == ACU_ERROR) {
+    sprintf(acuDebugStr, "the font '%s' could not be found");
+    acuDebugString(ACU_DEBUG_EMERGENCY);
+  }
+  return which;
+}
+
 
 void acxNumberedFilename(char *dest, char *tmpl, int *num) {
   int counter = 0;
@@ -228,8 +257,8 @@ float acxReadFloat(FILE *fp) {
 // SPHERICAL / CARTESIAN COORDINATES
 
 
-inline void acxSphericalToCartesian(float x, float y, float z,
-				    float *cx, float *cy, float *cz) {
+void acxSphericalToCartesian(float x, float y, float z,
+			     float *cx, float *cy, float *cz) {
   float x0 = (x) * TWO_PI;
   float y0 = (y) * PI;
   float z0 = (z) * TWO_PI;
@@ -240,8 +269,8 @@ inline void acxSphericalToCartesian(float x, float y, float z,
 }
 
 
-inline void acxCartesianToSpherical(float cx, float cy, float cz, 
-				    float *x, float *y, float *z) {
+void acxCartesianToSpherical(float cx, float cy, float cz, 
+			     float *x, float *y, float *z) {
   *z = sqrt(cx*cx + cy*cy + cz*cz) / TWO_PI;
 
   if (cx != 0) 
@@ -258,6 +287,52 @@ inline void acxCartesianToSpherical(float cx, float cy, float cz,
 }
 
 
+////////////////////////////////////////////////////////////
+
+// TRACKBALL (someday)
+
+//#define ROT_INCREMENT 3.0
+//#define TRANS_INCREMENT 0.1
+
+float acxLeftRightAngle = 0;
+float acxUpDownAngle = 0; 
+float acxFwdBackTrans = 0;
+float acxLastMouseX, acxLastMouseY;
+
+void acxTrackballMouseDown(float x, float y) {
+  acxLastMouseX = x;
+  acxLastMouseY = y;
+}
+
+void acxTrackballMouseDrag(float x, float y) {
+  float dX = acxLastMouseX - x;
+  float dY = acxLastMouseY - y;
+  acxLeftRightAngle -= dX * 0.2;
+  acxLastMouseX = x;
+  acxLastMouseY = y;
+}
+
+void acxTrackballTransform() {
+  glRotatef(acxLeftRightAngle, 0, 1, 0);
+  glRotatef(acxUpDownAngle, 1, 0, 0);
+}
+
+void acxZoomMouseDown(float x, float y) {  
+  acxLastMouseX = x;
+  acxLastMouseY = y;
+}
+
+void acxZoomMouseDrag(float x, float y) {
+  float dY = -(acxLastMouseY - y);
+  acxFwdBackTrans += dY * 0.02;
+  acxLastMouseX = x;
+  acxLastMouseY = y;
+}
+
+void acxZoomTransform() {
+  glTranslatef(0, 0, acxFwdBackTrans);
+}
+
 /*
 // not sure why you'd want this
   void screenGrabAss() {
@@ -271,4 +346,5 @@ inline void acxCartesianToSpherical(float cx, float cy, float cz,
     system(command);
   }
 */
+
 
