@@ -1,7 +1,7 @@
 #include "acu.h"
 #include "acFont.h"
 #include "acBitmapFont.h"
-#include "acFreeTypeFont.h"
+//#include "acFreeTypeFont.h"
 #include "acVectorFont.h"
 
 #define ACU_FONT_LIST_MAX 50
@@ -50,11 +50,11 @@ int acuLoadFont(char *filename) {
   if (!acuTextInited) acuTextInit();
 
   // construct it depending on what type of font it is
-  acFont *newbie;
+  acFont *newbie = NULL;
   if (strstr(filename, ".jvf") || strstr(filename, ".JVF")) {
     newbie = new acVectorFont(filename);
   } else if (strstr(filename, ".ttf") || strstr(filename, ".TTF")) {
-    newbie = new acFreeTypeFont(filename);
+    //newbie = new acFreeTypeFont(filename);
   } else {
     newbie = new acBitmapFont(filename);
   }

@@ -40,6 +40,8 @@ void acApp::selfStart()
 
 void acApp::setFocus(bool state) { }
 
+void acApp::setParent(void *parent) { }
+
 void acApp::resize( float posX, float posY, float width, float height) {
   X = posX;
   Y = posY;

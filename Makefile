@@ -21,7 +21,7 @@ OPTIONS=-g -DACU_IRIX
 OBJS=\
 	acApp.o acVec3f.o \
 	geometry.o jpeg.o main.o misc.o text.o video.o \
-	acBitmapFont.o acVectorFont.o acFreeTypeFont.o 
+	acBitmapFont.o acVectorFont.o # acFreeTypeFont.o 
 
 lib:	$(OBJS)
 	rm -f libacu.a libacu.so

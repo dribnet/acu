@@ -24,6 +24,8 @@ public:
   /* Called to let you know your program is (or isn't) getting attention. */
   virtual void setFocus(bool state);
 
+  virtual void setParent(void *parent);
+
   /* The X, Y, W, H variables are the position and size of the window */
   float X, Y, W, H;
 
