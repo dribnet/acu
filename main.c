@@ -790,6 +790,10 @@ void acuGetBooleanv(acuEnum pname, GLboolean *params) {
     params[0] = acuWindowClear;
     break;
 
+  case ACU_FONT_NORMALIZE:
+    params[0] = acuFontNormalize;
+    break;
+
   default:
     acuDebug(ACU_DEBUG_PROBLEM, 
 	     "Bad parameter passed to acuGetBooleanv");
@@ -814,6 +818,10 @@ void acuSetBooleanv(acuEnum pname, GLboolean *params) {
 
   case ACU_SCREEN_GRAB_FLIP:
     acuScreenGrabFlip = params[0];
+    break;
+
+  case ACU_FONT_NORMALIZE:
+    acuFontNormalize = params[0];
     break;
 
   default:

@@ -1,11 +1,14 @@
 #include "acu.h"
 #include "acFont.h"
 #include "acBitmapFont.h"
+#include "acFreeTypeFont.h"
 #include "acVectorFont.h"
 
 #define ACU_FONT_LIST_MAX 50
 
-boolean acuTextInited;
+boolean acuTextInited = FALSE;
+boolean acuFontNormalize = TRUE;
+
 acFont* acutFontList[ACU_FONT_LIST_MAX];
 char acutFontNames[ACU_FONT_LIST_MAX][128];
 int acutCurrentFont;
@@ -51,7 +54,7 @@ int acuLoadFont(char *filename) {
   if (strstr(filename, ".jvf") || strstr(filename, ".JVF")) {
     newbie = new acVectorFont(filename);
   } else if (strstr(filename, ".ttf") || strstr(filename, ".TTF")) {
-    //newbie = new acTrueTypeFont(filename);
+    newbie = new acFreeTypeFont(filename);
   } else {
     newbie = new acBitmapFont(filename);
   }

@@ -137,6 +137,8 @@ typedef enum acuEnum {
   ACU_FONT_LEADING = 105,
   ACU_FONT_ENABLE_KERNING = 106, 
 
+  ACU_FONT_NORMALIZE,
+
   ACU_CHAR_WIDTH,
   ACU_CHAR_HEIGHT,
   ACU_CHAR_EXISTS,
@@ -384,7 +386,9 @@ void acuWriteJpegFile(char *filename, unsigned char *data,
 
 /******************* text.c *******************/
 
+extern boolean acuFontNormalize;
 extern boolean acuTextInited;
+
 /* you never have to call this, please don't */
 void acuTextInit();
 
@@ -461,7 +465,7 @@ void acuPolygonClose();
  * if (image == NULL) exit(1);
  * float aspect = (float)width / (float)height;
  *
- * // find the closest power of 2 to use for the texture    
+ * // find the closest power of 2 to use for the texture
  * int twidth = (int) pow(2, ceil(log(width) / log(2)));
  * int theight = (int) pow(2, ceil(log(height) / log(2)));
  *    
@@ -536,7 +540,23 @@ extern int acuVideoProxyCount;
 extern int acuVideoProxyRawWidth;
 extern int acuVideoProxyRawHeight;
 
-/* Warm up the video, Marge. We've got company coming over. */
+/* Warm up the video, Marge. We've got company coming over. 
+ *
+ * // a simple video example:
+ * acuOpenVideo();
+ * videoWidth = 640;
+ * videoHeight = 480;
+ * // ask for a size, but the values get re-set to the correct size
+ * acuRequestVideoSize(&videoWidth, &videoHeight);
+ * // allocate an RGB buffer for it
+ * int count = videoWidth * videoHeight * 3;
+ * unsigned char *buffer = new unsigned char[count];
+ *
+ * void draw() {
+ *   acuGetVideoFrame(buffer);
+ *   // do something with the buffer here
+ * }
+ */
 void acuOpenVideo();
 
 /* Leftovers and cold cuts? Not again.. 

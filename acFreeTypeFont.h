@@ -4,41 +4,45 @@
 #include "acu.h"
 #include "acFont.h"
 
+// haven't sorted through which of these are needed
+#include "FTEngine.h"
+#include "FTFace.h"
+#include "FTInstance.h"
+#include "FTGlyph.h"
+#include "FTGlyphBitmap.h"
+#include "FTGlyphPixmap.h"
+#include "FTBitmapFont.h"
+#include "GLTTBitmapFont.h"
+#include "GLTTPixmapFont.h"
+#include "GLTTOutlineFont.h"
+#include "GLTTFont.h"
+#include "GLTTGlyphPolygonizer.h"
+#include "GLTTGlyphTriangulator.h"
+
 
 class acFreeTypeFont : public acFont {
 public:
-  acFreeTypeFont(const char *filename, int size);
+  acFreeTypeFont(const char* filename);
 
-  float getAscent();
   float getDescent();
-  float getXHeight();
   float getHeight();
-  float getEmWidth();
-  float getDefaultLeading();
   float charWidth(char c);
   float charHeight(char c);
   boolean charExists(char c);
+  float stringWidth(char *s);
   void drawChar(char c, float x, float y);
-  float kernWidth(char a, char b);
+  void drawString(char *s, float x, float y);
+  //float getDefaultLeading();
 
 protected:
-  int size; // useful?
-  int tsize;
-
-  int width[];
-  int height[];
-  int cols[];
-  unsigned char **tdata;
-  GLuint *tnames;
-
-  int indices[256];
-
-  //int advance; // 26.6
-  //int delta_x, delta_y; // 26.6
-
-  int ascent;
-  int descent;
-  
+  FTFace *face;
+  GLTTPixmapFont *font;
+  int fontSize;
 };
 
 #endif
+
+
+
+
+
