@@ -490,25 +490,9 @@ void acuvLinuxGetFrame(unsigned char *frame) {
 /* cygwin doens't know about any of this */
 //#include <gl/glut.h>
 LRESULT CALLBACK capVideoStreamCallback(HWND capWnd, LPVIDEOHDR lpVHdr) {
-  memcpy(lpVHdr->lpData, acuvTempBuffer, acuvTempBufferCount);
+  memcpy(acuvTempBuffer, lpVHdr->lpData, acuvTempBufferCount);  
   acuvGotFrame = true;
   return (LRESULT) TRUE;
-
-  /*
-  unsigned char *outputScanLine = acuvTempBuffer;
-  int outputLineLength = bufferWidth * 3;
-  int intputLineLength = videoWidth * 3;
-  unsigned char *inputData = lpVHdr->lpData;
-  for (int i = 0; i < videoHeight; i++) {
-    for (int j = 0; j < intputLineLength; j += 3) {
-      *(outputScanLine + j + 2) = *inputData++;
-      *(outputScanLine + j + 1) = *inputData++;
-      *(outputScanLine + j + 0) = *inputData++;
-    }
-    outputScanLine += outputLineLength;
-  }
-  return (LRESULT) TRUE;
-  */
 }
 #endif
 #endif
@@ -517,7 +501,7 @@ void acuvWindowsGetFrame(unsigned char *frame) {
 #ifdef ACU_WIN32
 #ifndef __CYGWIN__
   int i, j;
-  int srcOffset, srcIndex, destIndex;
+  int srcIndex, destIndex;
 
   if (!acuvWindowsInited) {  /* actually do the setup here */
     HINSTANCE hInstance; 
@@ -569,23 +553,23 @@ void acuvWindowsGetFrame(unsigned char *frame) {
   
   destIndex = acuVideoMirrorImage ? (acuVideoWidth-1)*3 : 0;
 
+  srcIndex = 0;
+  
   for (j = 0; j < acuVideoHeight; j++) {
-    srcOffset = acuVideoWidth * 3;
-
     for (i = 0; i < acuVideoWidth; i++) {
-      srcIndex = srcOffset + i;
-
+      
       frame[destIndex+0] = acuvTempBuffer[srcIndex+2];
       frame[destIndex+1] = acuvTempBuffer[srcIndex+1];
       frame[destIndex+2] = acuvTempBuffer[srcIndex+0];
-
+	  srcIndex += 3;
       destIndex = (acuVideoMirrorImage) ? destIndex-3 : destIndex+3;
     }
+    
     if (acuVideoMirrorImage) {
-      destIndex += (acuVideoArrayWidth*3*2 -
-		    (acuVideoArrayWidth-acuVideoWidth)*3);
+      destIndex += (acuVideoArrayWidth * 3 * 2 -
+		    (acuVideoArrayWidth-acuVideoWidth) * 3);
     } else {
-      destIndex += (acuVideoArrayWidth - acuVideoWidth)*3;
+      destIndex += (acuVideoArrayWidth - acuVideoWidth) * 3;
     }
   }
 #endif
@@ -612,6 +596,10 @@ void acuGetVideoFrame(unsigned char *frame) {
     }
     acuvLinuxGetFrame(frame);
 #endif
+#ifdef ACU_WIN32
+	acuvWindowsGetFrame(frame);
+#endif
+
   }
 }
 
