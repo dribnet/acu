@@ -1,6 +1,12 @@
 #include "ai.h"
 
 
+/*
+  THIS IS HIGHLY UNSUPPORTED CODE THAT CHANGES ALL THE TIME
+  ben fry 99.12.19
+*/
+
+
 boolean aiCapture = FALSE;
 static char AI_EOL[] = { 13, 10, 0 };
 //static char aiFilenameTemplate[] = "illusfart-%03d.ai";
@@ -62,14 +68,6 @@ void aiBegin(char *filename) {
   fprintf(afp, "0 J 0 j 0.25 w 4 M []0 d%s", AI_EOL);
 
   aiCapture = TRUE;
-
-  float bgColor[3];
-  acuGetFloatv(ACU_WINDOW_BG_COLOR, bgColor);
-  aiFillColorRGB(bgColor[0], bgColor[1], bgColor[2]);
-  aiBeginLock();
-  aiFilledRectangleMacro(0, 0, (float)screenDim[0], 
-			 (float)screenDim[1]);
-  aiEndLock();
 }
 
 
@@ -86,6 +84,19 @@ void aiEnd() {
 }
 
 
+void aiScreenShapeMacro() {
+  int screenDim[2];
+  acuGetIntegerv(ACU_WINDOW_SIZE, screenDim);
+  float bgColor[3];
+  acuGetFloatv(ACU_WINDOW_BG_COLOR, bgColor);
+  aiFillColorRGB(bgColor[0], bgColor[1], bgColor[2]);
+  aiBeginLock();
+  aiFilledRectangleMacro(0, 0, (float)screenDim[0], 
+			 (float)screenDim[1]);
+  aiEndLock();
+}
+
+
 void aiFillColorRGB(float r, float g, float b) {
   fprintf(afp, "%1.2f %1.2f %1.2f %1.2f k%s", 
 	  1.0-r, 1.0-g, 1.0-b, 0.0, AI_EOL);
@@ -96,6 +107,12 @@ void aiStrokeColorRGB(float r, float g, float b) {
 	  1.0-r, 1.0-g, 1.0-b, 0.0, AI_EOL);
 }
 
+void aiStrokeColorGet() {
+  float params[4];
+  glGetFloatv(GL_CURRENT_COLOR, params);
+  // alpha value is ignored.. that kinda sucks
+  aiStrokeColorRGB(params[0], params[1], params[2]);
+}
 
 void aiBeginGroup() {
   fprintf(afp, "u%s", AI_EOL);
@@ -113,12 +130,18 @@ void aiEndLock() {
   fprintf(afp, "0 A%s", AI_EOL);
 }
 
-void aiLineWidth(float width) {
+void aiStrokeWidthGet() {
+  float param[1];
+  glGetFloatv(GL_LINE_WIDTH, param);
+  aiStrokeWidth(param[0]);
+}
+
+void aiStrokeWidth(float width) {
   // 0.25 w = setlinewidth
   fprintf(afp, "%4.4f w%s", AI_EOL);
 }
 
-void aiBeginLine() {
+void aiBeginPath() {
 }
 
 void aiMoveTo(float x, float y) {
@@ -130,7 +153,12 @@ void aiLineTo(float x, float y) {
   fprintf(afp, "%4.4f %4.4f l%s", x, y, AI_EOL);
 }
 
-void aiEndLine() {
+void aiCurveTo(float x1, float y1, float x2, float y2, float x3, float y3) {
+  fprintf(afp, "%4.4f %4.4f %4.4f %4.4f %4.4f %4.4f c%s", 
+	  x1, y1, x2, y2, x3, y3, AI_EOL);
+}
+
+void aiEndPath() {
   // B - fill and stroke line
   // S - stroke line
   fprintf(afp, "S%s", AI_EOL);
@@ -138,10 +166,10 @@ void aiEndLine() {
 
 
 void aiLineMacro(float x1, float y1, float x2, float y2) {
-  aiBeginLine();
+  aiBeginPath();
   aiMoveTo(x1, y1);
   aiLineTo(x2, y2);
-  aiEndLine();
+  aiEndPath();
 }
 
 

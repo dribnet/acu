@@ -1,6 +1,13 @@
 #ifndef ACX_H
 #define ACX_H
 
+
+/*
+  THIS IS HIGHLY UNSUPPORTED CODE THAT CHANGES ALL THE TIME
+  ben fry 99.12.19
+*/
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -21,9 +28,9 @@ extern "C" {
 #define acxNextPowerOf2(x) ((int) pow(2, ceil(log(x) / log(2))))
 
 
-void acxDrawCatmullRom(int pointCount, float *xpoints, float *ypoints);
-void acxDrawCatmullRomBezier(int pointCount, float *xpoints, float *ypoints);
-void acxDrawBezier(int pointCount, float *xpoints, float *ypoints);
+void acxCatmullRom2fv(int pointCount, float *xpoints, float *ypoints);
+void acxCatmullRomBezier2fv(int pointCount, float *xpoints, float *ypoints);
+void acxBezier2fv(int pointCount, float *xpoints, float *ypoints);
 
 
 float acxFrameRate();
@@ -49,6 +56,14 @@ void acxTrackballTransform();
 void acxZoomMouseDown(float x, float y);
 void acxZoomMouseDrag(float x, float y);
 void acxZoomTransform();
+
+void acxQuad2f(float x1, float y1, float x2, float y2,
+	       float x3, float y3, float x4, float y4);
+
+void acxOval2f(float x, float y, float w, float h);
+
+void acxGolanLine2f(float x0, float y0, float x1, float y1, 
+		    float r0, float r1, int endcapCount);
 
   /*
 void acxSphericalToCartesian3(float *s, float *c);

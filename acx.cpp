@@ -1,6 +1,12 @@
 #include "acx.h"
 
 
+/*
+  THIS IS HIGHLY UNSUPPORTED CODE THAT CHANGES ALL THE TIME
+  ben fry 99.12.19
+*/
+
+
 // TODO add code from meta app for pop-up key list helper
 //      or maybe not, just make 'u' a usage key
 
@@ -58,7 +64,7 @@ void multCatmullRom(float m[4][4], float g[4][2], float mg[4][2]) {
   }
 }
 
-void acxDrawCatmullRom(int pointCount, float *xpoints, float *ypoints) {
+void acxCatmullRom2fv(int pointCount, float *xpoints, float *ypoints) {
   float geom[4][2];
   float plot[4][2];
   float mg[4][2];
@@ -80,7 +86,7 @@ void acxDrawCatmullRom(int pointCount, float *xpoints, float *ypoints) {
     glBegin(GL_LINE_STRIP);
     glVertex3f(startX, startY, 0);
     if (aiCapture) {
-      aiBeginLine();
+      aiBeginPath();
       aiMoveTo(startX, startY);
     }
     
@@ -99,12 +105,13 @@ void acxDrawCatmullRom(int pointCount, float *xpoints, float *ypoints) {
       startY = y;
     }
     glEnd();
-    if (aiCapture) aiEndLine();
+    if (aiCapture) aiEndPath();
   }
 }
 
 
-void acxDrawCatmullRomBezier(int pointCount, float *xpoints, float *ypoints) {
+void acxCatmullRomBezier2fv(int pointCount, float *xpoints, float *ypoints) {
+  //printf("in there\n");
   float control[4][3];  // 4 points, 3 for xyz
 
   for (int i = 0; i < pointCount-4; i++) {
@@ -130,6 +137,14 @@ void acxDrawCatmullRomBezier(int pointCount, float *xpoints, float *ypoints) {
     for (int m = 0; m < 4; m++)
       control[m][2] = 0;
 
+    if (aiCapture) {
+      aiBeginPath();
+      aiMoveTo(control[0][0], control[0][1]);
+      aiCurveTo(control[1][0], control[1][1],
+		control[2][0], control[2][1],
+		control[3][0], control[3][1]);
+      aiEndPath();
+    }
     glMap1f(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &control[0][0]);
     glEnable(GL_MAP1_VERTEX_3);
     glBegin(GL_LINE_STRIP);
@@ -141,7 +156,7 @@ void acxDrawCatmullRomBezier(int pointCount, float *xpoints, float *ypoints) {
 }
 
 
-void acxDrawBezier(int pointCount, float *xpoints, float *ypoints) {
+void acxBezier2fv(int pointCount, float *xpoints, float *ypoints) {
   // hey ben, write this later when you want to take the time
   // the code is inside innocents3 -> edge.cpp -> Edge::drawBezier
 }
@@ -368,3 +383,67 @@ void acxZoomTransform() {
 */
 
 
+
+////////////////////////////////////////////////////////////
+
+// GEOMETRY
+
+
+void acxQuad2f(float x1, float y1, float x2, float y2,
+	       float x3, float y3, float x4, float y4) {
+  glBegin(GL_QUADS);
+  glVertex3f(x1, y1, 0);
+  glVertex3f(x2, y2, 0);
+  glVertex3f(x3, y3, 0);
+  glVertex3f(x4, y4, 0);
+  glEnd();
+}
+
+
+void acxOval2f(float x, float y, float w, float h) {
+}
+
+
+// uses radius instead of thickness
+void acxGolanLine2f(float x0, float y0, float x1, float y1, 
+		    float r0, float r1, int endcapCount) {
+    float dX = x1-x0 + 0.0001f;
+    float dY = y1-y0 + 0.0001f;
+    float len = sqrt(dX*dX + dY*dY);
+
+    float rh0 = r0 / len;
+    float rh1 = r1 / len;
+    
+    float dx0 = rh0 * dY;
+    float dy0 = rh0 * dX;
+    float dx1 = rh1 * dY;
+    float dy1 = rh1 * dX;
+
+    acxQuad2f(x0+dx0, y0-dy0,
+	      x0-dx0, y0+dy0,
+	      x1-dx1, y1+dy1,
+	      x1+dx1, y1-dy1);
+
+    /*
+	final float dX = x1-x0 + EPSILON;
+	final float dY = y1-y0 + EPSILON;
+	final float rH = radius / (float)Math.sqrt(dX*dX + dY*dY);
+	final float dx = rH*dY;
+	final float dy = rH*dX;
+	
+	int xpts[] = { (int)(x0+dx), (int)(x0-dx), 
+		       (int)(x1-dx), (int)(x1+dx) };
+	int ypts[] = { (int)(y0-dy), (int)(y0+dy), 
+		       (int)(y1+dy), (int)(y1-dy) };
+	
+	g.fillPolygon(xpts, ypts, 4);
+	if (endcapCount > 0) {
+	    g.fillOval((int)(x0-radius), (int)(y0-radius),
+		       thickness, thickness);
+		       }
+	if (endcapCount == 2) {
+	g.fillOval((int)(x1-radius), (int)(y1-radius),
+	    thickness, thickness);
+	}
+    */
+}
