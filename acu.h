@@ -89,12 +89,27 @@ extern "C" {
 #define FALSE 0
 #endif
 
-// TOM needs this to be an unsigned char, not an int
+#ifndef true
+#define true 1
+#endif
+
+#ifndef false
+#define false 0
+#endif
+
+#ifndef null
+#define null NULL
+#endif
+
 #ifndef boolean
-//typedef int boolean;
 typedef unsigned char boolean;
 #endif
 
+/*
+#ifndef bool
+#define bool boolean
+#endif
+*/
 
 typedef enum acuEnum {
   ACU_NO_ERROR = 0,

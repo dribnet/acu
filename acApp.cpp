@@ -1,9 +1,9 @@
 #include "acApp.h"
 
 acApp *acApp::theApp = NULL;
-int grabCount;
-boolean validWindowSize;
-int lastModifiers = 0;
+int aaGrabCount;
+int aaLastMouseButton;
+boolean aaValidWindowSize;
 
 /* for mouseCallback Y switcheroo and reshaping */
 extern "C" GLint acuWindowHeight;
@@ -27,8 +27,8 @@ extern "C" GLint acuWindowWidth;
 
 acApp::acApp()
 {
-  grabCount = -1;
-  validWindowSize = FALSE;
+  aaGrabCount = -1;
+  aaValidWindowSize = FALSE;
   X = Y = 0;
   W = H = 100;
 }
@@ -58,14 +58,14 @@ void acApp::setFocus(bool state) { }
 
 void acApp::setParent(void *parent) { }
 
-void acApp::resize( float posX, float posY, float width, float height) {
+void acApp::resize(float posX, float posY, float width, float height) {
   X = posX;
   Y = posY;
   W = width;
   H = height;
 }
 
-bool acApp::pointInside( float x, float y ) {
+bool acApp::pointInside(float x, float y) {
   return (x >= 0 && y >= 0 && x < W && y < H);
 }
 
@@ -79,28 +79,33 @@ void acApp::screenGrab() {
   }
 
   char grabTemp[24];
-  if (grabCount == -1) {
-    // set grabCount by checking to see how many files exist
-    grabCount = 0;
+  if (aaGrabCount == -1) {
+    // set aaGrabCount by checking to see how many files exist
+    aaGrabCount = 0;
     int fd = -1;
     do {
       if (fd != -1) { 
 	close(fd);
-	grabCount++;
+	aaGrabCount++;
       }
-      sprintf(grabTemp, "screen-%04d.%s", grabCount, ext);
+      sprintf(grabTemp, "screen-%04d.%s", aaGrabCount, ext);
     } while ((fd = open(grabTemp, O_RDONLY)) != -1);
   }
-  sprintf(grabTemp, "screen-%04d.%s", grabCount, ext);
+  sprintf(grabTemp, "screen-%04d.%s", aaGrabCount, ext);
   acuScreenGrab(grabTemp);
-  grabCount++;
+  aaGrabCount++;
 }
 
-int acApp::getModifiers() { return lastModifiers; }
-void acApp::mouseDown(float x, float y, int button) { }
-void acApp::mouseUp(float x, float y, int button) { }
+//int acApp::getModifiers() { return lastModifiers; }
 void acApp::mouseMove(float x, float y) { }
-void acApp::mouseDrag(float x, float y) { }
+void acApp::mouseDown(float x, float y, int button) { }
+
+void acApp::mouseDrag(float x, float y) { 
+  mouseDrag(x, y, aaLastMouseButton);
+}
+
+void acApp::mouseDrag(float x, float y, int button) { }
+void acApp::mouseUp(float x, float y, int button) { }
 
 void acApp::keyDown(char c) { 
   // Default behavior, close program on escape
@@ -113,9 +118,9 @@ void acApp::draw() { }
 void acApp::idle() { }
 
 void display_cb(void) {
-  if (!validWindowSize)
-    validWindowSize = (acuGetInteger(ACU_WINDOW_WIDTH) != 0);
-  if (validWindowSize) {
+  if (!aaValidWindowSize)
+    aaValidWindowSize = (acuGetInteger(ACU_WINDOW_WIDTH) != 0);
+  if (aaValidWindowSize) {
     /* BENJAMIN FRY -- FIX ME!!! */
     acuOpenMazoFrame();
     acApp::theApp->draw();
@@ -130,6 +135,7 @@ void mouse_cb(int button, int state, int x, int y) {
   } else if (state == GLUT_UP) {
     acApp::theApp->mouseUp(x, ((acuWindowHeight-1)-y), button);
   }
+  aaLastMouseButton = button;
 }
 
 void motion_cb(int x, int y) {

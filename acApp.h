@@ -6,29 +6,31 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+
 #ifdef AC_GLWRAP
+/* gak! could this be any uglier? which of these are actually needed? */
 #include "acGLWrapper.h"
 #include "acGLEventWrapper.h"
 #include "acSocketIO.h"
-#include        <sys/types.h>  
-#include        <sys/socket.h> 
-#include        <sys/time.h>   
-#include        <time.h>       
-#include        <netinet/in.h> 
-#include        <arpa/inet.h>  
-#include        <errno.h>
-#include        <fcntl.h>      
-#include        <netdb.h>
-#include        <signal.h>
-#include        <stdio.h>
-#include        <stdlib.h>
-#include        <string.h>
-#include        <sys/stat.h>   
-#include        <sys/uio.h>    
-#include        <unistd.h>
-#include        <sys/wait.h>
-#include        <sys/un.h>     
-#include        <pthread.h>
+#include <sys/types.h>  
+#include <sys/socket.h> 
+#include <sys/time.h>   
+#include <time.h>       
+#include <netinet/in.h> 
+#include <arpa/inet.h>  
+#include <errno.h>
+#include <fcntl.h>      
+#include <netdb.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>   
+#include <sys/uio.h>    
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/un.h>     
+#include <pthread.h>
 #endif
 
 
@@ -62,10 +64,10 @@ public:
      Default implementation is to update X, Y, W, H
      If you override resize(), call acApp::resize() or do 
      this yourself */
-  virtual void resize( float posX, float posY, float width, float height);
+  virtual void resize(float posX, float posY, float width, float height);
 
   /* Someone is asking you if (x,y) is your responsibility */
-  virtual bool pointInside( float x, float y );
+  virtual bool pointInside(float x, float y);
 
   /* (Generally) called once every frame, just before draw().
    * This is automatically called repeatedly as your
@@ -106,11 +108,12 @@ public:
    * Modifiers are one of:
    * GLUT_ACTIVE_SHIFT, GLUT_ACTIVE_CTRL, GLUT_ACTIVE_ALT 
    */
-  int getModifiers();
-  virtual void mouseDown(float x, float y, int button);
-  virtual void mouseUp(float x, float y, int button);
+  //int getModifiers();
   virtual void mouseMove(float x, float y);
-  virtual void mouseDrag(float x, float y);
+  virtual void mouseDown(float x, float y, int button);
+  virtual void mouseDrag(float x, float y); /* deprecated */
+  virtual void mouseDrag(float x, float y, int button);
+  virtual void mouseUp(float x, float y, int button);
 
   /* Override to get keys from the keyboard. */
   virtual void keyDown(char c);
@@ -146,7 +149,8 @@ void reshape_cb(int x, int y);
 #define ExportApp extern "C" acApp
 #define ExportType extern "C" char
 #endif
-// this is the function declaration - put the function in your App
+
+/* this is the function declaration - put the function in your App */
 ExportApp *makeApp(void);
 
 #endif
