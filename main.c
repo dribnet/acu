@@ -6,6 +6,10 @@ GLint acuWindowHeight;
 GLfloat acuWindowBgColor[3];
 GLboolean acuWindowClear;
 
+/* anytime a string is returned from an acuFunction, use this */
+char returnString[256];
+char acuResourceLocation[256];
+
 float acuScreenFov;
 float acuScreenNear;
 float acuScreenFar;
@@ -29,8 +33,10 @@ static float mazoFarDist = 1000.0;
 static float mazoAspect = 4.0/3.0;
 static float mazoEyeX = 320;
 static float mazoEyeY = 240;
+/* REMOVED 11/99 
 static GLubyte *mazoBuffer = NULL;
-//static int mazoDoBuffer = 0;
+static int mazoDoBuffer = 0;
+*/
 
 /* this is a glut callback, set by acuOpen() */
 void reshape(int width, int height) {
@@ -55,6 +61,17 @@ void acuOpen() {
   acuWindowHeight = 0;
 
   frameDepth = 0;
+
+  /* set up location of resources dependent on platform */
+#if defined(ACU_IRIX)
+  strcpy(acuResourceLocation, "/acg/data/");
+#elif defined(ACU_WIN32)
+  strcpy(acuResourceLocation, "//di/acg/data/");
+#elif defined(ACU_MAC)
+  strcpy(acuResourceLocation, "/whatever/");
+#else
+  strcpy(acuResourceLocation, "//help/here");
+#endif
 
   // InitDisplayMode must appear before CreateWindow
   glutInit(&argc, vptr);
@@ -434,23 +451,23 @@ void acuCloseMazoFrame() {
   frameStepDown();
 }
 
+/* REMOVED 11/99
 
 GLubyte *acuGetMazoImage() {
-  return NULL;
-  /*
   mazoDoBuffer = 1;
   return mazoBuffer;
-  */
 }
+*/
 
 
-/* This is deprecated as it does not jive with 
-   my baby memory management system */
+/* REMOVED 11/99
+   This is deprecated as it does not jive with 
+   my baby memory management system
 void acuSetMazoImage(GLubyte *newBuffer) {
-  /*if(mazoBuffer != NULL) delete[] mazoBuffer;*/
+  / * if(mazoBuffer != NULL) delete[] mazoBuffer;* /
   mazoBuffer = newBuffer;
 }
-
+*/
 
 void acuScreenGrab(char *filename) {
   unsigned char *temp;
@@ -830,4 +847,44 @@ void acuSetBooleanv(acuEnum pname, GLboolean *params) {
     acuDebug(ACU_DEBUG_PROBLEM, 
 	     "Bad parameter passed to acuSetBooleanv");
   }
+}
+
+char *acuGetString(acuEnum pname) {
+  switch(pname) {
+    
+  case ACU_RESOURCE_LOCATION:
+    strcpy(returnString, acuResourceLocation);
+    return returnString;
+
+  default:
+    acuDebug(ACU_DEBUG_PROBLEM, "Bad parameter passed to acuGetString");
+    strcpy(returnString, "");
+    return returnString;
+  }
+}
+
+void acuSetString(acuEnum pname, char *param) {
+  
+  switch (pname) {
+    
+  case ACU_RESOURCE_LOCATION:
+    strcpy(acuResourceLocation, param);
+    break;
+  
+  default:
+    acuDebug(ACU_DEBUG_PROBLEM, "Bad parameter passed to acuSetString");
+  
+  }
+}
+
+/* 
+ * acuResourceFile should switch the pathname separator and use
+ * the current ACU_RESOURCE_LOCATION. But we use fopen, which seems
+ * to always want forward slashes. Maybe that will change on Macs.
+ * Anyway, for now we have this simple implementation.
+ */
+char *acuResourceFile(char *location) {
+  strcpy(returnString, acuResourceLocation);
+  strcat(returnString, location);
+  return returnString;
 }

@@ -137,6 +137,8 @@ typedef enum acuEnum {
   ACU_VECTOR_FONT,
   ACU_TRUETYPE_FONT,
 
+  ACU_RESOURCE_LOCATION,
+
   ACU_FONT_ASCENT = 100,
   ACU_FONT_DESCENT = 101,
   ACU_FONT_X_HEIGHT = 102,
@@ -202,10 +204,12 @@ void acuCloseGeoFrame();
 void acuOpenMazoFrame();
 void acuCloseMazoFrame();
 /* Gets the current contents of the mazo image buffer */
+/* MAZO IMAGE/BUFFER IS CURRENTLY SO DEPRECIATED THAT I AM TAKING IT OFFLINE
+ * TOM, 11/99
 GLubyte *acuGetMazoImage();
-/* acuSetMazoImage is deprecated - please don't use for now */
 void acuSetMazoImage(GLubyte *newBuffer);
-
+*/
+    
 /* DOWN WITH SCRSAVE! Grabs the contents of the screen
  * and writes them to an image file. 
  *
@@ -249,6 +253,24 @@ void acuGetBooleanv(acuEnum pname, GLboolean *params);
 void acuSetBoolean(acuEnum pname, GLboolean param);
 void acuSetBooleanv(acuEnum pname, GLboolean *params);
 
+/* if you call acuGetString it will return a string. You do not need
+ * to delete this memory. You should strcpy it to your local space if
+ * you want to use it for awhile. 
+ */
+char *acuGetString(acuEnum pname);
+void acuSetString(acuEnum pname, char *param);
+
+/* this function returns a string that is the file name
+ * for the resource asked for. This string is appropiate for
+ * passing to things like acuLoadFont. For example:
+ *
+ * acuLoadFont(acuResourceFile("font/bitmaps/GillSan.48"));
+ *
+ * Always use the above input format. Internally this uses 
+ * ACU_RESOURCE_LOCATION and munges the pathname seperator dependent on the 
+ * current platform.
+ */
+char *acuResourceFile(char *location);
 
 /******************* misc.c *******************/
 
