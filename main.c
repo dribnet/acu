@@ -127,13 +127,28 @@ void acuOpen() {
 #endif
 }
 
+/* this quitAtOne idle callback rewiring acuClose thing
+ * is a workaround for bad driver/cards that don't like
+ * to quit in fullscreen mode
+ */
+static quitAtOne = 0;
+
+void winddown_cb(void);
+void winddown_cb(void) {
+  if(quitAtOne == 1) exit(0);
+  else if(quitAtOne>1) --quitAtOne;
+}
 
 /**
  * Close the window and exit the application
  */
 void acuClose() {
+  GLint small[] = {100, 100};
 #ifdef ACU_WIN32
-  abort();
+  acuSetIntegerv(ACU_WINDOW_SIZE, small);
+  glutIdleFunc(winddown_cb);
+  quitAtOne = 5;
+  //  exit(0);
 #else
   exit(0);
 #endif
