@@ -421,6 +421,7 @@ int acuLoadFont(char *fontname);
 void acuUnloadFont(int index); /* may just be temporary */
 int acuFindFont(char *fontname);
 void acuSetFont(int index);
+void* acuGetFont(int index);
 
 /* Draw characters and strings to the screen */
 void acuDrawChar(char c, GLfloat x, GLfloat y);
