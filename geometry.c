@@ -86,7 +86,7 @@ void acuNamedTexRectf(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2,
  * The array passed in takes the format:
  * { x1, y1, z1, x2, y2, z2, ... , xN-1, yN-1, zN-1 }
  */
-void acuPolygon(int count, GLfloat *vertices) {
+void acuPolygon(GLint count, GLfloat *vertices) {
   GLdouble *p, *pts;
   int i;
 
