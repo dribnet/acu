@@ -187,9 +187,16 @@ struct threadStruct
 
 static bool QUIT_NOW = false;
 
-void acApp::wrapStart( char* hostname )
+void acApp::wrapStart()
 {
   theApp = this;
+  // -------------- get hostname from user ------
+  printf("enter hostname: ");
+  char hostname[256];
+  gets(hostname);
+  if ( strlen(hostname) < 2 )
+    strcpy( hostname, "localhost" );
+
   // ---------------- prelaunch ------------------
   int sockfd;
   long wrapFrameCount = 0;

@@ -46,7 +46,7 @@ public:
    */
   acApp();
   virtual void selfStart();
-  virtual void wrapStart( char* hostname );
+  virtual void wrapStart();
 
   /* Called to let you know your program is (or isn't) getting attention. */
   virtual void setFocus(bool state);
