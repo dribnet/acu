@@ -27,7 +27,8 @@ unsigned char *acuScreenGrabBuffer;
 boolean acuScreenGrabFlip;
 unsigned char *acuScreenGrabFlipper;
 int acuScreenGrabFormat;
-
+int acuScreenGrabX, acuScreenGrabY;
+int acuScreenGrabWidth, acuScreenGrabHeight;
 
 /* These are all constants about mazo's view area */
 static float mazoDist = 100.0;
@@ -118,6 +119,10 @@ void acuOpen() {
   acuScreenGrabFlip = TRUE;
   acuScreenGrabFlipper = NULL;
   acuScreenGrabFormat = ACU_FILE_FORMAT_TIFF;
+  acuScreenGrabX = 0;
+  acuScreenGrabY = 0;
+  acuScreenGrabWidth = 0; 
+  acuScreenGrabHeight = 0; 
 
   /* seed random number generator */
 #if defined(ACU_IRIX)
@@ -215,7 +220,7 @@ void acuOpenFrame() {
   glDepthFunc(GL_LEQUAL);
   glShadeModel(GL_SMOOTH);
 
-  if(topLevel && acuWindowClear) {
+  if (topLevel && acuWindowClear) {
     glClearColor(acuWindowBgColor[0], acuWindowBgColor[1], 
       acuWindowBgColor[2], 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -492,10 +497,17 @@ void acuScreenGrab(char *filename) {
   int j, k;
   FILE *fp; /* for ppm */
 
+  if (acuScreenGrabWidth == 0) {  // not set yet
+    acuScreenGrabWidth = acuWindowWidth;
+    acuScreenGrabHeight = acuWindowHeight;
+  }
+
   if (acuScreenGrabFormat == ACU_FILE_FORMAT_SCRSAVE) {
     char command[256];
     sprintf(command, "scrsave %s %d %d %d %d", filename,
-	    0, acuWindowWidth, 0, acuWindowHeight);
+	    acuScreenGrabX, acuScreenGrabY,
+	    acuScreenGrabWidth, acuScreenGrabHeight);
+	    //0, acuWindowWidth, 0, acuWindowHeight);
     printf("%s\n", command);
     system(command);
     return;
@@ -506,7 +518,9 @@ void acuScreenGrab(char *filename) {
       malloc(acuWindowWidth * acuWindowHeight * 3);
   }
 
-  glReadPixels(0, 0, acuWindowWidth, acuWindowHeight,
+  glReadPixels(acuScreenGrabX, acuScreenGrabY, 
+	       acuScreenGrabWidth, acuScreenGrabHeight,
+	       //0, 0, acuWindowWidth, acuWindowHeight,
 	       GL_RGB, GL_UNSIGNED_BYTE, acuScreenGrabBuffer);
 
   /* so it's really lazy of me to set up the algorithm this
@@ -519,11 +533,19 @@ void acuScreenGrab(char *filename) {
       acuScreenGrabFlipper = (unsigned char *)
         malloc(acuWindowWidth * acuWindowHeight * 3);
     }
+    /*
     for (j = 0; j < acuWindowHeight; j++) {
       k = acuWindowHeight - j - 1;
       memcpy(&acuScreenGrabFlipper[j*acuWindowWidth*3], 
 	     &acuScreenGrabBuffer[k*acuWindowWidth*3],
 	     acuWindowWidth*3);
+    }
+    */
+    for (j = 0; j < acuScreenGrabHeight; j++) {
+      k = acuScreenGrabHeight - j - 1;
+      memcpy(&acuScreenGrabFlipper[j*acuScreenGrabWidth*3], 
+	     &acuScreenGrabBuffer[k*acuScreenGrabWidth*3],
+	     acuScreenGrabWidth*3);
     }
     temp = acuScreenGrabBuffer;
     acuScreenGrabBuffer = acuScreenGrabFlipper;
@@ -538,28 +560,28 @@ void acuScreenGrab(char *filename) {
            "jpeg not yet supported on this platform.");
 #else
     acuWriteJpegFile(filename, acuScreenGrabBuffer, 
-		     acuWindowWidth, acuWindowHeight, 
+		     acuScreenGrabWidth, acuScreenGrabHeight, 
 		     acuScreenGrabQuality);
 #endif
     break;
 
   case ACU_FILE_FORMAT_RAW:
     acuWriteRawFile(filename, acuScreenGrabBuffer,
-		    acuWindowWidth*acuWindowHeight*3);
+		    acuScreenGrabWidth*acuScreenGrabHeight*3);
     break;
 
   case ACU_FILE_FORMAT_PPM:
     fp = fopen(filename, "wb");
     fprintf(fp, "%s %d %d %d\n", "P6", 
-	    acuWindowWidth, acuWindowHeight, 255);
+	    acuScreenGrabWidth, acuScreenGrabHeight, 255);
     fwrite(acuScreenGrabBuffer, 
-	   acuWindowWidth*acuWindowHeight*3, 1, fp);
+	   acuScreenGrabWidth*acuScreenGrabHeight*3, 1, fp);
     fclose(fp);
     break;
 
   case ACU_FILE_FORMAT_TIFF:
     acuWriteTiffFile(filename, acuScreenGrabBuffer, 
-		     acuWindowWidth, acuWindowHeight);
+		     acuScreenGrabWidth, acuScreenGrabHeight);
     break;
   }
 }
@@ -627,9 +649,20 @@ void acuGetIntegerv(acuEnum pname, GLint *params) {
   case ACU_SCREEN_GRAB_QUALITY:
     params[0] = acuScreenGrabQuality;
     break;
-
   case ACU_SCREEN_GRAB_FORMAT:
     params[0] = acuScreenGrabFormat;
+    break;
+  case ACU_SCREEN_GRAB_X:
+    params[0] = acuScreenGrabX;
+    break;
+  case ACU_SCREEN_GRAB_Y:
+    params[0] = acuScreenGrabX;
+    break;
+  case ACU_SCREEN_GRAB_WIDTH:
+    params[0] = acuScreenGrabWidth;
+    break;
+  case ACU_SCREEN_GRAB_HEIGHT:
+    params[0] = acuScreenGrabHeight;
     break;
 
   case ACU_TIME_STEP:
@@ -703,9 +736,20 @@ void acuSetIntegerv(acuEnum pname, GLint *params) {
   case ACU_SCREEN_GRAB_QUALITY:
     acuScreenGrabQuality = params[0];
     break;
-
   case ACU_SCREEN_GRAB_FORMAT:
     acuScreenGrabFormat = params[0];
+    break;
+  case ACU_SCREEN_GRAB_X:
+    acuScreenGrabX = params[0];
+    break;
+  case ACU_SCREEN_GRAB_Y:
+    acuScreenGrabY = params[0];
+    break;
+  case ACU_SCREEN_GRAB_WIDTH:
+    acuScreenGrabWidth = params[0];
+    break;
+  case ACU_SCREEN_GRAB_HEIGHT:
+    acuScreenGrabHeight = params[0];
     break;
 
   case ACU_TIME_STEP:
