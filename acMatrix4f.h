@@ -12,8 +12,11 @@ public:
 
   acMatrix4f();
   acMatrix4f(float source[4][4]);
+  void set(float *source);
   void set(acMatrix4f *source);
   void set(float source[4][4]);
+
+  void get(float *target);
 
   void setZero();
   void setIdentity();

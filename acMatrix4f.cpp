@@ -15,6 +15,12 @@ acMatrix4f::acMatrix4f() {
 }
 
 
+void acMatrix4f::set(float *source) {
+  for (int i = 0; i < 16; i++) {
+    a[i/4][i%4] = *source++;
+  }
+}
+
 void acMatrix4f::set(acMatrix4f *source) {
   set(source->m);
 }
@@ -25,6 +31,13 @@ void acMatrix4f::set(float source[4][4]) {
     for (int i = 0; i < 4; i++) {
       m[i][j] = source[i][j];
     }
+  }
+}
+
+
+void acMatrix4f::get(float *source) {
+  for (int i = 0; i < 16; i++) {
+    *source++ = a[i/4][i%4];
   }
 }
 

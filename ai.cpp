@@ -108,11 +108,27 @@ void aiStrokeColorRGB(float r, float g, float b) {
 	  1.0-r, 1.0-g, 1.0-b, 0.0, AI_EOL);
 }
 
+float hsb[3], rgb[3];
+void aiStrokeColorHSB(float h, float s, float b) {
+  hsb[0] = h; hsb[1] = s; hsb[2] = b;
+  acuHsbToRgb(hsb, rgb);
+  aiStrokeColorRGB(rgb[0], rgb[1], rgb[2]);
+}
+
+void aiStrokeColorHSBA(float h, float s, float b, float a) {
+  hsb[0] = h; hsb[1] = s; hsb[2] = b;
+  acuHsbToRgb(hsb, rgb);
+  aiStrokeColorRGB(rgb[0]*a, rgb[1]*a, rgb[2]*a);
+}
+
 void aiStrokeColorGet() {
   float params[4];
   glGetFloatv(GL_CURRENT_COLOR, params);
   // alpha value is ignored.. that kinda sucks
-  aiStrokeColorRGB(params[0], params[1], params[2]);
+  //aiStrokeColorRGB(params[0], params[1], params[2]);
+  aiStrokeColorRGB(params[0] * params[3], 
+		   params[1] * params[3], 
+		   params[2] * params[3]);
 }
 
 void aiBeginGroup() {
@@ -183,3 +199,59 @@ void aiFilledRectangleMacro(float x1, float y1, float x2, float y2) {
   // f - close and fill path
   fprintf(afp, "f%s", AI_EOL);
 }
+
+
+float ctm[16];
+void aiSetMatrix(float *matrix) {
+  for (int i = 0; i < 16; i++) {
+    ctm[i] = matrix[i];
+  }
+}
+
+void aiSetMatrixGet() {
+  //glGetFloatv(GL_PROJECTION_MATRIX, ctm);
+  //acMatrix4f a; a.set(ctm);
+  glGetFloatv(GL_MODELVIEW_MATRIX, ctm);
+  //acMatrix4f b; b.set(ctm);
+  //a.multiplyBy(&b);
+  //a.get(ctm);
+  
+  /*
+  for (int i = 0; i < 16; i++) {
+    if ((i % 4) == 0) printf("\n");
+    printf("%f ", ctm[i]);
+  }
+  printf("\n"); 
+  */
+}
+
+/*
+// pretends that the 'w' value for the input vector is 1.0
+void Edge::transform3(float *in, float *out) {
+  out[0] = m[0][0]*in[0] + m[0][1]*in[1] + m[0][2]*in[2] + m[0][3];
+  out[1] = m[1][0]*in[0] + m[1][1]*in[1] + m[1][2]*in[2] + m[1][3];
+  out[2] = m[2][0]*in[0] + m[2][1]*in[1] + m[2][2]*in[2] + m[2][3];
+}
+*/
+
+void aiMoveTo3f(float x, float y, float z) {
+  //float xx = ctm[0]*x + ctm[1]*y + ctm[2]*z + ctm[3];
+  //float yy = ctm[4]*x + ctm[5]*y + ctm[6]*z + ctm[7];
+
+  float xx = ctm[0]*x + ctm[4]*y + ctm[8]*z + ctm[12];
+  float yy = ctm[1]*x + ctm[5]*y + ctm[9]*z + ctm[13];
+
+  fprintf(afp, "%4.4f %4.4f m%s", xx, yy, AI_EOL);
+}
+
+// L and l seem to do same thing
+void aiLineTo3f(float x, float y, float z) {
+  //float xx = ctm[0]*x + ctm[1]*y + ctm[2]*z + ctm[3];
+  //float yy = ctm[4]*x + ctm[5]*y + ctm[6]*z + ctm[7];
+
+  float xx = ctm[0]*x + ctm[4]*y + ctm[8]*z + ctm[12];
+  float yy = ctm[1]*x + ctm[5]*y + ctm[9]*z + ctm[13];
+
+  fprintf(afp, "%4.4f %4.4f l%s", xx, yy, AI_EOL);
+}
+
