@@ -1,5 +1,8 @@
 #include "acu.h"
 
+#if defined(ACU_LINUX)
+#include <limits.h>
+#endif
 
 /* These functions exist either as convenience (lerp)
  * or because they are system-dependent (random, time).
@@ -122,9 +125,10 @@ void acuRgbToHsb(GLfloat *rgb, GLfloat *hsb) {
   }
 }
 
-
 GLfloat acuRandomf() {
 #if defined(ACU_IRIX)
+  return (GLfloat)random()*2.0 / (LONG_MAX+1.0) - 1.0;
+#elif defined(ACU_LINUX)
   return (GLfloat)random()*2.0 / (LONG_MAX+1.0) - 1.0;
 #elif defined(ACU_WIN32)
   return (GLfloat) ((float)(rand() >> 0) / 16384.0) - 1.0;
@@ -137,6 +141,8 @@ GLfloat acuRandomf() {
 GLfloat acuRandomuf() {
 #if defined(ACU_IRIX)
   return (GLfloat)random() / (LONG_MAX+1.0);
+#elif defined(ACU_LINUX)
+  return (GLfloat)random() / (LONG_MAX+1.0);
 #elif defined(ACU_WIN32)
   return (GLfloat) ((float)(rand() >> 0) / 32768.0);
 #else
@@ -147,6 +153,8 @@ GLfloat acuRandomuf() {
 
 GLint acuRandomui() {
 #if defined(ACU_IRIX)
+  return random();
+#elif defined(ACU_LINUX)
   return random();
 #elif defined(ACU_WIN32)
   return rand();

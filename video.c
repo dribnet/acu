@@ -24,6 +24,8 @@ int acuVideoProxyCount;
 int acuVideoProxyRawWidth;
 int acuVideoProxyRawHeight;
 
+int acuVideoFPS;
+
 boolean acuvProxy;
 boolean acuvProxyRaw;
 int acuvFrameIndex;
@@ -213,7 +215,7 @@ void acuvLinuxRequestSize(int width, int height) {
   }
   /* -r 10 means 10 fps, -t 100 means 100 times */
   /* -b 1 means just 1 buffer */
-  sprintf(command, "streamer -b 2 -r 15 -f rgb -n ntsc -i 1 -t 100000000 -s %dx%d", width, height);
+  sprintf(command, "streamer -b 2 -r %d -f rgb -n ntsc -i 1 -t 100000000 -s %dx%d", acuVideoFPS, width, height);
   //sprintf(command, "cat /acg/hsvspace/streamer.out");
   acuvStream = popen(command, "r");
   if (acuvStream == NULL) {
@@ -232,7 +234,6 @@ void acuvLinuxRequestSize(int width, int height) {
 void acuRequestVideoSize(GLint *width, GLint *height) {
   int wide = *width;
   int high = *height;
-  int value;
 
   float zoom = (((float)wide / (float)acuvActualWidth) + 
 		((float)high / (float)acuvActualHeight)) / 2.0f;    
@@ -442,12 +443,6 @@ void acuvLinuxGetFrame(unsigned char *frame) {
 
 
 void acuGetVideoFrame(unsigned char *frame) {
-#ifdef ACU_LINUX
-  if (acuvStream == NULL) {
-    acuDebug(ACU_DEBUG_EMERGENCY, "must call acuRequestVideoSize() before getting frames on linux\n");
-  }
-#endif
-
   if (!acuVideoOpened) {
     acuDebug(ACU_DEBUG_PROBLEM, "Video not opened");
   }
@@ -461,6 +456,9 @@ void acuGetVideoFrame(unsigned char *frame) {
 #endif
 
 #ifdef ACU_LINUX
+    if (acuvStream == NULL) {
+      acuDebug(ACU_DEBUG_EMERGENCY, "must call acuRequestVideoSize() before getting frames on linux\n");
+    }
     acuvLinuxGetFrame(frame);
 #endif
   }

@@ -103,6 +103,7 @@ void acuOpen() {
   acuVideoProxyRepeating = FALSE;
   acuVideoProxyRawWidth = 0;
   acuVideoProxyRawHeight = 0;
+  acuVideoFPS = 15;
 
   acuTesselator = NULL;
 
@@ -649,6 +650,9 @@ void acuGetIntegerv(acuEnum pname, GLint *params) {
   case ACU_VIDEO_PROXY_RAW_HEIGHT:
     params[0] = acuVideoProxyRawHeight;
     break;
+  case ACU_VIDEO_FPS:
+    params[0] = acuVideoFPS;
+    break;
 
   default:
     acuDebug(ACU_DEBUG_PROBLEM, 
@@ -711,6 +715,9 @@ void acuSetIntegerv(acuEnum pname, GLint *params) {
     break;
   case ACU_VIDEO_PROXY_RAW_HEIGHT:
     acuVideoProxyRawHeight = params[0];
+    break;
+  case ACU_VIDEO_FPS:
+    acuVideoFPS = params[0];
     break;
   
   default:

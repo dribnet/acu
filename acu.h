@@ -62,6 +62,7 @@ extern "C" {
 
 #ifdef ACU_LINUX
 #undef ACU_WIN32
+#include <limits.h>
 #endif
 
 #ifdef ACU_MAC
@@ -182,6 +183,7 @@ typedef enum acuEnum {
   ACU_VIDEO_ARRAY_HEIGHT,
   ACU_VIDEO_ARRAY_SIZE,
   ACU_VIDEO_MIRROR_IMAGE,
+  ACU_VIDEO_FPS,
 
   ACU_VIDEO_PROXY_COUNT,
   ACU_VIDEO_PROXY_REPEATING,
@@ -598,6 +600,7 @@ extern boolean acuVideoProxyRepeating;
 extern int acuVideoProxyCount;
 extern int acuVideoProxyRawWidth;
 extern int acuVideoProxyRawHeight;
+extern int acuVideoFPS;
 
 /* Warm up the video, Marge. We've got company coming over. 
  *
