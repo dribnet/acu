@@ -1,5 +1,10 @@
 about acu, sometimes a twice-weekly newsletter for the acu community
 
+[ todo ]
+acApp::mouseDrag -> pass in mouse button, save lastmousex,y
+add acuStringWidth, or acuDrawString(char *, x, y, align)
+  or acuDrawParagraph(char * x, y, align, leading, etc)
+
 [ october 31 2000 ] 
 - removed acx and ai, both of which were unsupported
 - removed acMatrix4f, it wasn't particularly well designed

@@ -2,10 +2,12 @@
 
 
 /* internal state variables, used for acuGet/acuSet */
+
 GLint acuWindowWidth;
 GLint acuWindowHeight;
 GLfloat acuWindowBgColor[3];
 GLboolean acuWindowClear;
+GLuint acuDisplayMode = GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH;
 
 /* anytime a string is returned from an acuFunction, use this */
 char returnString[256];
@@ -77,7 +79,7 @@ void acuOpen() {
   // InitDisplayMode must appear before CreateWindow
   glutInit(&argc, vptr);
   //glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_ALPHA);
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+  glutInitDisplayMode(acuDisplayMode); //GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 
   glutCreateWindow("acu");
   glutFullScreen();

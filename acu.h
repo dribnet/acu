@@ -198,7 +198,7 @@ typedef enum acuEnum {
 extern char *acuDebugStr;
 extern int acuScreenGrabQuality;
 extern boolean acuScreenGrabFlip;
-
+extern GLuint acuDisplayMode;
 /* Call these at the beginning (and end) of an acu application.
  * if you're using acApp, this is done for you.
  */
