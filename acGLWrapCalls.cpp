@@ -1,10 +1,34 @@
 
 #include "acGLWrapper.h"
 	
+extern unsigned char* buffer = NULL;
+extern long bufferSize = 0;
+extern long bufferAllocSize = 0;
 
-extern static unsigned char* buffer = NULL;
-extern static long bufferSize = 0;
-extern static long bufferAllocSize = 0;
+/*-------------------- write data ----------------------------*/
+
+void tryExpand( int size )
+{
+  while ( bufferAllocSize <= bufferSize+size )
+    {
+      if ( bufferAllocSize==0 )
+	bufferAllocSize = 32;
+      bufferAllocSize *= 2;
+      buffer = (unsigned char*)realloc( buffer, sizeof(char)*bufferAllocSize );
+    }
+}
+
+void writeValue( void* V, int size )
+{
+  tryExpand( size );
+  memcpy( (void*)(&buffer[bufferSize]), V, size );
+  bufferSize += size;
+}
+
+void writeGlCommand( glCommand C )
+{
+  writeValue( &C, sizeof(C) );
+}
 
 /*------------------------- the wrappers -------------------*/
 
