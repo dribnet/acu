@@ -33,7 +33,9 @@ int acuScreenGrabFormat;
 static float mazoDist = 100.0;
 static float mazoNearDist = 10.0;
 static float mazoFarDist = 1000.0;
-static float mazoAspect = 4.0/3.0;
+//static float mazoAspect = 4.0/3.0;
+//float mazoAspect = 4.0/3.0;
+static float mazoAspect = 4;
 static float mazoEyeX = 320;
 static float mazoEyeY = 240;
 /* REMOVED 11/99 
@@ -224,6 +226,7 @@ void acuOpenFrame() {
     // done already glLoadIdentity();
 
     aspect = (float)acuWindowWidth / (float)acuWindowHeight;
+    printf("setting aspect to %f\n", aspect);
     /* don't set 'far' too high.. it destroys the resolution of 
        the z-buffer. even 100 might be too high. */
     gluPerspective(acuScreenFov, aspect, acuScreenNear, acuScreenFar);
