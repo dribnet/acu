@@ -1,5 +1,5 @@
 #!gmake
-include $(ROOT)/usr/include/make/commondefs
+#include $(ROOT)/usr/include/make/commondefs
 
 MYINC_DIR = /u/$(USER)/include
 ACINC_DIR = /acg/include

@@ -389,4 +389,22 @@ closelabel:
   return NULL;
 }
 
+
+void* waitforquit( void* arg )
+{
+  int status = pthread_detach( pthread_self() );
+  if ( status != 0 )
+    {
+      printf("bad detach\n");
+      exit(0);
+    }
+  
+  char str[256];
+  printf("press 'q' to quit: ");
+  gets( str );
+  printf("done\n");
+  QUIT_NOW = true;
+  return NULL;
+}
+
 #endif
