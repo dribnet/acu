@@ -20,33 +20,48 @@ public:
   virtual boolean isValid() { return valid; }
 
   virtual float stringWidth(char *s) {
-    float wide = 0.0;
+    float wide = 0;
+    float pwide = 0;
     char previous = 0;
     while (*s != 0) {
-      wide += charWidth(*s);
-      if (previous != 0) 
-	wide += kernWidth(previous, *s);
-      previous = *s++;
+      if (*s == '\n') {
+	if (wide > pwide) pwide = wide;
+	wide = 0;
+	previous = 0;
+      } else {
+	wide += charWidth(*s);
+	if (previous != 0) 
+	  wide += kernWidth(previous, *s);
+	previous = *s;
+      }
+      s++;
     }
-    return wide;
+    return (pwide > wide) ? pwide : wide;
   }
 
   virtual void drawString(char *c, float x, float y) {
     glPushMatrix();
+    float startX = x;
     int index = 0;
     char previous = 0;
     while (c[index] != 0) {
-      drawChar(c[index], x, y);
-      x += charWidth(c[index]);
-      if (previous != 0)
-	x += kernWidth(previous, c[index]);
-      previous = c[index];
+      if (c[index] == '\n') {
+	x = startX;
+	y += getDefaultLeading();
+	previous = 0;
+      } else {
+	drawChar(c[index], x, y);
+	x += charWidth(c[index]);
+	if (previous != 0)
+	  x += kernWidth(previous, c[index]);
+	previous = c[index];
+      }
       index++;
     }
     glPopMatrix();
   }
-  
-  
+
+
 protected:
   boolean valid;
 };

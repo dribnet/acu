@@ -23,49 +23,66 @@ acVectorFont::acVectorFont(const char* filename) {
   float nX, nY;
   char currentLetter = 0;
   int currentPoint = 0;
+  float bigWidth = 0;
+  float bigHeight = 0;
+
+  // fgets reads until newline or eof
   while (fgets(str, 64, fp)) {
     switch (str[0]) {
-    case 'C':
+    case 'C':  // what character
       if (currentLetter != 0) {
 	numPoints[currentLetter] = currentPoint;
+	height[currentLetter] = bigHeight;
+	if (width[currentLetter] == 0) {
+	  // support the old-school format, not for long
+	  width[currentLetter] = bigWidth * 1.5;
+	}
 	currentPoint = 0;
       }
       currentLetter = str[2];
       width[currentLetter] = 0;
       height[currentLetter] = 0;
+      bigWidth = 0; 
+      bigHeight = 0;
       currentPoint = 0;
       break;
 
-    case 'L':
+    case 'L':  // lineto
       sscanf(str, "L %f %f\n", &nX, &nY);
       kind[currentLetter][currentPoint] = LINETO;
       x[currentLetter][currentPoint] = nX;
       y[currentLetter][currentPoint] = nY;
-      if (nX > width[currentLetter])
-	width[currentLetter] = nX;
-      if (nY > height[currentLetter])
-	height[currentLetter] = nY;
+      if (nX > bigWidth) bigWidth = nX;
+      if (nY > bigHeight) bigHeight = nY;
       currentPoint++;
       break;
 
-    case 'M':
+    case 'M':  // moveto
       sscanf(str, "M %f %f\n", &nX, &nY);
       kind[currentLetter][currentPoint] = MOVETO;
       x[currentLetter][currentPoint] = nX;
       y[currentLetter][currentPoint] = nY;
-      if (nX > width[currentLetter])
-	width[currentLetter] = nX;
-      if (nY > height[currentLetter])
-	height[currentLetter] = nY;
+      if (nX > bigWidth) bigWidth = nX;
+      if (nY > bigHeight) bigHeight = nY;
       currentPoint++;
+      break;
+
+    case 'W':  // width
+      sscanf(str, "W %f\n", &width[currentLetter]);
+      break;
+
+    case 0:  // blank line
+    case '#':  // comment
+      break;
+
+    default:
+      // got something not understood
+      sprintf(acuDebugStr, "strange line in %s: \"%s\"", filename, str);
+      acuDebugString(ACU_DEBUG_PROBLEM);
+      break;
     }
   }
   fclose(fp);
-
-  for (int c = 0; c < 256; c++) {
-    // design flaw in these vector fonts
-    width[c] *= 1.5;
-  }
 
   descent = 0;
   maxHeight = 0;
