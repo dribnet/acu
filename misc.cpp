@@ -170,7 +170,6 @@ void acuRgbToHsb(GLfloat *rgb, GLfloat *hsb) {
 
 GLfloat acuRandomf() {
 #ifdef ACU_WIN32
-  /*printf("%f\n", ((float)(rand() >> 16) / 16384.0) - 1.0);*/
   return (GLfloat) ((float)(rand() >> 0) / 16384.0) - 1.0;
 #endif
 
@@ -183,14 +182,22 @@ GLfloat acuRandomf() {
 
 GLfloat acuRandomuf() {
 #ifdef ACU_WIN32
-  //printf("%d\n", rand());
-  //printf("%f\n", ((float)(rand() >> 16) / 32768.0));
   return (GLfloat) ((float)(rand() >> 0) / 32768.0);
 #endif
 
 #ifdef ACU_IRIX
-  // tom irix patch return (GLfloat)rand() / 32768.0;
   return (GLfloat)random() / (LONG_MAX+1.0);
+#endif
+}
+
+
+GLint acuRandomui() {
+#ifdef ACU_WIN32
+  return rand();
+#endif
+
+#ifdef ACU_IRIX
+  return random();
 #endif
 }
 

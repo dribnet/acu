@@ -284,6 +284,9 @@ GLfloat acuRandomf();
 /* Tom says the random number f should be such that 0 <= f < 1 */
 GLfloat acuRandomuf();
 
+/* Returns a random integer (cross platform) */
+GLint acuRandomui();
+
 /* Does linear interpolation between a and b for a step size t */
 GLfloat acuLerpf(GLfloat t, GLfloat a, GLfloat b);
 
