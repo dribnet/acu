@@ -273,23 +273,53 @@ unsigned char* acuResizeArray2D(unsigned char *data,
 }
 
 
+void* acuReadRawFile(char *filename, int *length) {
+  FILE *tp = fopen(filename, "r");
+  if (tp == NULL) {
+    sprintf(acuDebugStr, "could not find %s\n", filename);
+    acuDebugString(ACU_DEBUG_PROBLEM);
+    return NULL;
+  }
+  fseek(tp, 0, SEEK_END);
+  int fileLength = (int) ftell(tp);
+  rewind(tp);
+
+  // it looks like NTFS files aren't the size
+  // that ftell would lead us to believe
+  char *fileData = new char[fileLength];
+  int remaining = fileLength;
+  int offset = 0;
+  while (remaining) {
+    int count = fread(&fileData[offset], 1, remaining, tp);
+    if (feof(tp)) { 
+      remaining = count;
+      fileLength = offset + count;
+    }
+    offset += count;
+    remaining -= count;
+  }
+  fclose(tp);
+  *length = fileLength;
+  return fileData;
+}
+
+/*
+// aww, nobody liked this code anyway
 unsigned char* acuReadRawFile(char *filename, int count) {
   unsigned char *buffer;
   FILE *fp;
-  //int c;
 
   fp = fopen(filename, "rb");
   buffer = (unsigned char*) malloc(count);
 
   fread(buffer, 1, count, fp);
   fclose(fp);
-  //c = fread(buffer, count, 1, fp);
-  //printf("count was %d\n", c);
   return buffer;
 }
+*/
 
 
-void acuWriteRawFile(char *filename, unsigned char *data, int count) {
+void acuWriteRawFile(char *filename, void *data, int count) {
   FILE *fp = fopen(filename, "wb");
   fwrite(data, count, 1, fp);
   fclose(fp);

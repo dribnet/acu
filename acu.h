@@ -303,6 +303,8 @@ int acuReadInt(FILE *fp);
  * Resize will modify the size of the array, similar to
  * changing the "canvas size" in Photoshop.
  *
+ * background is the value to set all background values to.
+ *
  * THESE ARE NOT OPTIMIZED! THEY ARE NOT VERY FAST!
  * THESE MAY GO AWAY BUT ARE SORT OF USEFUL!
  */
@@ -317,29 +319,29 @@ unsigned char* acuResizeArray2D(unsigned char *data,
 				int components,
 				unsigned char background);
 
-/* For platforms not supporting jpeg, you can read a raw
- * stream of bits to use as an image. It's recommended that
- * you just use RGB or RGBA data. If you need to resize 
- * these things or add an alpha channel use acuResizeArray2D
- * and acuRecomponentArray2D.
+/* These functions perform a wholesale read (or write) of
+ * a binary file. This can be useful because it's annoying
+ * code to write over and over again. *count returns the
+ * size of the data actually read (by acuReadRawFile).
  *
- * count = width * height * components
- * where width and height are the size of your image, and
- * components is the number of channels (3 for RGB, 4 for RGBA)
- *
- * background is the value to set all background values to.
+ * For instance, you can read a raw stream of bits to use 
+ * as an image. It's recommended that you just use RGB or 
+ * RGBA data. If you need to resize these things or add 
+ * an alpha channel use acuResizeArray2D and
+ * acuRecomponentArray2D.
  *
  * The following opens a raw, 32x32 pixel, RGB format file, 
  * and adds an alpha channel to the data, set to 168:
  *
  * unsigned char *data, *newbuf;
- * data = acuReadRawFile("face.raw", 32*32*3);
+ * int count = 0;
+ * data = (unsigned char*) acuReadRawFile("face.raw", &count);
  * newbuf = acuRecomponentArray(data, 32, 32, 3, 4, 168);
  * free(data);
  */
-unsigned char* acuReadRawFile(char *filename, int count);
+void* acuReadRawFile(char *filename, int *count);
 
-void acuWriteRawFile(char *filename, unsigned char *data, int count);
+void acuWriteRawFile(char *filename, void *data, int count);
 
 
 /* Writes an uncompressed TIFF file for use with photoduck
