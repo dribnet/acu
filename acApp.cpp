@@ -36,7 +36,6 @@ acApp::acApp()
 void acApp::selfStart()
 {
   GLint screenSize[2];
-  
   theApp = this;
 
   glutDisplayFunc(display_cb); 
