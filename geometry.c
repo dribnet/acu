@@ -197,9 +197,12 @@ void acuLine2fv(int count, GLfloat *x, GLfloat *y) {
 
 
 void acuLine3f(float x1, float y1, float z1, float x2, float y2, float z2) {
+  //printf("frgsdfg\n");
   glBegin(GL_LINES);
-  //glNormal3f(1.0, 1.0, 1.0);
+  //glNormal3f(0, 0, 1);
+  glNormal3f(x1, y1, z1);
   glVertex3f(x1, y1, z1);
+  glNormal3f(x2, y2, z2);
   glVertex3f(x2, y2, z2);
   glEnd();
 }

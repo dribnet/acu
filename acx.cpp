@@ -344,7 +344,7 @@ void acxZoomMouseDown(float x, float y) {
 
 void acxZoomMouseDrag(float x, float y) {
   float dY = -(acxLastMouseY - y);
-  acxFwdBackTrans += dY * 0.02;
+  acxFwdBackTrans += dY * 0.2;
   acxLastMouseX = x;
   acxLastMouseY = y;
 }
