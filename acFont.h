@@ -48,6 +48,7 @@ public:
       if (c[index] == '\n') {
 	x = startX;
 	y -= getDefaultLeading();
+	//printf("adding leading\n");
 	previous = 0;
       } else {
 	drawChar(c[index], x, y);
