@@ -89,8 +89,10 @@ extern "C" {
 #define FALSE 0
 #endif
 
+// TOM needs this to be an unsigned char, not an int
 #ifndef boolean
-typedef int boolean;
+//typedef int boolean;
+typedef unsigned char boolean;
 #endif
 
 

@@ -1,5 +1,5 @@
-#ifndef _AC_CRAPP_H_
-#define _AC_CRAPP_H_
+#ifndef _AC_APP_H_
+#define _AC_APP_H_
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -11,7 +11,7 @@ public:
   /* Your application can just have a simple 'main' in
    * a separate main.cpp file that looks something like this:
    * void main() {
-   *   MyAcApp *myApp = new MyAcApp();
+   *   acApp *myApp = makeApp();
    *   myApp->selfStart();
    * }
    * selfStart() is the 'bootstrap' function to get the
@@ -107,5 +107,19 @@ void idle_cb(void);
 void keyboard_cb(unsigned char key, int x, int y);
 void special_key_cb(int key, int x, int y);
 void reshape_cb(int x, int y);
+
+/* This is some glue that connects the app to the window system */
+#ifdef ACU_WIN32
+#include "ansi_prefix.win32.h"
+#include <windows.h>
+#include <stdio.h>
+#define ExportApp extern "C" __declspec(dllexport) acApp
+#define ExportType extern "C" __declspec(dllexport) char
+#else
+#define ExportApp extern "C" acApp
+#define ExportType extern "C" char
+#endif
+// this is the function declaration - put the function in your App
+ExportApp *makeApp(void);
 
 #endif
