@@ -62,6 +62,11 @@ acVectorFont::acVectorFont(const char* filename) {
   }
   fclose(fp);
 
+  for (int c = 0; c < 256; c++) {
+    // design flaw in these vector fonts
+    width[c] *= 1.5;
+  }
+
   descent = 0;
   maxHeight = 0;
   for (i = 0; i < 256; i++) {
