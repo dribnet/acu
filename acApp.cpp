@@ -12,6 +12,7 @@ extern "C" GLint acuWindowWidth;
 
 /* This is some glue that connects the app to the window system */
 
+/*
 #ifdef ACU_WIN32
 #include "ansi_prefix.win32.h"
 #include <windows.h>
@@ -22,6 +23,7 @@ extern "C" GLint acuWindowWidth;
 #define ExternalApp extern "C" acApp
 #define ExternalType extern "C" char
 #endif
+*/
 
 acApp::acApp()
 {

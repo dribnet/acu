@@ -1,10 +1,10 @@
 #ifndef _AC_APP_H_
 #define _AC_APP_H_
 
+#include "acu.h"
+
 #include <fcntl.h>
 #include <unistd.h>
-
-#include "acu.h"
 
 class acApp {
 public:
@@ -111,8 +111,8 @@ void reshape_cb(int x, int y);
 /* This is some glue that connects the app to the window system */
 #ifdef ACU_WIN32
 #include "ansi_prefix.win32.h"
-#include <windows.h>
-#include <stdio.h>
+//#include <windows.h>
+//#include <stdio.h>
 #define ExportApp extern "C" __declspec(dllexport) acApp
 #define ExportType extern "C" __declspec(dllexport) char
 #else
