@@ -7,11 +7,11 @@
  * acu to other platforms. 
  */
 
-GLint acuTimeStep = 1;
+int acuTimeStep = 1;
 
-GLuint acuCurrentTimeMillis() {
+int acuCurrentTimeMillis() {
   /* exactly what you need, when you need it */
-  return glutGet(GLUT_ELAPSED_TIME) / acuTimeStep;
+  return glutGet((GLenum) GLUT_ELAPSED_TIME) / acuTimeStep;
 }
 
 

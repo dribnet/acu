@@ -1,6 +1,10 @@
 #include "acu.h"
 
 
+/* acu2: acuOpenVideo(&width, &height) instead of requesting size 
+   gets rid of acuVideoRequestSize, since a size is always specified
+   by the programmer anyways */
+
 /* acuVideoXXX are externs from other files (such as acu.h)
  * acuvXXX are only used within this file (video.c)
  */
@@ -37,14 +41,21 @@ VLInfoPtr acuvInfoPtr;
 VLControlValue acuvControlVal;
 #endif /* ACU_IRIX */
 
+#ifdef ACU_LINUX
+FILE *acuvStream = NULL;
+unsigned char *acuvTempBuffer = NULL;
+int acuvTempBufferCount;
+#endif
 
 void acuOpenVideo() {
-#ifdef ACU_IRIX
+  /*int ignored1, ignored2;*/
+
   if (acuVideoOpened) {
     acuDebug(ACU_DEBUG_USEFUL, "acuVideo already opened");
     return;
   }
 
+#ifdef ACU_IRIX
   if (!(acuvServer = vlOpenVideo(""))) {
     acuDebug(ACU_DEBUG_EMERGENCY, "vlOpenVideo problem");
     return;
@@ -80,10 +91,36 @@ void acuOpenVideo() {
 
   acuVideoOpened = TRUE;
   acuvProxy = FALSE;
-#else /* ACU_IRIX */
+#endif /* ACU_IRIX */
+
+#ifdef ACU_LINUX
+  /* doesn't need any setup, acuVideoRequestZoom() does it all,
+     and is required before starting under linux */
+
+  /* i'm guessing this is what the hauppage would default to..
+     though it might use 'more exact' numbers (576x434 or whatever) */
+  /*
+  acuvActualWidth = 640;
+  acuvActualHeight = 480;  
+  */
+  /* this may be a little silly, so it might be better to 
+     require that linux request a video size before capturing */
+  /*acuRequestVideoSize(&ignored1, &ignored2); */
+  /*
+  acuVideoArrayWidth = acuVideoWidth;
+  acuVideoArrayHeight = acuVideoHeight;
+  */
+  acuVideoOpened = TRUE;
+  acuvProxy = FALSE;
+#endif
+
+  /* this is ugly but it works, and the solution is uglier */
+#ifndef ACU_LINUX
+#ifndef ACU_IRIX
   acuVideoOpened = FALSE;
   acuDebug(ACU_DEBUG_EMERGENCY, 
-	   "Video not yet implemented on this platform.");
+	   "Video not implemented on this platform.");
+#endif
 #endif
 }
 
@@ -148,7 +185,7 @@ void acuOpenVideoProxy(char *filenameTemplate) {
 }
 
 
-void acuvRequestZoom(int numer, int denom) {
+void acuvIrixRequestZoom(int numer, int denom) {
 #ifdef ACU_IRIX
   acuvControlVal.fractVal.numerator = numer;
   acuvControlVal.fractVal.denominator = denom;
@@ -161,6 +198,34 @@ void acuvRequestZoom(int numer, int denom) {
   acuVideoWidth = acuvControlVal.xyVal.x;
   acuVideoHeight = acuvControlVal.xyVal.y;
 #endif /* ACU_IRIX */
+}
+
+void acuvLinuxRequestSize(int width, int height) {
+#ifdef ACU_LINUX
+  char command[128];
+
+  if (acuvStream != NULL) {
+    acuCloseVideo();
+  }
+  if ((width < 40) || (height < 40)) {
+    width = 60;
+    height = 40;
+  }
+  /* -r 10 means 10 fps, -t 100 means 100 times */
+  /* -b 1 means just 1 buffer */
+  sprintf(command, "streamer -b 2 -r 15 -f rgb -n ntsc -i 1 -t 100000000 -s %dx%d", width, height);
+  //sprintf(command, "cat /acg/hsvspace/streamer.out");
+  acuvStream = popen(command, "r");
+  if (acuvStream == NULL) {
+    acuDebug(ACU_DEBUG_EMERGENCY, "Video could not be opened");
+  }
+  acuVideoWidth = width;
+  acuVideoHeight = height;
+
+  if (acuvTempBuffer != NULL) free(acuvTempBuffer);
+  acuvTempBufferCount = width * height * 3;
+  acuvTempBuffer = malloc(acuvTempBufferCount);
+#endif /* ACU_LINUX */
 }
 
 
@@ -178,6 +243,7 @@ void acuRequestVideoSize(GLint *width, GLint *height) {
     acuVideoHeight = (acuvActualHeight * zoom);
     
   } else {
+#ifdef ACU_IRIX
     int numerator, denominator;
     if (zoom < 1.0) {
       /* smaller image */
@@ -192,7 +258,12 @@ void acuRequestVideoSize(GLint *width, GLint *height) {
 	if (value == 0) value = 1;*/
       denominator = 1;
     }
-    acuvRequestZoom(numerator, denominator);
+    acuvIrixRequestZoom(numerator, denominator);
+#endif
+
+#ifdef ACU_LINUX
+    acuvLinuxRequestSize(*width, *height);
+#endif
   }
   acuVideoArrayWidth = acuVideoWidth;
   acuVideoArrayHeight = acuVideoHeight;
@@ -201,7 +272,7 @@ void acuRequestVideoSize(GLint *width, GLint *height) {
 }
 
 
-void acuvGetProxyFrame(unsigned char *frame) {
+void acuvProxyGetFrame(unsigned char *frame) {
   int srcOffset, srcIndex, destIndex;
   int i, j, iw, ih;
   unsigned char *data;
@@ -251,7 +322,7 @@ void acuvGetProxyFrame(unsigned char *frame) {
 }
 
 
-void acuvGetFrame(unsigned char *frame) {
+void acuvIrixGetFrame(unsigned char *frame) {
 #ifdef ACU_IRIX
   unsigned long *dataPtr;
   unsigned long *pixelPtr;
@@ -310,15 +381,86 @@ void acuvGetFrame(unsigned char *frame) {
 }
 
 
+void acuvLinuxGetFrame(unsigned char *frame) {
+  int srcOffset, srcIndex, destIndex;
+  int i, j, iw, ih;
+  int bytesRead;
+  unsigned char *data = acuvTempBuffer;
+
+  if ((!acuVideoMirrorImage) &&
+      (acuVideoArrayWidth == acuVideoWidth) &&
+      (acuVideoArrayHeight == acuVideoHeight)) {
+    fread(frame, 1, acuvTempBufferCount-3, acuvStream);
+    return;
+  }
+  printf("the slow way\n");
+  /* do an fread to get *data from the file */
+  //printf("reading\n");
+  bytesRead = fread(acuvTempBuffer, 1, acuvTempBufferCount-3, acuvStream);
+  if (bytesRead == 0) {
+    printf("bytes read, needed = %d, %d\n", bytesRead, acuvTempBufferCount);
+    //printf("no bytes ready, skipping\n");
+    return;
+    //} else {
+    //printf("got frame\n");
+  }
+  //printf("done reading\n");
+
+  destIndex = acuVideoMirrorImage ? (acuVideoWidth-1)*3 : 0;
+  for (j = 0; j < acuVideoHeight; j++) {
+    /*srcOffset = (((j * acuvZoomDenom) / acuvZoomNumer) * 
+		 acuVideoArrayWidth * 3);*/
+    /*srcOffset = (floor((float)j * acuvZoom)) * acuvActualWidth * 3;*/
+    srcOffset = acuVideoWidth * 3;
+
+    for (i = 0; i < acuVideoWidth; i++) {
+      /*srcIndex = srcOffset + ((i * acuvZoomDenom) / acuvZoomNumer) * 3;*/
+      /*srcIndex = srcOffset + (floor((float)i * acuvZoom)) * 3;*/
+      srcIndex = srcOffset + i;
+
+      //printf("%03d ", frame[destIndex]);
+      frame[destIndex+0] = data[srcIndex+0];
+      frame[destIndex+1] = data[srcIndex+1];
+      frame[destIndex+2] = data[srcIndex+2];
+
+      if (acuVideoMirrorImage)
+	destIndex -= 3;
+      else 
+	destIndex += 3;
+    }
+    //printf("\n");
+    if (acuVideoMirrorImage) {
+      destIndex += (acuVideoArrayWidth*3*2 -
+		    (acuVideoArrayWidth-acuVideoWidth)*3);
+    } else {
+      destIndex += (acuVideoArrayWidth - acuVideoWidth)*3;
+    }
+  }
+}
+
+
 void acuGetVideoFrame(unsigned char *frame) {
+#ifdef ACU_LINUX
+  if (acuvStream == NULL) {
+    acuDebug(ACU_DEBUG_EMERGENCY, "must call acuRequestVideoSize() before getting frames on linux\n");
+  }
+#endif
+
   if (!acuVideoOpened) {
     acuDebug(ACU_DEBUG_PROBLEM, "Video not opened");
   }
   
   if (acuvProxy) {
-    acuvGetProxyFrame(frame);
+    acuvProxyGetFrame(frame);
+
   } else {
-    acuvGetFrame(frame);
+#ifdef ACU_IRIX
+    acuvIrixGetFrame(frame);
+#endif
+
+#ifdef ACU_LINUX
+    acuvLinuxGetFrame(frame);
+#endif
   }
 }
 
@@ -335,5 +477,11 @@ void acuCloseVideo() {
     vlDestroyPath(acuvServer, acuvPath);
     vlCloseVideo(acuvServer);
 #endif /* ACU_IRIX */
+
+#ifdef ACU_LINUX
+    if (acuvStream != NULL) {
+      pclose(acuvStream);
+    }
+#endif /* ACU_LINUX */
   }
 }

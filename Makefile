@@ -1,10 +1,10 @@
 #!gmake
 #include $(ROOT)/usr/include/make/commondefs
 
-MYINC_DIR = /u/$(USER)/include
+#MYINC_DIR = /u/$(USER)/include
 ACINC_DIR = /acg/include
 
-MYLIB_DIR = /u/$(USER)/lib
+#MYLIB_DIR = /u/$(USER)/lib
 ACLIB_DIR = /acg/lib
 
 default: lib
@@ -12,8 +12,8 @@ default: lib
 #jarold extralibs = -lsocket -lpthread
 extralibs =
 
-CC=CC
-OPTIONS=-g -DACU_IRIX -DAC_GLWRAP  -LANG:ansi-for-init-scope=ON
+CC=gcc
+OPTIONS=-g -DACU_LINUX -DAC_GLWRAP -LANG:ansi-for-init-scope=ON
 
 .c.o:
 	$(CC) $(OPTIONS) $(extralibs) -c $<
@@ -29,7 +29,7 @@ OBJS=\
 lib:	$(OBJS)
 	rm -f libacu.a libacu.so
 	/usr/bin/ar ru libacu.a $?
-	/usr/bin/ld -n32 -shared $(OBJS) -o libacu.so
+	/usr/bin/ld -shared $(OBJS) -o libacu.so
 	chmod 555 libacu.a libacu.so
 
 clean:

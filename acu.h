@@ -60,6 +60,10 @@ extern "C" {
 #undef ACU_WIN32
 #endif
 
+#ifdef ACU_LINUX
+#undef ACU_WIN32
+#endif
+
 #ifdef ACU_MAC
 #define NO_JPEG
 #endif
@@ -319,7 +323,7 @@ void acuRgbToHsb(GLfloat *rgb, GLfloat *hsb);
  * milliseconds it's taking to grab each frame, and the
  * time-based things in your app will remain happy.
  */
-GLuint acuCurrentTimeMillis();
+int acuCurrentTimeMillis();
 
 /* Returns a random float between -1 and 1 */
 GLfloat acuRandomf();
