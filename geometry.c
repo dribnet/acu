@@ -98,7 +98,7 @@ void acuPolygon(int count, GLfloat *vertices) {
   gluBeginPolygon(acuTesselator);
 
   //GLdouble *pts = new GLdouble[count*3];
-  pts = malloc(sizeof(GLdouble) * count*3);
+  pts = (GLdouble*) malloc(sizeof(GLdouble) * count*3);
   for (i = 0; i < count*3; i++) {
     pts[i] = (double)vertices[i];
   }
