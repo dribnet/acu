@@ -7,34 +7,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#define AC_GLWRAP
-#ifdef AC_GLWRAP
-/* gak! could this be any uglier? which of these are actually needed? */
-#include "acGLWrapper.h"
-#include "acGLEventWrapper.h"
-#include "acSocketIO.h"
-#include <sys/types.h>  
-#include <sys/socket.h> 
-#include <sys/time.h>   
-#include <time.h>       
-#include <netinet/in.h> 
-#include <arpa/inet.h>  
-#include <errno.h>
-#include <fcntl.h>      
-#include <netdb.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>   
-#include <sys/uio.h>    
-#include <unistd.h>
-#include <sys/wait.h>
-#include <sys/un.h>     
-#include <pthread.h>
-#endif
-
-
 class acApp : public acGeo {
 public:
   /* Your application can just have a simple 'main' in
@@ -49,9 +21,6 @@ public:
    */
   acApp();
   virtual void selfStart();
-#ifdef AC_GLWRAP
-  virtual void wrapStart();
-#endif
 
   /* Called to let you know your program is (or isn't) getting attention. */
   virtual void setFocus(bool state);

@@ -23,8 +23,7 @@ OPTIONS=-g -DACU_IRIX -DAC_GLWRAP  -LANG:ansi-for-init-scope=ON
 OBJS=\
 	acApp.o acGeo.o acVec3f.o acVec4f.o acMatrix4f.o ai.o acx.o \
 	geometry.o jpeg.o main.o misc.o text.o video.o \
-	acBitmapFont.o acVectorFont.o acSocketIO.o \
-	acGLWrapper.o acGLUnwrapper.o # acFreeTypeFont.o 
+	acBitmapFont.o acVectorFont.o # acFreeTypeFont.o 
 
 lib:	$(OBJS)
 	rm -f libacu.a libacu.so
