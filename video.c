@@ -33,6 +33,7 @@ char acuvFilenameTemplate[64];
 char acuvFilename[64];
 float acuvZoom;
 
+
 #ifdef ACU_IRIX
 VLServer acuvServer;
 VLPath acuvPath;
@@ -43,15 +44,28 @@ VLInfoPtr acuvInfoPtr;
 VLControlValue acuvControlVal;
 #endif /* ACU_IRIX */
 
+
 #ifdef ACU_LINUX
 FILE *acuvStream = NULL;
-unsigned char *acuvTempBuffer = NULL;
 int acuvTempBufferCount;
+unsigned char *acuvTempBuffer = NULL;
 #endif
 
-void acuOpenVideo() {
-  /*int ignored1, ignored2;*/
 
+#ifdef ACU_WIN32
+/* including windows.h causes a lot of errors to spew out.. but
+   it appears to be harmless (and unavoidable without a lotta hacking) */
+#include <windows.h>
+#include <Vfw.h>
+int acuvTempBufferCount;
+unsigned char *acuvTempBuffer = NULL;
+boolean acuvWindowsInited = FALSE;
+boolean acuvGotFrame = FALSE;
+HWND acuvVideoWindow;
+#endif
+
+
+void acuOpenVideo() {
   if (acuVideoOpened) {
     acuDebug(ACU_DEBUG_USEFUL, "acuVideo already opened");
     return;
@@ -116,14 +130,21 @@ void acuOpenVideo() {
   acuvProxy = FALSE;
 #endif
 
+#ifdef ACU_WIN32
+  acuVideoOpened = TRUE;
+  acuvProxy = FALSE;
+#endif
+
   /* this is ugly but it works, and the solution is uglier */
 #ifndef ACU_LINUX
 #ifndef ACU_IRIX
+#ifndef ACU_WIN32
   acuVideoOpened = FALSE;
   acuDebug(ACU_DEBUG_EMERGENCY, 
 	   "Video not implemented on this platform.");
-#endif
-#endif
+#endif /* ACU_WIN32 */
+#endif /* ACU_IRIX */
+#endif /* ACU_LINUX */
 }
 
 
@@ -202,6 +223,7 @@ void acuvIrixRequestZoom(int numer, int denom) {
 #endif /* ACU_IRIX */
 }
 
+
 void acuvLinuxRequestSize(int width, int height) {
 #ifdef ACU_LINUX
   char command[128];
@@ -228,6 +250,18 @@ void acuvLinuxRequestSize(int width, int height) {
   acuvTempBufferCount = width * height * 3;
   acuvTempBuffer = malloc(acuvTempBufferCount);
 #endif /* ACU_LINUX */
+}
+
+
+void acuvWindowsRequestSize(int width, int height) {
+#ifdef ACU_WIN32
+  acuVideoWidth = width;
+  acuVideoHeight = height;
+
+  //if (acuvTempBuffer != NULL) free(acuvTempBuffer);
+  acuvTempBufferCount = width * height * 3;
+  acuvTempBuffer = malloc(acuvTempBufferCount);
+#endif
 }
 
 
@@ -264,6 +298,10 @@ void acuRequestVideoSize(GLint *width, GLint *height) {
 
 #ifdef ACU_LINUX
     acuvLinuxRequestSize(*width, *height);
+#endif
+
+#ifdef ACU_WIN32
+    acuvWindowsRequestSize(*width, *height);
 #endif
   }
   acuVideoArrayWidth = acuVideoWidth;
@@ -442,6 +480,109 @@ void acuvLinuxGetFrame(unsigned char *frame) {
 }
 
 
+#ifdef ACU_WIN32
+//#include <gl/glut.h>
+LRESULT CALLBACK capVideoStreamCallback(HWND capWnd, LPVIDEOHDR lpVHdr) {
+  memcpy(lpVHdr->lpData, acuvTempBuffer, acuvTempBufferCount);
+  acuvGotFrame = true;
+  return (LRESULT) TRUE;
+
+  /*
+  unsigned char *outputScanLine = acuvTempBuffer;
+  int outputLineLength = bufferWidth * 3;
+  int intputLineLength = videoWidth * 3;
+  unsigned char *inputData = lpVHdr->lpData;
+  for (int i = 0; i < videoHeight; i++) {
+    for (int j = 0; j < intputLineLength; j += 3) {
+      *(outputScanLine + j + 2) = *inputData++;
+      *(outputScanLine + j + 1) = *inputData++;
+      *(outputScanLine + j + 0) = *inputData++;
+    }
+    outputScanLine += outputLineLength;
+  }
+  return (LRESULT) TRUE;
+  */
+}
+#endif
+
+void acuvWindowsGetFrame(unsigned char *frame) {
+#ifdef ACU_WIN32
+  int i, j;
+  int srcOffset, srcIndex, destIndex;
+
+  if (!acuvWindowsInited) {  /* actually do the setup here */
+    HINSTANCE hInstance; 
+    HWND videoWindowParent;
+    CAPTUREPARMS captureParms;
+    LPBITMAPINFO lpbi;
+    DWORD dwSize;
+
+    hInstance = GetModuleHandle(NULL);
+    videoWindowParent = GetActiveWindow();
+
+    if (videoWindowParent == NULL) {
+      return;
+    }
+
+    /* videoWidth and videoHeight don't actually affect anything here */
+    acuvVideoWindow = 
+      capCreateCaptureWindow((LPSTR) "My Capture Window",
+			     WS_CHILD,
+			     0, 0, acuVideoWidth, acuVideoHeight,
+			     videoWindowParent,
+			     18); /* child ID.. simon made up "18" */
+
+    capDriverConnect(acuvVideoWindow,0);
+    capSetCallbackOnVideoStream(acuvVideoWindow, capVideoStreamCallback);
+
+    capCaptureGetSetup(acuvVideoWindow, &captureParms, sizeof(CAPTUREPARMS));
+    //CaptureParms.dwRequestMicroSecPerFrame = (DWORD) (1.0e6 / FramesPerSec);
+    captureParms.dwRequestMicroSecPerFrame = (DWORD) (1.0e6 / acuVideoFPS);
+    captureParms.fYield = true;
+    captureParms.fAbortLeftMouse = false;
+    captureParms.fAbortRightMouse = false;
+    captureParms.fCaptureAudio = false;
+    capCaptureSetSetup(acuvVideoWindow, &captureParms, sizeof (CAPTUREPARMS));
+
+    dwSize = capGetVideoFormatSize(acuvVideoWindow);
+    lpbi = (LPBITMAPINFO)GlobalAlloc (GHND, dwSize);
+    capGetVideoFormat(acuvVideoWindow, lpbi, dwSize);
+    lpbi->bmiHeader.biWidth = acuVideoWidth;
+    lpbi->bmiHeader.biHeight = acuVideoHeight;
+    capSetVideoFormat(acuvVideoWindow, lpbi, dwSize);	
+    GlobalFree(lpbi);
+
+    capCaptureSequenceNoFile(acuvVideoWindow);
+
+    acuvWindowsInited = true;
+  }
+  if (!acuvGotFrame) return;
+  
+  destIndex = acuVideoMirrorImage ? (acuVideoWidth-1)*3 : 0;
+
+  for (j = 0; j < acuVideoHeight; j++) {
+    srcOffset = acuVideoWidth * 3;
+
+    for (i = 0; i < acuVideoWidth; i++) {
+      srcIndex = srcOffset + i;
+
+      frame[destIndex+0] = acuvTempBuffer[srcIndex+2];
+      frame[destIndex+1] = acuvTempBuffer[srcIndex+1];
+      frame[destIndex+2] = acuvTempBuffer[srcIndex+0];
+
+      destIndex = (acuVideoMirrorImage) ? destIndex-3 : destIndex+3;
+    }
+    if (acuVideoMirrorImage) {
+      destIndex += (acuVideoArrayWidth*3*2 -
+		    (acuVideoArrayWidth-acuVideoWidth)*3);
+    } else {
+      destIndex += (acuVideoArrayWidth - acuVideoWidth)*3;
+    }
+  }
+#endif
+}
+
+
 void acuGetVideoFrame(unsigned char *frame) {
   if (!acuVideoOpened) {
     acuDebug(ACU_DEBUG_PROBLEM, "Video not opened");
@@ -466,22 +607,30 @@ void acuGetVideoFrame(unsigned char *frame) {
 
 
 void acuCloseVideo() {
-  if (acuvProxy) {	
+  if (acuvProxy) {
     acuVideoProxyCount = -1;
-    
-  } else {
+    return;
+  }
+
 #ifdef ACU_IRIX
-    vlEndTransfer(acuvServer, acuvPath);     
-    vlDeregisterBuffer(acuvServer, acuvPath, acuvDrnNode, acuvBuffer);
-    vlDestroyBuffer(acuvServer, acuvBuffer);
-    vlDestroyPath(acuvServer, acuvPath);
-    vlCloseVideo(acuvServer);
+  vlEndTransfer(acuvServer, acuvPath);     
+  vlDeregisterBuffer(acuvServer, acuvPath, acuvDrnNode, acuvBuffer);
+  vlDestroyBuffer(acuvServer, acuvBuffer);
+  vlDestroyPath(acuvServer, acuvPath);
+  vlCloseVideo(acuvServer);
 #endif /* ACU_IRIX */
 
 #ifdef ACU_LINUX
-    if (acuvStream != NULL) {
-      pclose(acuvStream);
-    }
-#endif /* ACU_LINUX */
+  if (acuvStream != NULL) {
+    pclose(acuvStream);
   }
+#endif /* ACU_LINUX */
+
+#ifdef ACU_WIN32
+  acuvGotFrame = false;
+  capCaptureStop(acuvVideoWindow);
+  capDriverDisconnect(acuvVideoWindow);
+  CloseWindow(acuvVideoWindow);
+  DestroyWindow(acuvVideoWindow);
+#endif /* ACU_WIN32 */
 }
