@@ -76,6 +76,7 @@ void acApp::screenGrab() {
     case ACU_FILE_FORMAT_RAW: sprintf(ext, "raw"); break;
     case ACU_FILE_FORMAT_PPM: sprintf(ext, "ppm"); break;
     case ACU_FILE_FORMAT_TIFF: sprintf(ext, "tif"); break;
+    case ACU_FILE_FORMAT_SCRSAVE: sprintf(ext, "rgb"); break;
   }
 
   char grabTemp[24];
