@@ -190,6 +190,8 @@ static bool QUIT_NOW = false;
 void acApp::wrapStart()
 {
   theApp = this;
+  resize(0, 0, 1024,768 );
+
   // -------------- get hostname from user ------
   printf("enter hostname: ");
   char hostname[256];
@@ -383,7 +385,13 @@ void* eventcaller( void* arg )
 	acApp::theApp->mouseDrag( events.mouseX, events.mouseY );
       else
 	acApp::theApp->mouseMove( events.mouseX, events.mouseY );
-
+      if ( events.windowWidth != acApp::theApp->W || events.windowHeight != acApp::theApp->H )
+	{
+	  acApp::theApp->W = events.windowWidth;
+	  acApp::theApp->H = events.windowHeight;
+	  acApp::theApp->resize( 0, 0, events.windowWidth, events.windowHeight );
+	}
+      
       callMouseDown = callMouseUp = callKeyDown = false;
 	  
       if ( QUIT_NOW )
