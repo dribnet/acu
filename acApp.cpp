@@ -44,6 +44,12 @@ acApp::acApp()
 void acApp::selfStart()
 {
   GLint screenSize[2];
+
+  // the following 3 lines were removed from acuOpen
+  glutCreateWindow("acu");
+  glutFullScreen();
+  acuGlobalGLSettings();
+
   //theApp = this;
   apps[glutGetWindow()] = this;
 
@@ -54,7 +60,6 @@ void acApp::selfStart()
   glutIdleFunc(idle_cb);
   glutKeyboardFunc(keyboard_cb);
   glutSpecialFunc(special_key_cb);
-  glutReshapeFunc(NULL);
   glutReshapeFunc(reshape_cb);
 
   acuGetIntegerv(ACU_WINDOW_SIZE, screenSize);
@@ -74,7 +79,6 @@ void acApp::subStart() {
   glutIdleFunc(idle_cb);
   glutKeyboardFunc(keyboard_cb);
   glutSpecialFunc(special_key_cb);
-  glutReshapeFunc(NULL); // why first set to null?
   glutReshapeFunc(reshape_cb);
 }
 
@@ -129,10 +133,26 @@ void acApp::mouseDrag(float x, float y) { }
 void acApp::mouseDrag(float x, float y, int button) { }
 void acApp::mouseUp(float x, float y, int button) { }
 
+/* this quitAtOne idle callback rewiring quit thing
+ * is a workaround for bad driver/cards that don't like
+ * to quit in fullscreen mode
+ */
+int quitAtOne = 0;
+
+void winddown_cb(void) {
+  if(quitAtOne <= 1) acuClose();
+  else --quitAtOne;
+}
+
 void acApp::keyDown(char c) { 
+  GLint small[] = {100, 100};
   // Default behavior, close program on escape
-  if (c == 27) // escape
-    acuClose();
+  if (c == 27) { // escape
+    // it doesn't exit in fullscreen mode, but shrinks first
+    acuSetIntegerv(ACU_WINDOW_SIZE, small);
+    glutIdleFunc(winddown_cb);
+    quitAtOne = 5;
+  }
 }
 
 void acApp::specialKeyDown( int key) {
@@ -153,8 +173,8 @@ void acApp::specialKeyDown( int key) {
          aaWinY = 55;
        }
        aafullScreen = FALSE;
-       aafullWidth = W;
-       aafullHeight = H;
+       aafullWidth = (int)W;
+       aafullHeight = (int)H;
        size[0] = aaWinW; size[1] = aaWinH;
        acuSetIntegerv(ACU_WINDOW_SIZE, size);
        glutPositionWindow(aaWinX, aaWinY);
@@ -163,8 +183,8 @@ void acApp::specialKeyDown( int key) {
        aafullScreen = TRUE;
        aaWinX = glutGet(GLUT_WINDOW_X);
        aaWinY = glutGet(GLUT_WINDOW_Y);
-       aaWinW = W;
-       aaWinH = H;
+       aaWinW = (int)W;
+       aaWinH = (int)H;
        glutFullScreen();
      }
   }

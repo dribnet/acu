@@ -38,12 +38,6 @@ static float mazoAspect = 4.0/3.0;
 static float mazoEyeX = 320;
 static float mazoEyeY = 240;
 
-/* this is a glut callback, set by acuOpen() */
-void reshape(int width, int height) {
-  acuWindowWidth = width;
-  acuWindowHeight = height;
-}
-
 extern void textInit();
 
 /**
@@ -79,16 +73,6 @@ void acuOpen() {
   //glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_ALPHA);
   glutInitDisplayMode(acuDisplayMode); //GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 
-  glutCreateWindow("acu");
-  glutFullScreen();
-  glutReshapeFunc(reshape);
-
-  /* most of these won't be needed for 2d */
-  glEnable(GL_AUTO_NORMAL);
-  glEnable(GL_NORMALIZE); 
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  
   acuDebugLevel = ACU_DEBUG_USEFUL;
   acuDebugStr = (char *) malloc(64);
 
@@ -130,33 +114,23 @@ void acuOpen() {
 #elif defined(ACU_WIN32)
   srand(time(NULL));
 #endif
+
 }
 
-/* this quitAtOne idle callback rewiring acuClose thing
- * is a workaround for bad driver/cards that don't like
- * to quit in fullscreen mode
- */
-static quitAtOne = 0;
-
-void winddown_cb(void);
-void winddown_cb(void) {
-  if(quitAtOne == 1) exit(0);
-  else if(quitAtOne>1) --quitAtOne;
+void acuGlobalGLSettings(void) {
+  /* you have to call this for text and stuff to work after
+     opening the window */
+  glEnable(GL_AUTO_NORMAL);
+  glEnable(GL_NORMALIZE);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 /**
  * Close the window and exit the application
  */
 void acuClose() {
-  GLint small[] = {100, 100};
-#ifdef ACU_WIN32
-  acuSetIntegerv(ACU_WINDOW_SIZE, small);
-  glutIdleFunc(winddown_cb);
-  quitAtOne = 5;
-  //  exit(0);
-#else
   exit(0);
-#endif
 }
 
 /* utility functions used by open/close Frames() */
@@ -731,6 +705,21 @@ void acuSetIntegerv(acuEnum pname, GLint *params) {
 
   case ACU_DEBUG_LEVEL:
     acuDebugLevel = params[0];
+    break;
+
+  /* NOTE:
+   * ACU_WINDOW_WIDTH and HEIGHT are a way of telling acu
+   * what the width and height should be, but ACU_WINDOW_SIZE
+   * is a *request* to call glutReshapeWindow to change the
+   * window size
+   */
+
+  case ACU_WINDOW_WIDTH:
+    acuWindowWidth = params[0];
+    break;
+
+  case ACU_WINDOW_HEIGHT:
+    acuWindowHeight = params[0];
     break;
 
   case ACU_WINDOW_SIZE:

@@ -209,6 +209,10 @@ extern GLuint acuDisplayMode;
  */
 void acuOpen();
 void acuClose();
+/* This is called after the window is opened.
+ * acApp does this for you
+ */
+void acuGlobalGLSettings();
 
 /* Inside your applications 'draw' function, call acuOpenFrame
  * first, and finish up with acuCloseFrame. All your GL calls

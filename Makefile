@@ -17,12 +17,12 @@ extralibs =
 #OPTIONS=-g -DACU_LINUX -DAC_GLWRAP -LANG:ansi-for-init-scope=ON
 
 # these are the options for cygwin make with gcc
-#CC=gcc
-#OPTIONS=-g -DNO_JPEG
+CC=gcc
+OPTIONS=-g -DNO_JPEG
 
 #this is macosx
-CC=cc
-OPTIONS = -g -DACU_MAC -F/System/Library/Frameworks/GLUT
+#CC=cc
+#OPTIONS = -g -DACU_MAC -F/System/Library/Frameworks/GLUT
 
 .c.o:
 	$(CC) $(OPTIONS) $(extralibs) -c $<
@@ -41,7 +41,7 @@ lib:	$(OBJS)
 	rm -f libacu.a libacu.so
 	/usr/bin/ar ru libacu.a $?
         # on mac you must run randlib, video.c un-inited constants mean -c
-	ranlib -c libacu.a
+	#MAC: ranlib -c libacu.a
 
 clean:
 	rm -f *.o libacu.a libacu.so *~
