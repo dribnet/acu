@@ -485,10 +485,12 @@ void* acuGetFont(int index);
 /* Draw characters and strings to the screen */
 void acuDrawChar(char c, GLfloat x, GLfloat y);
 void acuDrawString(char *c, GLfloat x, GLfloat y);
+void acuDrawChar2(unsigned char c, GLfloat x, GLfloat y);
+void acuDrawString2(unsigned char *c, GLfloat x, GLfloat y);
 
 /* Back off, not yet implemented */
-void acuGetCharMetrics(acuEnum pname, char *c, GLfloat *metrics);
-float acuGetCharMetric(acuEnum pname, char c);
+void acuGetCharMetrics(acuEnum pname, unsigned char *c, GLfloat *metrics);
+float acuGetCharMetric(acuEnum pname, unsigned char c);
 
 
 /******************* geometry.c *******************/

@@ -16,11 +16,11 @@ public:
 
   float getDescent();
   float getHeight();
-  float charWidth(char c);
-  float charHeight(char c);
-  boolean charExists(char c);
+  float charWidth(unsigned char c);
+  float charHeight(unsigned char c);
+  boolean charExists(unsigned char c);
   //float kernWidth(char a, char b);
-  void drawChar(char c, float x, float y);
+  void drawChar(unsigned char c, float x, float y);
   float getDefaultLeading();
   int getFormat();
 

@@ -1,6 +1,30 @@
 #include "acBitmapFont.h"
 
 
+// this is for encoding from windows ansi to mac ordering for 
+// the 8 bits chars outside ascii range (chars with values > 127)
+int win2mac[256] = {
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
+  19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 
+  35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 
+  69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 
+  86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 
+  102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 
+  115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127,
+  -1, -1, 226, 196, 227, 201, 160, 224, 246, 228, -1, 220, 206, -1, 
+  -1, -1, -1, 212, 213, 210, 211, 165, 208, 209, 247, 170, -1, 221, 
+  207, -1, -1, 217, -1, 193, 162, 163, 219, 180, -1, 164, 172, 169, 
+  187, 199, 194, -1, 168, 248, 161, 177, -1, -1, 171, 181, 166, 225, 
+  252, -1, 188, 200, -1, -1, -1, 192, 203, 231, 229, 204, 128, 129, 
+  174, 130, 233, 131, 230, 232, 237, 234, 235, 236, -1, 132, 241, 
+  238, 239, 205, 133, -1, 175, 244, 242, 243, 134, -1, -1, 167, 136, 
+  135, 137, 139, 138, 140, 190, 141, 143, 142, 144, 145, 147, 146, 
+  148, 149, -1, 150, 152, 151, 153, 155, 154, 214, 191, 157, 156, 158, 
+  159, -1, -1
+};
+
+
 acBitmapFont::acBitmapFont(const char *filename) {
   int i;
   valid = FALSE;
@@ -13,6 +37,7 @@ acBitmapFont::acBitmapFont(const char *filename) {
 
   // read the base font information
   numChars = acuReadInt(fp);
+  //printf("num chars for font is %d\n", numChars);
   numBits = acuReadInt(fp);
   mboxX = acuReadInt(fp);
   mboxY = acuReadInt(fp);
@@ -98,49 +123,55 @@ float acBitmapFont::getHeight() {
   return (float)mboxY / 64.0f;
 }
 
-float acBitmapFont::charWidth(char c) {
+float acBitmapFont::charWidth(unsigned char c) {
   // width of the horizontal space char takes up
-  if (c != ' ') {
-    return (float)setWidth[c-33] / 64.0f;
+  //if (c != ' ') {
+  if (charExists(c)) {
+    return (float)setWidth[win2mac[c]-33] / 64.0f;
+
   } else {
     //return charWidth('i')*1.2f;
     return charWidth('n'); // support monospace better
   }
 }
 
-float acBitmapFont::charHeight(char c) {
-  return (float)height[c-33] / 64.0f;
+float acBitmapFont::charHeight(unsigned char c) {
+  return charExists(c) ? (float)height[win2mac[c]-33]/64.0f : 0;
 }
 
-float acBitmapFont::charBitmapWidth(char c) {
+float acBitmapFont::charBitmapWidth(unsigned char c) {
   // width of the bitmap itself
-  return (float)width[c-33] / 64.0f;
+  return charExists(c) ? (float)width[win2mac[c]-33] / 64.0f : 0;
 }
 
-float acBitmapFont::charBitmapHeight(char c) {
+float acBitmapFont::charBitmapHeight(unsigned char c) {
   // same as charHeight
-  return (float)height[c-33] / 64.0f;
+  return charExists(c) ? (float)height[win2mac[c]-33] / 64.0f : 0;
 }
 
-float acBitmapFont::charTop(char c) {
-  return -charHeight(c) + (float)(topExtent[c-33]) / 64.0f;
+float acBitmapFont::charTop(unsigned char c) {
+  return charExists(c) ? 
+    (-charHeight(c) + (float)(topExtent[win2mac[c]-33]) / 64.0f) : 0;
 }
 
-float acBitmapFont::charTopExtent(char c) {
-  return (float)topExtent[c-33] / 64.0f;
+float acBitmapFont::charTopExtent(unsigned char c) {
+  return charExists(c) ? 
+    (float)topExtent[win2mac[c]-33] / 64.0f : 0;
 }
 
-float acBitmapFont::charLeftExtent(char c) {
-  return (float)leftExtent[c-33] / 64.0f;
+float acBitmapFont::charLeftExtent(unsigned char c) {
+  return charExists(c) ? 
+    (float)leftExtent[win2mac[c]-33] / 64.0f : 0;
 }
 
-boolean acBitmapFont::charExists(char c) {
+boolean acBitmapFont::charExists(unsigned char c) {
   //return (c-33 < numChars);
+  if (win2mac[c] == -1) return false;  // out of encoding
   return ((c > 32) && (c-33 < numChars));
-
+  //return ((c > 32) && (c < numChars));
 }
 
-unsigned char* acBitmapFont::getCharData(char c, float *x, float *y, float *w, float *h) {
+unsigned char* acBitmapFont::getCharData(unsigned char c, float *x, float *y, float *w, float *h) {
   if (!charExists(c)) return NULL;
   *x = charLeftExtent(c);
   *y = charTop(c);
@@ -157,13 +188,29 @@ unsigned char* acBitmapFont::getCharData(char c, float *x, float *y, float *w, f
   return images[c-33];
 }
 
-void acBitmapFont::drawChar(char c, float x, float y) {
+void acBitmapFont::drawChar(unsigned char c, float x, float y) {
   // x,y is insertion point, lower-left, on baseline
   //if (c < 33) return;
   //if (c > numChars + 32) return;
   if (!charExists(c)) return;
 
+  /*
+  if (!charExists(c)) {
+    int m = win2mac[c-128];
+    if (m == -1) m = 'X';
+    printf("%d does not exist %c '%c'\n", c, c, m);
+    return;
+  }
+
+  //if (c+33 > 127) {
+  if (c > 127) {
+    //printf("got something outside: %d\n", c+33);
+    c = win2mac[c];
+    if (c == -1) return; // char not in encoding
+    printf("found %c\n", (unsigned char)c);
+  }
   //glEnable(GL_TEXTURE_2D);
+  */
 
   float height = charHeight(c);
   //float width = charWidth(c);
@@ -173,10 +220,10 @@ void acBitmapFont::drawChar(char c, float x, float y) {
 
 #ifndef CANNOT_BIND_TEXTURES
 
-  if (glIsTexture(texNames[c-33])) {
+  if (glIsTexture(texNames[win2mac[c]-33])) {
     acuNamedTexRectf(x+lextent, y+top, 
 		     x+lextent+bwidth, y+height+top, 
-		     texNames[c-33], bwidth, height);
+		     texNames[win2mac[c]-33], bwidth, height);
   } else {
     sprintf(acuDebugStr, "Could not bind: %c %d\n", c, c);
     acuDebugString(ACU_DEBUG_MUMBLE);
@@ -187,7 +234,7 @@ void acBitmapFont::drawChar(char c, float x, float y) {
 #else  
 
   acuTexRectf(x+lextent, y+top, x+lextent+bwidth, y+height+top, 
-	      images[c-33], GL_RGBA, 4, 64, 64, bwidth, height);
+	      images[win2mac[c]-33], GL_RGBA, 4, 64, 64, bwidth, height);
 #endif
 
 #if 0

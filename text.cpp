@@ -97,18 +97,26 @@ void* acuGetFont(int index) {
 
 
 void acuDrawChar(char c, GLfloat x, GLfloat y) {
+  acuDrawChar2((unsigned char)c, x, y);
+}
+
+void acuDrawChar2(unsigned char c, GLfloat x, GLfloat y) {
   if (acutCurrentFont == ACU_ERROR) return;
   acutFontList[acutCurrentFont]->drawChar(c, x, y);
 }
 
 
 void acuDrawString(char *c, GLfloat x, GLfloat y) {
+  acuDrawString2((unsigned char*) c, x, y);
+}
+
+void acuDrawString2(unsigned char *c, GLfloat x, GLfloat y) {
   if (acutCurrentFont == ACU_ERROR) return;
   acutFontList[acutCurrentFont]->drawString(c, x, y);
 }
 
 
-float acuGetCharMetric(acuEnum pname, char c) {
+float acuGetCharMetric(acuEnum pname, unsigned char c) {
   if (acutCurrentFont == ACU_ERROR) {
     acuDebug(ACU_DEBUG_PROBLEM,
 	     "Can't get char metrics when no font is set");
@@ -124,7 +132,7 @@ float acuGetCharMetric(acuEnum pname, char c) {
 }
 
 
-void acuGetCharMetrics(acuEnum pname, char *c, GLfloat *metrics) {
+void acuGetCharMetrics(acuEnum pname, unsigned char *c, GLfloat *metrics) {
   if (acutCurrentFont == ACU_ERROR) return;
 
   switch (pname) {

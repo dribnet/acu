@@ -12,12 +12,12 @@ public:
 
   float getDescent();
   float getHeight();
-  float charWidth(char c);
-  float charHeight(char c);
-  boolean charExists(char c);
-  void drawChar(char c, float x, float y);
+  float charWidth(unsigned char c);
+  float charHeight(unsigned char c);
+  boolean charExists(unsigned char c);
+  void drawChar(unsigned char c, float x, float y);
   int getFormat();
-  unsigned char* getCharData(char c, float *x, float *y, 
+  unsigned char* getCharData(unsigned char c, float *x, float *y, 
 			     float *w, float *h);
   //protected:
   int numChars;
@@ -37,11 +37,11 @@ public:
   unsigned char **images;
   GLuint *texNames;
 
-  float charBitmapWidth(char c);
-  float charBitmapHeight(char c);
-  float charTop(char c);
-  float charTopExtent(char c);
-  float charLeftExtent(char c);
+  float charBitmapWidth(unsigned char c);
+  float charBitmapHeight(unsigned char c);
+  float charTop(unsigned char c);
+  float charTopExtent(unsigned char c);
+  float charLeftExtent(unsigned char c);
 };
 
 #endif

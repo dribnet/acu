@@ -21,7 +21,7 @@ acVectorFont::acVectorFont(const char* filename) {
   // read the font
   char str[64];
   float nX, nY;
-  char currentLetter = 0;
+  unsigned char currentLetter = 0;
   int currentPoint = 0;
   float bigWidth = 0;
   float bigHeight = 0;
@@ -117,7 +117,7 @@ int acVectorFont::getFormat() {
   return ACU_VECTOR_FONT;
 }
 
-void acVectorFont::drawChar(char c, float tx, float ty) {
+void acVectorFont::drawChar(unsigned char c, float tx, float ty) {
   glBegin(GL_LINE_STRIP);
   for (int i = 0; i < numPoints[c]; i++) {
     if (kind[c][i] == MOVETO) {
@@ -138,7 +138,7 @@ float acVectorFont::getHeight() {
   return maxHeight + descent;
 }
 
-float acVectorFont::charWidth(char c) {
+float acVectorFont::charWidth(unsigned char c) {
   if (c != ' ') {
     return width[c];
   } else { 
@@ -146,11 +146,11 @@ float acVectorFont::charWidth(char c) {
   }
 }
 
-float acVectorFont::charHeight(char c) {
+float acVectorFont::charHeight(unsigned char c) {
   return height[c];
 }
 
-boolean acVectorFont::charExists(char c) {
+boolean acVectorFont::charExists(unsigned char c) {
   return (numPoints[c] != 0);
 }
 
