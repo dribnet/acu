@@ -33,6 +33,7 @@ void writeGlCommand( glCommand C )
 /*------------------------- the wrappers -------------------*/
 
 
+
 void glAccum ( GLenum a, GLfloat b )
 {
 	writeGlCommand( ACW_ACCUM );
@@ -47,10 +48,46 @@ void glAlphaFunc ( GLenum a, GLclampf b )
 	writeValue( (void*)&b, sizeof(GLclampf) );
 }
 
+GLboolean glAreTexturesResident ( GLsizei a, GLuint* b, GLboolean* c )
+{
+	writeGlCommand( ACW_ARETEXTURESRESIDENT );
+}
+
+GLboolean glAreTexturesResidentEXT ( GLsizei a, GLuint* b, GLboolean* c )
+{
+	writeGlCommand( ACW_ARETEXTURESRESIDENTEXT );
+}
+
+void glArrayElement ( GLint a )
+{
+	writeGlCommand( ACW_ARRAYELEMENT );
+}
+
+void glArrayElementEXT ( GLint a )
+{
+	writeGlCommand( ACW_ARRAYELEMENTEXT );
+}
+
+
 void glBegin ( GLenum a )
 {
 	writeGlCommand( ACW_BEGIN );
 	writeValue( (void*)&a, sizeof(GLenum) );
+}
+
+void glBindTexture ( GLenum a, GLuint b )
+{
+	writeGlCommand( ACW_BINDTEXTURE );
+}
+
+void glBindTextureEXT ( GLenum a, GLuint b )
+{
+	writeGlCommand( ACW_BINDTEXTUREEXT );
+}
+
+void glBitmap ( GLsizei a, GLsizei b, GLfloat c, GLfloat d, GLfloat e, GLfloat f, GLubyte* g )
+{
+	writeGlCommand( ACW_BITMAP );
 }
 
 void glBlendColor ( GLclampf a, GLclampf b, GLclampf c, GLclampf d )
@@ -60,6 +97,11 @@ void glBlendColor ( GLclampf a, GLclampf b, GLclampf c, GLclampf d )
 	writeValue( (void*)&b, sizeof(GLclampf) );
 	writeValue( (void*)&c, sizeof(GLclampf) );
 	writeValue( (void*)&d, sizeof(GLclampf) );
+}
+
+void glBlendColorEXT ( GLclampf a, GLclampf b, GLclampf c, GLclampf d )
+{
+	writeGlCommand( ACW_BLENDCOLOREXT );
 }
 
 void glBlendEquation ( GLenum a )
@@ -85,6 +127,11 @@ void glCallList ( GLuint a )
 {
 	writeGlCommand( ACW_CALLLIST );
 	writeValue( (void*)&a, sizeof(GLuint) );
+}
+
+void glCallLists ( GLsizei a, GLenum b, GLvoid* c )
+{
+	writeGlCommand( ACW_CALLLISTS );
 }
 
 void glClear ( GLbitfield a )
@@ -127,6 +174,11 @@ void glClearStencil ( GLint a )
 {
 	writeGlCommand( ACW_CLEARSTENCIL );
 	writeValue( (void*)&a, sizeof(GLint) );
+}
+
+void glClipPlane ( GLenum a, GLdouble* b )
+{
+	writeGlCommand( ACW_CLIPPLANE );
 }
 
 void glColor3b ( GLbyte a, GLbyte b, GLbyte c )
@@ -397,6 +449,146 @@ void glColorMaterial ( GLenum a, GLenum b )
 	writeValue( (void*)&b, sizeof(GLenum) );
 }
 
+void glColorPointer ( GLint a, GLenum b, GLsizei c, GLvoid* d )
+{
+	writeGlCommand( ACW_COLORPOINTER );
+}
+
+void glColorPointerEXT ( GLint a, GLenum b, GLsizei c, GLsizei d, GLvoid* e )
+{
+	writeGlCommand( ACW_COLORPOINTEREXT );
+}
+
+void glColorSubTable ( GLenum a, GLsizei b, GLsizei c, GLenum d, GLenum e, GLvoid* f )
+{
+	writeGlCommand( ACW_COLORSUBTABLE );
+}
+
+void glColorTable ( GLenum a, GLenum b, GLsizei c, GLenum d, GLenum e, GLvoid* f )
+{
+	writeGlCommand( ACW_COLORTABLE );
+}
+
+void glColorTableParameterfv ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_COLORTABLEPARAMETERFV );
+}
+
+void glColorTableParameterfvSGI ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_COLORTABLEPARAMETERFVSGI );
+}
+
+void glColorTableParameteriv ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_COLORTABLEPARAMETERIV );
+}
+
+void glColorTableParameterivSGI ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_COLORTABLEPARAMETERIVSGI );
+}
+
+void glColorTableSGI ( GLenum a, GLenum b, GLsizei c, GLenum d, GLenum e, GLvoid* f )
+{
+	writeGlCommand( ACW_COLORTABLESGI );
+}
+
+void glConvolutionFilter1D ( GLenum a, GLenum b, GLsizei c, GLenum d, GLenum e, GLvoid* f )
+{
+	writeGlCommand( ACW_CONVOLUTIONFILTER1D );
+}
+
+void glConvolutionFilter1DEXT ( GLenum a, GLenum b, GLsizei c, GLenum d, GLenum e, GLvoid* f )
+{
+	writeGlCommand( ACW_CONVOLUTIONFILTER1DEXT );
+}
+
+void glConvolutionFilter2D ( GLenum a, GLenum b, GLsizei c, GLsizei d, GLenum e, GLenum f, GLvoid* g )
+{
+	writeGlCommand( ACW_CONVOLUTIONFILTER2D );
+}
+
+void glConvolutionFilter2DEXT ( GLenum a, GLenum b, GLsizei c, GLsizei d, GLenum e, GLenum f, GLvoid* g )
+{
+	writeGlCommand( ACW_CONVOLUTIONFILTER2DEXT );
+}
+
+void glConvolutionParameterf ( GLenum a, GLenum b, GLfloat c )
+{
+	writeGlCommand( ACW_CONVOLUTIONPARAMETERF );
+}
+
+void glConvolutionParameterfEXT ( GLenum a, GLenum b, GLfloat c )
+{
+	writeGlCommand( ACW_CONVOLUTIONPARAMETERFEXT );
+}
+
+void glConvolutionParameterfv ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_CONVOLUTIONPARAMETERFV );
+}
+
+void glConvolutionParameterfvEXT ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_CONVOLUTIONPARAMETERFVEXT );
+}
+
+void glConvolutionParameteri ( GLenum a, GLenum b, GLint c )
+{
+	writeGlCommand( ACW_CONVOLUTIONPARAMETERI );
+}
+
+void glConvolutionParameteriEXT ( GLenum a, GLenum b, GLint c )
+{
+	writeGlCommand( ACW_CONVOLUTIONPARAMETERIEXT );
+}
+
+void glConvolutionParameteriv ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_CONVOLUTIONPARAMETERIV );
+}
+
+void glConvolutionParameterivEXT ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_CONVOLUTIONPARAMETERIVEXT );
+}
+
+void glCopyColorSubTable ( GLenum a, GLsizei b, GLint c, GLint d, GLsizei e )
+{
+	writeGlCommand( ACW_COPYCOLORSUBTABLE );
+}
+
+void glCopyColorTable ( GLenum a, GLenum b, GLint c, GLint d, GLsizei e )
+{
+	writeGlCommand( ACW_COPYCOLORTABLE );
+}
+
+void glCopyColorTableSGI ( GLenum a, GLenum b, GLint c, GLint d, GLsizei e )
+{
+	writeGlCommand( ACW_COPYCOLORTABLESGI );
+}
+
+void glCopyConvolutionFilter1D ( GLenum a, GLenum b, GLint c, GLint d, GLsizei e )
+{
+	writeGlCommand( ACW_COPYCONVOLUTIONFILTER1D );
+}
+
+void glCopyConvolutionFilter1DEXT ( GLenum a, GLenum b, GLint c, GLint d, GLsizei e )
+{
+	writeGlCommand( ACW_COPYCONVOLUTIONFILTER1DEXT );
+}
+
+void glCopyConvolutionFilter2D ( GLenum a, GLenum b, GLint c, GLint d, GLsizei e, GLsizei f )
+{
+	writeGlCommand( ACW_COPYCONVOLUTIONFILTER2D );
+}
+
+void glCopyConvolutionFilter2DEXT ( GLenum a, GLenum b, GLint c, GLint d, GLsizei e, GLsizei f )
+{
+	writeGlCommand( ACW_COPYCONVOLUTIONFILTER2DEXT );
+}
+
 void glCopyPixels ( GLint a, GLint b, GLsizei c, GLsizei d, GLenum e )
 {
 	writeGlCommand( ACW_COPYPIXELS );
@@ -405,6 +597,56 @@ void glCopyPixels ( GLint a, GLint b, GLsizei c, GLsizei d, GLenum e )
 	writeValue( (void*)&c, sizeof(GLsizei) );
 	writeValue( (void*)&d, sizeof(GLsizei) );
 	writeValue( (void*)&e, sizeof(GLenum) );
+}
+
+void glCopyTexImage1D ( GLenum a, GLint b, GLenum c, GLint d, GLint e, GLsizei f, GLint g )
+{
+	writeGlCommand( ACW_COPYTEXIMAGE1D );
+}
+
+void glCopyTexImage1DEXT ( GLenum a, GLint b, GLenum c, GLint d, GLint e, GLsizei f, GLint g )
+{
+	writeGlCommand( ACW_COPYTEXIMAGE1DEXT );
+}
+
+void glCopyTexImage2D ( GLenum a, GLint b, GLenum c, GLint d, GLint e, GLsizei f, GLsizei g, GLint h )
+{
+	writeGlCommand( ACW_COPYTEXIMAGE2D );
+}
+
+void glCopyTexImage2DEXT ( GLenum a, GLint b, GLenum c, GLint d, GLint e, GLsizei f, GLsizei g, GLint h )
+{
+	writeGlCommand( ACW_COPYTEXIMAGE2DEXT );
+}
+
+void glCopyTexSubImage1D ( GLenum a, GLint b, GLint c, GLint d, GLint e, GLsizei f )
+{
+	writeGlCommand( ACW_COPYTEXSUBIMAGE1D );
+}
+
+void glCopyTexSubImage1DEXT ( GLenum a, GLint b, GLint c, GLint d, GLint e, GLsizei f )
+{
+	writeGlCommand( ACW_COPYTEXSUBIMAGE1DEXT );
+}
+
+void glCopyTexSubImage2D ( GLenum a, GLint b, GLint c, GLint d, GLint e, GLint f, GLsizei g, GLsizei h )
+{
+	writeGlCommand( ACW_COPYTEXSUBIMAGE2D );
+}
+
+void glCopyTexSubImage2DEXT ( GLenum a, GLint b, GLint c, GLint d, GLint e, GLint f, GLsizei g, GLsizei h )
+{
+	writeGlCommand( ACW_COPYTEXSUBIMAGE2DEXT );
+}
+
+void glCopyTexSubImage3D ( GLenum a, GLint b, GLint c, GLint d, GLint e, GLint f, GLint g, GLsizei h, GLsizei i )
+{
+	writeGlCommand( ACW_COPYTEXSUBIMAGE3D );
+}
+
+void glCopyTexSubImage3DEXT ( GLenum a, GLint b, GLint c, GLint d, GLint e, GLint f, GLint g, GLsizei h, GLsizei i )
+{
+	writeGlCommand( ACW_COPYTEXSUBIMAGE3DEXT );
 }
 
 void glCullFace ( GLenum a )
@@ -419,11 +661,31 @@ void glDeformSGIX ( GLbitfield a )
 	writeValue( (void*)&a, sizeof(GLbitfield) );
 }
 
+void glDeformationMap3dSGIX ( GLenum a, GLdouble b, GLdouble c, GLint d, GLint e, GLdouble f, GLdouble g, GLint h, GLint i, GLdouble j, GLdouble k, GLint l, GLint m, GLdouble* n )
+{
+	writeGlCommand( ACW_DEFORMATIONMAP3DSGIX );
+}
+
+void glDeformationMap3fSGIX ( GLenum a, GLfloat b, GLfloat c, GLint d, GLint e, GLfloat f, GLfloat g, GLint h, GLint i, GLfloat j, GLfloat k, GLint l, GLint m, GLfloat* n )
+{
+	writeGlCommand( ACW_DEFORMATIONMAP3FSGIX );
+}
+
 void glDeleteLists ( GLuint a, GLsizei b )
 {
 	writeGlCommand( ACW_DELETELISTS );
 	writeValue( (void*)&a, sizeof(GLuint) );
 	writeValue( (void*)&b, sizeof(GLsizei) );
+}
+
+void glDeleteTextures ( GLsizei a, GLuint* b )
+{
+	writeGlCommand( ACW_DELETETEXTURES );
+}
+
+void glDeleteTexturesEXT ( GLsizei a, GLuint* b )
+{
+	writeGlCommand( ACW_DELETETEXTURESEXT );
 }
 
 void glDepthFunc ( GLenum a )
@@ -443,6 +705,11 @@ void glDepthRange ( GLclampd a, GLclampd b )
 	writeGlCommand( ACW_DEPTHRANGE );
 	writeValue( (void*)&a, sizeof(GLclampd) );
 	writeValue( (void*)&b, sizeof(GLclampd) );
+}
+
+void glDetailTexFuncSGIS ( GLenum a, GLsizei b, GLfloat* c )
+{
+	writeGlCommand( ACW_DETAILTEXFUNCSGIS );
 }
 
 void glDisable ( GLenum a )
@@ -479,10 +746,40 @@ void glDrawBuffer ( GLenum a )
 	writeValue( (void*)&a, sizeof(GLenum) );
 }
 
+void glDrawElements ( GLenum a, GLsizei b, GLenum c, GLvoid* d )
+{
+	writeGlCommand( ACW_DRAWELEMENTS );
+}
+
+void glDrawPixels ( GLsizei a, GLsizei b, GLenum c, GLenum d, GLvoid* e )
+{
+	writeGlCommand( ACW_DRAWPIXELS );
+}
+
+void glDrawRangeElements ( GLenum a, GLuint b, GLuint c, GLsizei d, GLenum e, GLvoid* f )
+{
+	writeGlCommand( ACW_DRAWRANGEELEMENTS );
+}
+
 void glEdgeFlag ( GLboolean a )
 {
 	writeGlCommand( ACW_EDGEFLAG );
 	writeValue( (void*)&a, sizeof(GLboolean) );
+}
+
+void glEdgeFlagPointer ( GLsizei a, GLboolean* b )
+{
+	writeGlCommand( ACW_EDGEFLAGPOINTER );
+}
+
+void glEdgeFlagPointerEXT ( GLsizei a, GLsizei b, GLboolean* c )
+{
+	writeGlCommand( ACW_EDGEFLAGPOINTEREXT );
+}
+
+void glEdgeFlagv ( GLboolean* a )
+{
+	writeGlCommand( ACW_EDGEFLAGV );
 }
 
 void glEnable ( GLenum a )
@@ -596,6 +893,16 @@ void glEvalPoint2 ( GLint a, GLint b )
 	writeValue( (void*)&b, sizeof(GLint) );
 }
 
+void glFeedbackBuffer ( GLsizei a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_FEEDBACKBUFFER );
+}
+
+void glFinish (  )
+{
+	writeGlCommand( ACW_FINISH );
+}
+
 void glFlush (  )
 {
 	writeGlCommand( ACW_FLUSH );
@@ -606,6 +913,11 @@ void glFlushRasterSGIX (  )
 	writeGlCommand( ACW_FLUSHRASTERSGIX );
 }
 
+void glFogFuncSGIS ( GLsizei a, GLfloat* b )
+{
+	writeGlCommand( ACW_FOGFUNCSGIS );
+}
+
 void glFogf ( GLenum a, GLfloat b )
 {
 	writeGlCommand( ACW_FOGF );
@@ -613,11 +925,21 @@ void glFogf ( GLenum a, GLfloat b )
 	writeValue( (void*)&b, sizeof(GLfloat) );
 }
 
+void glFogfv ( GLenum a, GLfloat* b )
+{
+	writeGlCommand( ACW_FOGFV );
+}
+
 void glFogi ( GLenum a, GLint b )
 {
 	writeGlCommand( ACW_FOGI );
 	writeValue( (void*)&a, sizeof(GLenum) );
 	writeValue( (void*)&b, sizeof(GLint) );
+}
+
+void glFogiv ( GLenum a, GLint* b )
+{
+	writeGlCommand( ACW_FOGIV );
 }
 
 void glFrameZoomSGIX ( GLint a )
@@ -656,9 +978,319 @@ void glGenTextures ( GLsizei a, GLuint* b )
 	writeValue( (void*)&b, sizeof(GLuint*) );
 }
 
+void glGenTexturesEXT ( GLsizei a, GLuint* b )
+{
+	writeGlCommand( ACW_GENTEXTURESEXT );
+}
+
+void glGetBooleanv ( GLenum a, GLboolean* b )
+{
+	writeGlCommand( ACW_GETBOOLEANV );
+}
+
+void glGetClipPlane ( GLenum a, GLdouble* b )
+{
+	writeGlCommand( ACW_GETCLIPPLANE );
+}
+
+void glGetColorTable ( GLenum a, GLenum b, GLenum c, GLvoid* d )
+{
+	writeGlCommand( ACW_GETCOLORTABLE );
+}
+
+void glGetColorTableParameterfv ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_GETCOLORTABLEPARAMETERFV );
+}
+
+void glGetColorTableParameterfvSGI ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_GETCOLORTABLEPARAMETERFVSGI );
+}
+
+void glGetColorTableParameteriv ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_GETCOLORTABLEPARAMETERIV );
+}
+
+void glGetColorTableParameterivSGI ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_GETCOLORTABLEPARAMETERIVSGI );
+}
+
+void glGetColorTableSGI ( GLenum a, GLenum b, GLenum c, GLvoid* d )
+{
+	writeGlCommand( ACW_GETCOLORTABLESGI );
+}
+
+void glGetConvolutionFilter ( GLenum a, GLenum b, GLenum c, GLvoid* d )
+{
+	writeGlCommand( ACW_GETCONVOLUTIONFILTER );
+}
+
+void glGetConvolutionFilterEXT ( GLenum a, GLenum b, GLenum c, GLvoid* d )
+{
+	writeGlCommand( ACW_GETCONVOLUTIONFILTEREXT );
+}
+
+void glGetConvolutionParameterfv ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_GETCONVOLUTIONPARAMETERFV );
+}
+
+void glGetConvolutionParameterfvEXT ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_GETCONVOLUTIONPARAMETERFVEXT );
+}
+
+void glGetConvolutionParameteriv ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_GETCONVOLUTIONPARAMETERIV );
+}
+
+void glGetConvolutionParameterivEXT ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_GETCONVOLUTIONPARAMETERIVEXT );
+}
+
+void glGetDetailTexFuncSGIS ( GLenum a, GLfloat* b )
+{
+	writeGlCommand( ACW_GETDETAILTEXFUNCSGIS );
+}
+
+void glGetDoublev ( GLenum a, GLdouble* b )
+{
+	writeGlCommand( ACW_GETDOUBLEV );
+}
+
 GLenum glGetError (  )
 {
 	writeGlCommand( ACW_GETERROR );
+}
+
+void glGetFloatv ( GLenum a, GLfloat* b )
+{
+	writeGlCommand( ACW_GETFLOATV );
+}
+
+void glGetHistogram ( GLenum a, GLboolean b, GLenum c, GLenum d, GLvoid* e )
+{
+	writeGlCommand( ACW_GETHISTOGRAM );
+}
+
+void glGetHistogramEXT ( GLenum a, GLboolean b, GLenum c, GLenum d, GLvoid* e )
+{
+	writeGlCommand( ACW_GETHISTOGRAMEXT );
+}
+
+void glGetHistogramParameterfv ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_GETHISTOGRAMPARAMETERFV );
+}
+
+void glGetHistogramParameterfvEXT ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_GETHISTOGRAMPARAMETERFVEXT );
+}
+
+void glGetHistogramParameteriv ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_GETHISTOGRAMPARAMETERIV );
+}
+
+void glGetHistogramParameterivEXT ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_GETHISTOGRAMPARAMETERIVEXT );
+}
+
+GLint glGetInstrumentsSGIX (  )
+{
+	writeGlCommand( ACW_GETINSTRUMENTSSGIX );
+}
+
+void glGetIntegerv ( GLenum a, GLint* b )
+{
+	writeGlCommand( ACW_GETINTEGERV );
+}
+
+void glGetLightfv ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_GETLIGHTFV );
+}
+
+void glGetLightiv ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_GETLIGHTIV );
+}
+
+void glGetListParameterfvSGIX ( GLuint a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_GETLISTPARAMETERFVSGIX );
+}
+
+void glGetListParameterivSGIX ( GLuint a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_GETLISTPARAMETERIVSGIX );
+}
+
+void glGetMapdv ( GLenum a, GLenum b, GLdouble* c )
+{
+	writeGlCommand( ACW_GETMAPDV );
+}
+
+void glGetMapfv ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_GETMAPFV );
+}
+
+void glGetMapiv ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_GETMAPIV );
+}
+
+void glGetMaterialfv ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_GETMATERIALFV );
+}
+
+void glGetMaterialiv ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_GETMATERIALIV );
+}
+
+void glGetMinmax ( GLenum a, GLboolean b, GLenum c, GLenum d, GLvoid* e )
+{
+	writeGlCommand( ACW_GETMINMAX );
+}
+
+void glGetMinmaxEXT ( GLenum a, GLboolean b, GLenum c, GLenum d, GLvoid* e )
+{
+	writeGlCommand( ACW_GETMINMAXEXT );
+}
+
+void glGetMinmaxParameterfv ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_GETMINMAXPARAMETERFV );
+}
+
+void glGetMinmaxParameterfvEXT ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_GETMINMAXPARAMETERFVEXT );
+}
+
+void glGetMinmaxParameteriv ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_GETMINMAXPARAMETERIV );
+}
+
+void glGetMinmaxParameterivEXT ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_GETMINMAXPARAMETERIVEXT );
+}
+
+void glGetPixelMapfv ( GLenum a, GLfloat* b )
+{
+	writeGlCommand( ACW_GETPIXELMAPFV );
+}
+
+void glGetPixelMapuiv ( GLenum a, GLuint* b )
+{
+	writeGlCommand( ACW_GETPIXELMAPUIV );
+}
+
+void glGetPixelMapusv ( GLenum a, GLushort* b )
+{
+	writeGlCommand( ACW_GETPIXELMAPUSV );
+}
+
+void glGetPointerv ( GLenum a, GLvoid** b )
+{
+	writeGlCommand( ACW_GETPOINTERV );
+}
+
+void glGetPointervEXT ( GLenum a, GLvoid** b )
+{
+	writeGlCommand( ACW_GETPOINTERVEXT );
+}
+
+void glGetPolygonStipple ( GLubyte* a )
+{
+	writeGlCommand( ACW_GETPOLYGONSTIPPLE );
+}
+
+void glGetSeparableFilter ( GLenum a, GLenum b, GLenum c, GLvoid* d, GLvoid* e, GLvoid* f )
+{
+	writeGlCommand( ACW_GETSEPARABLEFILTER );
+}
+
+void glGetSeparableFilterEXT ( GLenum a, GLenum b, GLenum c, GLvoid* d, GLvoid* e, GLvoid* f )
+{
+	writeGlCommand( ACW_GETSEPARABLEFILTEREXT );
+}
+
+void glGetSharpenTexFuncSGIS ( GLenum a, GLfloat* b )
+{
+	writeGlCommand( ACW_GETSHARPENTEXFUNCSGIS );
+}
+
+const GLubyte* glGetString ( GLenum a )
+{
+	writeGlCommand( ACW_GETSTRING );
+} 
+
+void glGetTexEnvfv ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_GETTEXENVFV );
+}
+
+void glGetTexEnviv ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_GETTEXENVIV );
+}
+
+void glGetTexFilterFuncSGIS ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_GETTEXFILTERFUNCSGIS );
+}
+
+void glGetTexGendv ( GLenum a, GLenum b, GLdouble* c )
+{
+	writeGlCommand( ACW_GETTEXGENDV );
+}
+
+void glGetTexGenfv ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_GETTEXGENFV );
+}
+
+void glGetTexGeniv ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_GETTEXGENIV );
+}
+
+void glGetTexImage ( GLenum a, GLint b, GLenum c, GLenum d, GLvoid* e )
+{
+	writeGlCommand( ACW_GETTEXIMAGE );
+}
+
+void glGetTexLevelParameterfv ( GLenum a, GLint b, GLenum c, GLfloat* d )
+{
+	writeGlCommand( ACW_GETTEXLEVELPARAMETERFV );
+}
+
+void glGetTexLevelParameteriv ( GLenum a, GLint b, GLenum c, GLint* d )
+{
+	writeGlCommand( ACW_GETTEXLEVELPARAMETERIV );
+}
+
+void glGetTexParameterfv ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_GETTEXPARAMETERFV );
+}
+
+void glGetTexParameteriv ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_GETTEXPARAMETERIV );
 }
 
 void glHint ( GLenum a, GLenum b )
@@ -692,10 +1324,25 @@ void glIndexMask ( GLuint a )
 	writeValue( (void*)&a, sizeof(GLuint) );
 }
 
+void glIndexPointer ( GLenum a, GLsizei b, GLvoid* c )
+{
+	writeGlCommand( ACW_INDEXPOINTER );
+}
+
+void glIndexPointerEXT ( GLenum a, GLsizei b, GLsizei c, GLvoid* d )
+{
+	writeGlCommand( ACW_INDEXPOINTEREXT );
+}
+
 void glIndexd ( GLdouble a )
 {
 	writeGlCommand( ACW_INDEXD );
 	writeValue( (void*)&a, sizeof(GLdouble) );
+}
+
+void glIndexdv ( GLdouble* a )
+{
+	writeGlCommand( ACW_INDEXDV );
 }
 
 void glIndexf ( GLfloat a )
@@ -704,15 +1351,55 @@ void glIndexf ( GLfloat a )
 	writeValue( (void*)&a, sizeof(GLfloat) );
 }
 
+void glIndexfv ( GLfloat* a )
+{
+	writeGlCommand( ACW_INDEXFV );
+}
+
 void glIndexi ( GLint a )
 {
 	writeGlCommand( ACW_INDEXI );
 	writeValue( (void*)&a, sizeof(GLint) );
 }
 
+void glIndexiv ( GLint* a )
+{
+	writeGlCommand( ACW_INDEXIV );
+}
+
+void glIndexs ( GLshort a )
+{
+	writeGlCommand( ACW_INDEXS );
+}
+
+void glIndexsv ( GLshort* a )
+{
+	writeGlCommand( ACW_INDEXSV );
+}
+
+void glIndexub ( GLubyte a )
+{
+	writeGlCommand( ACW_INDEXUB );
+}
+
+void glIndexubv ( GLubyte* a )
+{
+	writeGlCommand( ACW_INDEXUBV );
+}
+
 void glInitNames (  )
 {
 	writeGlCommand( ACW_INITNAMES );
+}
+
+void glInstrumentsBufferSGIX ( GLsizei a, GLint* b )
+{
+	writeGlCommand( ACW_INSTRUMENTSBUFFERSGIX );
+}
+
+void glInterleavedArrays ( GLenum a, GLsizei b, GLvoid* c )
+{
+	writeGlCommand( ACW_INTERLEAVEDARRAYS );
 }
 
 GLboolean glIsEnabled ( GLenum a )
@@ -746,11 +1433,21 @@ void glLightModelf ( GLenum a, GLfloat b )
 	writeValue( (void*)&b, sizeof(GLfloat) );
 }
 
+void glLightModelfv ( GLenum a, GLfloat* b )
+{
+	writeGlCommand( ACW_LIGHTMODELFV );
+}
+
 void glLightModeli ( GLenum a, GLint b )
 {
 	writeGlCommand( ACW_LIGHTMODELI );
 	writeValue( (void*)&a, sizeof(GLenum) );
 	writeValue( (void*)&b, sizeof(GLint) );
+}
+
+void glLightModeliv ( GLenum a, GLint* b )
+{
+	writeGlCommand( ACW_LIGHTMODELIV );
 }
 
 void glLightf ( GLenum a, GLenum b, GLfloat c )
@@ -761,12 +1458,22 @@ void glLightf ( GLenum a, GLenum b, GLfloat c )
 	writeValue( (void*)&c, sizeof(GLfloat) );
 }
 
+void glLightfv ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_LIGHTFV );
+}
+
 void glLighti ( GLenum a, GLenum b, GLint c )
 {
 	writeGlCommand( ACW_LIGHTI );
 	writeValue( (void*)&a, sizeof(GLenum) );
 	writeValue( (void*)&b, sizeof(GLenum) );
 	writeValue( (void*)&c, sizeof(GLint) );
+}
+
+void glLightiv ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_LIGHTIV );
 }
 
 void glLineStipple ( GLint a, GLushort b )
@@ -796,12 +1503,22 @@ void glListParameterfSGIX ( GLuint a, GLenum b, GLfloat c )
 	writeValue( (void*)&c, sizeof(GLfloat) );
 }
 
+void glListParameterfvSGIX ( GLuint a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_LISTPARAMETERFVSGIX );
+}
+
 void glListParameteriSGIX ( GLuint a, GLenum b, GLint c )
 {
 	writeGlCommand( ACW_LISTPARAMETERISGIX );
 	writeValue( (void*)&a, sizeof(GLuint) );
 	writeValue( (void*)&b, sizeof(GLenum) );
 	writeValue( (void*)&c, sizeof(GLint) );
+}
+
+void glListParameterivSGIX ( GLuint a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_LISTPARAMETERIVSGIX );
 }
 
 void glLoadIdentity (  )
@@ -813,6 +1530,16 @@ void glLoadIdentityDeformationMapSGIX ( GLbitfield a )
 {
 	writeGlCommand( ACW_LOADIDENTITYDEFORMATIONMAPSGIX );
 	writeValue( (void*)&a, sizeof(GLbitfield) );
+}
+
+void glLoadMatrixd ( GLdouble* a )
+{
+	writeGlCommand( ACW_LOADMATRIXD );
+}
+
+void glLoadMatrixf ( GLfloat* a )
+{
+	writeGlCommand( ACW_LOADMATRIXF );
 }
 
 void glLoadName ( GLuint a )
@@ -827,6 +1554,46 @@ void glLogicOp ( GLenum a )
 	writeValue( (void*)&a, sizeof(GLenum) );
 }
 
+void glMap1d ( GLenum a, GLdouble b, GLdouble c, GLint d, GLint e, GLdouble* f )
+{
+	writeGlCommand( ACW_MAP1D );
+}
+
+void glMap1f ( GLenum a, GLfloat b, GLfloat c, GLint d, GLint e, GLfloat* f )
+{
+	writeGlCommand( ACW_MAP1F );
+}
+
+void glMap2d ( GLenum a, GLdouble b, GLdouble c, GLint d, GLint e, GLdouble f, GLdouble g, GLint h, GLint i, GLdouble* j )
+{
+	writeGlCommand( ACW_MAP2D );
+}
+
+void glMap2f ( GLenum a, GLfloat b, GLfloat c, GLint d, GLint e, GLfloat f, GLfloat g, GLint h, GLint i, GLfloat* j )
+{
+	writeGlCommand( ACW_MAP2F );
+}
+
+void glMapGrid1d ( GLint a, GLdouble b, GLdouble c )
+{
+	writeGlCommand( ACW_MAPGRID1D );
+}
+
+void glMapGrid1f ( GLint a, GLfloat b, GLfloat c )
+{
+	writeGlCommand( ACW_MAPGRID1F );
+}
+
+void glMapGrid2d ( GLint a, GLdouble b, GLdouble c, GLint d, GLdouble e, GLdouble f )
+{
+	writeGlCommand( ACW_MAPGRID2D );
+}
+
+void glMapGrid2f ( GLint a, GLfloat b, GLfloat c, GLint d, GLfloat e, GLfloat f )
+{
+	writeGlCommand( ACW_MAPGRID2F );
+}
+
 void glMaterialf ( GLenum a, GLenum b, GLfloat c )
 {
 	writeGlCommand( ACW_MATERIALF );
@@ -835,12 +1602,22 @@ void glMaterialf ( GLenum a, GLenum b, GLfloat c )
 	writeValue( (void*)&c, sizeof(GLfloat) );
 }
 
+void glMaterialfv ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_MATERIALFV );
+}
+
 void glMateriali ( GLenum a, GLenum b, GLint c )
 {
 	writeGlCommand( ACW_MATERIALI );
 	writeValue( (void*)&a, sizeof(GLenum) );
 	writeValue( (void*)&b, sizeof(GLenum) );
 	writeValue( (void*)&c, sizeof(GLint) );
+}
+
+void glMaterialiv ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_MATERIALIV );
 }
 
 void glMatrixMode ( GLenum a )
@@ -863,6 +1640,16 @@ void glMinmaxEXT ( GLenum a, GLenum b, GLboolean c )
 	writeValue( (void*)&a, sizeof(GLenum) );
 	writeValue( (void*)&b, sizeof(GLenum) );
 	writeValue( (void*)&c, sizeof(GLboolean) );
+}
+
+void glMultMatrixd ( GLdouble* a )
+{
+	writeGlCommand( ACW_MULTMATRIXD );
+}
+
+void glMultMatrixf ( GLfloat* a )
+{
+	writeGlCommand( ACW_MULTMATRIXF );
 }
 
 void glNewList ( GLuint a, GLenum b )
@@ -952,6 +1739,16 @@ void glNormal3sv ( GLshort* a )
 	writeValue( (void*)a, sizeof(GLshort)*3 );
 }
 
+void glNormalPointer ( GLenum a, GLsizei b, GLvoid* c )
+{
+	writeGlCommand( ACW_NORMALPOINTER );
+}
+
+void glNormalPointerEXT ( GLenum a, GLsizei b, GLsizei c, GLvoid* d )
+{
+	writeGlCommand( ACW_NORMALPOINTEREXT );
+}
+
 void glOrtho ( GLdouble a, GLdouble b, GLdouble c, GLdouble d, GLdouble e, GLdouble f )
 {
 	writeGlCommand( ACW_ORTHO );
@@ -967,6 +1764,21 @@ void glPassThrough ( GLfloat a )
 {
 	writeGlCommand( ACW_PASSTHROUGH );
 	writeValue( (void*)&a, sizeof(GLfloat) );
+}
+
+void glPixelMapfv ( GLenum a, GLint b, GLfloat* c )
+{
+	writeGlCommand( ACW_PIXELMAPFV );
+}
+
+void glPixelMapuiv ( GLenum a, GLint b, GLuint* c )
+{
+	writeGlCommand( ACW_PIXELMAPUIV );
+}
+
+void glPixelMapusv ( GLenum a, GLint b, GLushort* c )
+{
+	writeGlCommand( ACW_PIXELMAPUSV );
 }
 
 void glPixelStoref ( GLenum a, GLfloat b )
@@ -1017,10 +1829,20 @@ void glPointParameterfSGIS ( GLenum a, GLfloat b )
 	writeValue( (void*)&b, sizeof(GLfloat) );
 }
 
+void glPointParameterfvSGIS ( GLenum a, GLfloat* b )
+{
+	writeGlCommand( ACW_POINTPARAMETERFVSGIS );
+}
+
 void glPointSize ( GLfloat a )
 {
 	writeGlCommand( ACW_POINTSIZE );
 	writeValue( (void*)&a, sizeof(GLfloat) );
+}
+
+GLint glPollInstrumentsSGIX ( GLint* a )
+{
+	writeGlCommand( ACW_POLLINSTRUMENTSSGIX );
 }
 
 void glPolygonMode ( GLenum a, GLenum b )
@@ -1044,6 +1866,11 @@ void glPolygonOffsetEXT ( GLfloat a, GLfloat b )
 	writeValue( (void*)&b, sizeof(GLfloat) );
 }
 
+void glPolygonStipple ( GLubyte* a )
+{
+	writeGlCommand( ACW_POLYGONSTIPPLE );
+}
+
 void glPopAttrib (  )
 {
 	writeGlCommand( ACW_POPATTRIB );
@@ -1062,6 +1889,16 @@ void glPopMatrix (  )
 void glPopName (  )
 {
 	writeGlCommand( ACW_POPNAME );
+}
+
+void glPrioritizeTextures ( GLsizei a, GLuint* b, GLclampf* c )
+{
+	writeGlCommand( ACW_PRIORITIZETEXTURES );
+}
+
+void glPrioritizeTexturesEXT ( GLsizei a, GLuint* b, GLclampf* c )
+{
+	writeGlCommand( ACW_PRIORITIZETEXTURESEXT );
 }
 
 void glPushAttrib ( GLbitfield a )
@@ -1291,6 +2128,11 @@ void glReadInstrumentsSGIX ( GLint a )
 	writeValue( (void*)&a, sizeof(GLint) );
 }
 
+void glReadPixels ( GLint a, GLint b, GLsizei c, GLsizei d, GLenum e, GLenum f, GLvoid* g )
+{
+	writeGlCommand( ACW_READPIXELS );
+}
+
 void glRectd ( GLdouble a, GLdouble b, GLdouble c, GLdouble d )
 {
 	writeGlCommand( ACW_RECTD );
@@ -1298,6 +2140,11 @@ void glRectd ( GLdouble a, GLdouble b, GLdouble c, GLdouble d )
 	writeValue( (void*)&b, sizeof(GLdouble) );
 	writeValue( (void*)&c, sizeof(GLdouble) );
 	writeValue( (void*)&d, sizeof(GLdouble) );
+}
+
+void glRectdv ( GLdouble* a, GLdouble* b )
+{
+	writeGlCommand( ACW_RECTDV );
 }
 
 void glRectf ( GLfloat a, GLfloat b, GLfloat c, GLfloat d )
@@ -1309,6 +2156,11 @@ void glRectf ( GLfloat a, GLfloat b, GLfloat c, GLfloat d )
 	writeValue( (void*)&d, sizeof(GLfloat) );
 }
 
+void glRectfv ( GLfloat* a, GLfloat* b )
+{
+	writeGlCommand( ACW_RECTFV );
+}
+
 void glRecti ( GLint a, GLint b, GLint c, GLint d )
 {
 	writeGlCommand( ACW_RECTI );
@@ -1316,6 +2168,11 @@ void glRecti ( GLint a, GLint b, GLint c, GLint d )
 	writeValue( (void*)&b, sizeof(GLint) );
 	writeValue( (void*)&c, sizeof(GLint) );
 	writeValue( (void*)&d, sizeof(GLint) );
+}
+
+void glRectiv ( GLint* a, GLint* b )
+{
+	writeGlCommand( ACW_RECTIV );
 }
 
 void glRects ( GLshort a, GLshort b, GLshort c, GLshort d )
@@ -1327,10 +2184,45 @@ void glRects ( GLshort a, GLshort b, GLshort c, GLshort d )
 	writeValue( (void*)&d, sizeof(GLshort) );
 }
 
+void glRectsv ( GLshort* a, GLshort* b )
+{
+	writeGlCommand( ACW_RECTSV );
+}
+
+void glReferencePlaneSGIX ( GLdouble* a )
+{
+	writeGlCommand( ACW_REFERENCEPLANESGIX );
+}
+
 GLint glRenderMode ( GLenum a )
 {
 	writeGlCommand( ACW_RENDERMODE );
 	writeValue( (void*)&a, sizeof(GLenum) );
+}
+
+void glResetHistogram ( GLenum a )
+{
+	writeGlCommand( ACW_RESETHISTOGRAM );
+}
+
+void glResetHistogramEXT ( GLenum a )
+{
+	writeGlCommand( ACW_RESETHISTOGRAMEXT );
+}
+
+void glResetMinmax ( GLenum a )
+{
+	writeGlCommand( ACW_RESETMINMAX );
+}
+
+void glResetMinmaxEXT ( GLenum a )
+{
+	writeGlCommand( ACW_RESETMINMAXEXT );
+}
+
+void glRotated ( GLdouble a, GLdouble b, GLdouble c, GLdouble d )
+{
+	writeGlCommand( ACW_ROTATED );
 }
 
 void glRotatef ( GLfloat a, GLfloat b, GLfloat c, GLfloat d )
@@ -1380,10 +2272,50 @@ void glScissor ( GLint a, GLint b, GLsizei c, GLsizei d )
 	writeValue( (void*)&d, sizeof(GLsizei) );
 }
 
+void glSelectBuffer ( GLsizei a, GLuint* b )
+{
+	writeGlCommand( ACW_SELECTBUFFER );
+}
+
+void glSeparableFilter2D ( GLenum a, GLenum b, GLsizei c, GLsizei d, GLenum e, GLenum f, GLvoid* g, GLvoid* h )
+{
+	writeGlCommand( ACW_SEPARABLEFILTER2D );
+}
+
+void glSeparableFilter2DEXT ( GLenum a, GLenum b, GLsizei c, GLsizei d, GLenum e, GLenum f, GLvoid* g, GLvoid* h )
+{
+	writeGlCommand( ACW_SEPARABLEFILTER2DEXT );
+}
+
 void glShadeModel ( GLenum a )
 {
 	writeGlCommand( ACW_SHADEMODEL );
 	writeValue( (void*)&a, sizeof(GLenum) );
+}
+
+void glSharpenTexFuncSGIS ( GLenum a, GLsizei b, GLfloat* c )
+{
+	writeGlCommand( ACW_SHARPENTEXFUNCSGIS );
+}
+
+void glSpriteParameterfSGIX ( GLenum a, GLfloat b )
+{
+	writeGlCommand( ACW_SPRITEPARAMETERFSGIX );
+}
+
+void glSpriteParameterfvSGIX ( GLenum a, GLfloat* b )
+{
+	writeGlCommand( ACW_SPRITEPARAMETERFVSGIX );
+}
+
+void glSpriteParameteriSGIX ( GLenum a, GLint b )
+{
+	writeGlCommand( ACW_SPRITEPARAMETERISGIX );
+}
+
+void glSpriteParameterivSGIX ( GLenum a, GLint* b )
+{
+	writeGlCommand( ACW_SPRITEPARAMETERIVSGIX );
 }
 
 void glStartInstrumentsSGIX (  )
@@ -1672,12 +2604,27 @@ void glTexCoord4sv ( GLshort* a )
 	writeValue( (void*)a, sizeof(GLshort)*4 );
 }
 
+void glTexCoordPointer ( GLint a, GLenum b, GLsizei c, GLvoid* d )
+{
+	writeGlCommand( ACW_TEXCOORDPOINTER );
+}
+
+void glTexCoordPointerEXT ( GLint a, GLenum b, GLsizei c, GLsizei d, GLvoid* e )
+{
+	writeGlCommand( ACW_TEXCOORDPOINTEREXT );
+}
+
 void glTexEnvf ( GLenum a, GLenum b, GLfloat c )
 {
 	writeGlCommand( ACW_TEXENVF );
 	writeValue( (void*)&a, sizeof(GLenum) );
 	writeValue( (void*)&b, sizeof(GLenum) );
 	writeValue( (void*)&c, sizeof(GLfloat) );
+}
+
+void glTexEnvfv ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_TEXENVFV );
 }
 
 void glTexEnvi ( GLenum a, GLenum b, GLint c )
@@ -1688,12 +2635,27 @@ void glTexEnvi ( GLenum a, GLenum b, GLint c )
 	writeValue( (void*)&c, sizeof(GLint) );
 }
 
+void glTexEnviv ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_TEXENVIV );
+}
+
+void glTexFilterFuncSGIS ( GLenum a, GLenum b, GLsizei c, GLfloat* d )
+{
+	writeGlCommand( ACW_TEXFILTERFUNCSGIS );
+}
+
 void glTexGend ( GLenum a, GLenum b, GLdouble c )
 {
 	writeGlCommand( ACW_TEXGEND );
 	writeValue( (void*)&a, sizeof(GLenum) );
 	writeValue( (void*)&b, sizeof(GLenum) );
 	writeValue( (void*)&c, sizeof(GLdouble) );
+}
+
+void glTexGendv ( GLenum a, GLenum b, GLdouble* c )
+{
+	writeGlCommand( ACW_TEXGENDV );
 }
 
 void glTexGenf ( GLenum a, GLenum b, GLfloat c )
@@ -1704,12 +2666,47 @@ void glTexGenf ( GLenum a, GLenum b, GLfloat c )
 	writeValue( (void*)&c, sizeof(GLfloat) );
 }
 
+void glTexGenfv ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_TEXGENFV );
+}
+
 void glTexGeni ( GLenum a, GLenum b, GLint c )
 {
 	writeGlCommand( ACW_TEXGENI );
 	writeValue( (void*)&a, sizeof(GLenum) );
 	writeValue( (void*)&b, sizeof(GLenum) );
 	writeValue( (void*)&c, sizeof(GLint) );
+}
+
+void glTexGeniv ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_TEXGENIV );
+}
+
+void glTexImage1D ( GLenum a, GLint b, GLint c, GLsizei d, GLint e, GLenum f, GLenum g, GLvoid* h )
+{
+	writeGlCommand( ACW_TEXIMAGE1D );
+}
+
+void glTexImage2D ( GLenum a, GLint b, GLint c, GLsizei d, GLsizei e, GLint f, GLenum g, GLenum h, GLvoid* i )
+{
+	writeGlCommand( ACW_TEXIMAGE2D );
+}
+
+void glTexImage3D ( GLenum a, GLint b, GLenum c, GLsizei d, GLsizei e, GLsizei f, GLint g, GLenum h, GLenum i, GLvoid* j )
+{
+	writeGlCommand( ACW_TEXIMAGE3D );
+}
+
+void glTexImage3DEXT ( GLenum a, GLint b, GLenum c, GLsizei d, GLsizei e, GLsizei f, GLint g, GLenum h, GLenum i, GLvoid* j )
+{
+	writeGlCommand( ACW_TEXIMAGE3DEXT );
+}
+
+void glTexImage4DSGIS ( GLenum a, GLint b, GLenum c, GLsizei d, GLsizei e, GLsizei f, GLsizei g, GLint h, GLenum i, GLenum j, GLvoid* k )
+{
+	writeGlCommand( ACW_TEXIMAGE4DSGIS );
 }
 
 void glTexParameterf ( GLenum a, GLenum b, GLfloat c )
@@ -1720,12 +2717,57 @@ void glTexParameterf ( GLenum a, GLenum b, GLfloat c )
 	writeValue( (void*)&c, sizeof(GLfloat) );
 }
 
+void glTexParameterfv ( GLenum a, GLenum b, GLfloat* c )
+{
+	writeGlCommand( ACW_TEXPARAMETERFV );
+}
+
 void glTexParameteri ( GLenum a, GLenum b, GLint c )
 {
 	writeGlCommand( ACW_TEXPARAMETERI );
 	writeValue( (void*)&a, sizeof(GLenum) );
 	writeValue( (void*)&b, sizeof(GLenum) );
 	writeValue( (void*)&c, sizeof(GLint) );
+}
+
+void glTexParameteriv ( GLenum a, GLenum b, GLint* c )
+{
+	writeGlCommand( ACW_TEXPARAMETERIV );
+}
+
+void glTexSubImage1D ( GLenum a, GLint b, GLint c, GLsizei d, GLenum e, GLenum f, GLvoid* g )
+{
+	writeGlCommand( ACW_TEXSUBIMAGE1D );
+}
+
+void glTexSubImage1DEXT ( GLenum a, GLint b, GLint c, GLsizei d, GLenum e, GLenum f, GLvoid* g )
+{
+	writeGlCommand( ACW_TEXSUBIMAGE1DEXT );
+}
+
+void glTexSubImage2D ( GLenum a, GLint b, GLint c, GLint d, GLsizei e, GLsizei f, GLenum g, GLenum h, GLvoid* i )
+{
+	writeGlCommand( ACW_TEXSUBIMAGE2D );
+}
+
+void glTexSubImage2DEXT ( GLenum a, GLint b, GLint c, GLint d, GLsizei e, GLsizei f, GLenum g, GLenum h, GLvoid* i )
+{
+	writeGlCommand( ACW_TEXSUBIMAGE2DEXT );
+}
+
+void glTexSubImage3D ( GLenum a, GLint b, GLint c, GLint d, GLint e, GLsizei f, GLsizei g, GLsizei h, GLenum i, GLenum j, GLvoid* k )
+{
+	writeGlCommand( ACW_TEXSUBIMAGE3D );
+}
+
+void glTexSubImage3DEXT ( GLenum a, GLint b, GLint c, GLint d, GLint e, GLsizei f, GLsizei g, GLsizei h, GLenum i, GLenum j, GLvoid* k )
+{
+	writeGlCommand( ACW_TEXSUBIMAGE3DEXT );
+}
+
+void glTexSubImage4DSGIS ( GLenum a, GLint b, GLint c, GLint d, GLint e, GLint f, GLsizei g, GLsizei h, GLsizei i, GLsizei j, GLenum k, GLenum l, GLvoid* m )
+{
+	writeGlCommand( ACW_TEXSUBIMAGE4DSGIS );
 }
 
 void glTranslated ( GLdouble a, GLdouble b, GLdouble c )
@@ -1934,6 +2976,16 @@ void glVertex4sv ( GLshort* a )
 {
 	writeGlCommand( ACW_VERTEX4SV );
 	writeValue( (void*)a, sizeof(GLshort)*4 );
+}
+
+void glVertexPointer ( GLint a, GLenum b, GLsizei c, GLvoid* d )
+{
+	writeGlCommand( ACW_VERTEXPOINTER );
+}
+
+void glVertexPointerEXT ( GLint a, GLenum b, GLsizei c, GLsizei d, GLvoid* e )
+{
+	writeGlCommand( ACW_VERTEXPOINTEREXT );
 }
 
 void glViewport ( GLint a, GLint b, GLsizei c, GLsizei d )

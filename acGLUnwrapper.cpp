@@ -1,49 +1,36 @@
 
 #include "acGLUnwrapper.h"
+#include <stdio.h>
 
 glUnwrapper::glUnwrapper()
 {
-  unbuffer = NULL;
-  unbufferSize = 0;
-  unbufferAllocSize = 0;
+  buffer = NULL;
+  bufferSize = 0;
+  bufferAllocSize = 0;
 }
 
 void glUnwrapper::setBuffer( unsigned char* B, long Bsize )
 {
-  while ( unbufferAllocSize <= Bsize )
+  while ( bufferAllocSize <= Bsize )
     {
-      if ( unbufferAllocSize==0 )
-	unbufferAllocSize = 32;
-      unbufferAllocSize *= 2;
-      unbuffer = (unsigned char*)realloc( unbuffer, sizeof(char)*unbufferAllocSize );
+      if ( bufferAllocSize==0 )
+	bufferAllocSize = 32;
+      bufferAllocSize *= 2;
+      buffer = (unsigned char*)realloc( buffer, sizeof(char)*bufferAllocSize );
     }
-  unbufferSize = Bsize;
-  memcpy( unbuffer, B, Bsize );
+  bufferSize = Bsize;
+  memcpy( buffer, B, Bsize );
 }
 
 void* glUnwrapper::getBuffer() 
 { 
-  return unbuffer; 
+  return buffer; 
 }
 
 long glUnwrapper::getBufferSize() 
 { 
-  return unbufferSize;
+  return bufferSize;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -54,533 +41,828 @@ void glUnwrapper::Apply()
 {
 long i=0;
 GLenum* E;
-while( i < unbufferSize )
+while( i < bufferSize )
 {
-glCommand* G = (glCommand*) &unbuffer[i];
+glCommand* G = (glCommand*) &buffer[i];
 switch( *G )
 {
 
 case ACW_ACCUM:
  i += sizeof(glCommand);
- GLenum* a0 = (GLenum*) &unbuffer[i];
+ GLenum* a0 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLfloat* b0 = (GLfloat*) &unbuffer[i];
+ GLfloat* b0 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
  glAccum( *a0, *b0 );
  break;
 
 case ACW_ALPHAFUNC:
  i += sizeof(glCommand);
- GLenum* a1 = (GLenum*) &unbuffer[i];
+ GLenum* a1 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLclampf* b1 = (GLclampf*) &unbuffer[i];
+ GLclampf* b1 = (GLclampf*) &buffer[i];
  i += sizeof(GLclampf);
  glAlphaFunc( *a1, *b1 );
  break;
 
+case ACW_ARETEXTURESRESIDENT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glAreTexturesResident\n");
+ break;
+
+case ACW_ARETEXTURESRESIDENTEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glAreTexturesResidentEXT\n");
+ break;
+
+case ACW_ARRAYELEMENT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glArrayElement\n");
+ break;
+
+case ACW_ARRAYELEMENTEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glArrayElementEXT\n");
+ break;
+
 case ACW_BEGIN:
  i += sizeof(glCommand);
- GLenum* a2 = (GLenum*) &unbuffer[i];
+ GLenum* a6 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glBegin( *a2 );
+ glBegin( *a6 );
+ break;
+
+case ACW_BINDTEXTURE:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glBindTexture\n");
+ break;
+
+case ACW_BINDTEXTUREEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glBindTextureEXT\n");
+ break;
+
+case ACW_BITMAP:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glBitmap\n");
  break;
 
 case ACW_BLENDCOLOR:
  i += sizeof(glCommand);
- GLclampf* a3 = (GLclampf*) &unbuffer[i];
+ GLclampf* a10 = (GLclampf*) &buffer[i];
  i += sizeof(GLclampf);
- GLclampf* b3 = (GLclampf*) &unbuffer[i];
+ GLclampf* b10 = (GLclampf*) &buffer[i];
  i += sizeof(GLclampf);
- GLclampf* c3 = (GLclampf*) &unbuffer[i];
+ GLclampf* c10 = (GLclampf*) &buffer[i];
  i += sizeof(GLclampf);
- GLclampf* d3 = (GLclampf*) &unbuffer[i];
+ GLclampf* d10 = (GLclampf*) &buffer[i];
  i += sizeof(GLclampf);
- glBlendColor( *a3, *b3, *c3, *d3 );
+ glBlendColor( *a10, *b10, *c10, *d10 );
+ break;
+
+case ACW_BLENDCOLOREXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glBlendColorEXT\n");
  break;
 
 case ACW_BLENDEQUATION:
  i += sizeof(glCommand);
- GLenum* a4 = (GLenum*) &unbuffer[i];
+ GLenum* a12 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glBlendEquation( *a4 );
+ glBlendEquation( *a12 );
  break;
 
 case ACW_BLENDEQUATIONEXT:
  i += sizeof(glCommand);
- GLenum* a5 = (GLenum*) &unbuffer[i];
+ GLenum* a13 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glBlendEquationEXT( *a5 );
+ glBlendEquationEXT( *a13 );
  break;
 
 case ACW_BLENDFUNC:
  i += sizeof(glCommand);
- GLenum* a6 = (GLenum*) &unbuffer[i];
+ GLenum* a14 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b6 = (GLenum*) &unbuffer[i];
+ GLenum* b14 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glBlendFunc( *a6, *b6 );
+ glBlendFunc( *a14, *b14 );
  break;
 
 case ACW_CALLLIST:
  i += sizeof(glCommand);
- GLuint* a7 = (GLuint*) &unbuffer[i];
+ GLuint* a15 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- glCallList( *a7 );
+ glCallList( *a15 );
+ break;
+
+case ACW_CALLLISTS:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCallLists\n");
  break;
 
 case ACW_CLEAR:
  i += sizeof(glCommand);
- GLbitfield* a8 = (GLbitfield*) &unbuffer[i];
+ GLbitfield* a17 = (GLbitfield*) &buffer[i];
  i += sizeof(GLbitfield);
- glClear( *a8 );
+ glClear( *a17 );
  break;
 
 case ACW_CLEARACCUM:
  i += sizeof(glCommand);
- GLfloat* a9 = (GLfloat*) &unbuffer[i];
+ GLfloat* a18 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- GLfloat* b9 = (GLfloat*) &unbuffer[i];
+ GLfloat* b18 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- GLfloat* c9 = (GLfloat*) &unbuffer[i];
+ GLfloat* c18 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- GLfloat* d9 = (GLfloat*) &unbuffer[i];
+ GLfloat* d18 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glClearAccum( *a9, *b9, *c9, *d9 );
+ glClearAccum( *a18, *b18, *c18, *d18 );
  break;
 
 case ACW_CLEARCOLOR:
  i += sizeof(glCommand);
- GLclampf* a10 = (GLclampf*) &unbuffer[i];
+ GLclampf* a19 = (GLclampf*) &buffer[i];
  i += sizeof(GLclampf);
- GLclampf* b10 = (GLclampf*) &unbuffer[i];
+ GLclampf* b19 = (GLclampf*) &buffer[i];
  i += sizeof(GLclampf);
- GLclampf* c10 = (GLclampf*) &unbuffer[i];
+ GLclampf* c19 = (GLclampf*) &buffer[i];
  i += sizeof(GLclampf);
- GLclampf* d10 = (GLclampf*) &unbuffer[i];
+ GLclampf* d19 = (GLclampf*) &buffer[i];
  i += sizeof(GLclampf);
- glClearColor( *a10, *b10, *c10, *d10 );
+ glClearColor( *a19, *b19, *c19, *d19 );
  break;
 
 case ACW_CLEARDEPTH:
  i += sizeof(glCommand);
- GLclampd* a11 = (GLclampd*) &unbuffer[i];
+ GLclampd* a20 = (GLclampd*) &buffer[i];
  i += sizeof(GLclampd);
- glClearDepth( *a11 );
+ glClearDepth( *a20 );
  break;
 
 case ACW_CLEARINDEX:
  i += sizeof(glCommand);
- GLfloat* a12 = (GLfloat*) &unbuffer[i];
+ GLfloat* a21 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glClearIndex( *a12 );
+ glClearIndex( *a21 );
  break;
 
 case ACW_CLEARSTENCIL:
  i += sizeof(glCommand);
- GLint* a13 = (GLint*) &unbuffer[i];
+ GLint* a22 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glClearStencil( *a13 );
+ glClearStencil( *a22 );
+ break;
+
+case ACW_CLIPPLANE:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glClipPlane\n");
  break;
 
 case ACW_COLOR3B:
  i += sizeof(glCommand);
- GLbyte* a14 = (GLbyte*) &unbuffer[i];
+ GLbyte* a24 = (GLbyte*) &buffer[i];
  i += sizeof(GLbyte)*3;
- glColor3bv( a14 );
+ glColor3bv( a24 );
  break;
 
 case ACW_COLOR3BV:
  i += sizeof(glCommand);
- GLbyte* a15 = (GLbyte*) &unbuffer[i];
+ GLbyte* a25 = (GLbyte*) &buffer[i];
  i += sizeof(GLbyte)*3;
- glColor3bv( a15 );
+ glColor3bv( a25 );
  break;
 
 case ACW_COLOR3D:
  i += sizeof(glCommand);
- GLdouble* a16 = (GLdouble*) &unbuffer[i];
+ GLdouble* a26 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*3;
- glColor3dv( a16 );
+ glColor3dv( a26 );
  break;
 
 case ACW_COLOR3DV:
  i += sizeof(glCommand);
- GLdouble* a17 = (GLdouble*) &unbuffer[i];
+ GLdouble* a27 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*3;
- glColor3dv( a17 );
+ glColor3dv( a27 );
  break;
 
 case ACW_COLOR3F:
  i += sizeof(glCommand);
- GLfloat* a18 = (GLfloat*) &unbuffer[i];
+ GLfloat* a28 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*3;
- glColor3fv( a18 );
+ glColor3fv( a28 );
  break;
 
 case ACW_COLOR3FV:
  i += sizeof(glCommand);
- GLfloat* a19 = (GLfloat*) &unbuffer[i];
+ GLfloat* a29 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*3;
- glColor3fv( a19 );
+ glColor3fv( a29 );
  break;
 
 case ACW_COLOR3I:
  i += sizeof(glCommand);
- GLint* a20 = (GLint*) &unbuffer[i];
+ GLint* a30 = (GLint*) &buffer[i];
  i += sizeof(GLint)*3;
- glColor3iv( a20 );
+ glColor3iv( a30 );
  break;
 
 case ACW_COLOR3IV:
  i += sizeof(glCommand);
- GLint* a21 = (GLint*) &unbuffer[i];
+ GLint* a31 = (GLint*) &buffer[i];
  i += sizeof(GLint)*3;
- glColor3iv( a21 );
+ glColor3iv( a31 );
  break;
 
 case ACW_COLOR3S:
  i += sizeof(glCommand);
- GLshort* a22 = (GLshort*) &unbuffer[i];
+ GLshort* a32 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*3;
- glColor3sv( a22 );
+ glColor3sv( a32 );
  break;
 
 case ACW_COLOR3SV:
  i += sizeof(glCommand);
- GLshort* a23 = (GLshort*) &unbuffer[i];
+ GLshort* a33 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*3;
- glColor3sv( a23 );
+ glColor3sv( a33 );
  break;
 
 case ACW_COLOR3UB:
  i += sizeof(glCommand);
- GLubyte* a24 = (GLubyte*) &unbuffer[i];
+ GLubyte* a34 = (GLubyte*) &buffer[i];
  i += sizeof(GLubyte);
- GLubyte* b24 = (GLubyte*) &unbuffer[i];
+ GLubyte* b34 = (GLubyte*) &buffer[i];
  i += sizeof(GLubyte);
- GLubyte* c24 = (GLubyte*) &unbuffer[i];
+ GLubyte* c34 = (GLubyte*) &buffer[i];
  i += sizeof(GLubyte);
- glColor3ub( *a24, *b24, *c24 );
+ glColor3ub( *a34, *b34, *c34 );
  break;
 
 case ACW_COLOR3UBV:
  i += sizeof(glCommand);
- GLubyte** a25 = (GLubyte**) &unbuffer[i];
+ GLubyte** a35 = (GLubyte**) &buffer[i];
  i += sizeof(GLubyte*);
- glColor3ubv( *a25 );
+ glColor3ubv( *a35 );
  break;
 
 case ACW_COLOR3UI:
  i += sizeof(glCommand);
- GLuint* a26 = (GLuint*) &unbuffer[i];
+ GLuint* a36 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- GLuint* b26 = (GLuint*) &unbuffer[i];
+ GLuint* b36 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- GLuint* c26 = (GLuint*) &unbuffer[i];
+ GLuint* c36 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- glColor3ui( *a26, *b26, *c26 );
+ glColor3ui( *a36, *b36, *c36 );
  break;
 
 case ACW_COLOR3UIV:
  i += sizeof(glCommand);
- GLuint** a27 = (GLuint**) &unbuffer[i];
+ GLuint** a37 = (GLuint**) &buffer[i];
  i += sizeof(GLuint*);
- glColor3uiv( *a27 );
+ glColor3uiv( *a37 );
  break;
 
 case ACW_COLOR3US:
  i += sizeof(glCommand);
- GLushort* a28 = (GLushort*) &unbuffer[i];
+ GLushort* a38 = (GLushort*) &buffer[i];
  i += sizeof(GLushort);
- GLushort* b28 = (GLushort*) &unbuffer[i];
+ GLushort* b38 = (GLushort*) &buffer[i];
  i += sizeof(GLushort);
- GLushort* c28 = (GLushort*) &unbuffer[i];
+ GLushort* c38 = (GLushort*) &buffer[i];
  i += sizeof(GLushort);
- glColor3us( *a28, *b28, *c28 );
+ glColor3us( *a38, *b38, *c38 );
  break;
 
 case ACW_COLOR3USV:
  i += sizeof(glCommand);
- GLushort** a29 = (GLushort**) &unbuffer[i];
+ GLushort** a39 = (GLushort**) &buffer[i];
  i += sizeof(GLushort*);
- glColor3usv( *a29 );
+ glColor3usv( *a39 );
  break;
 
 case ACW_COLOR4B:
  i += sizeof(glCommand);
- GLbyte* a30 = (GLbyte*) &unbuffer[i];
+ GLbyte* a40 = (GLbyte*) &buffer[i];
  i += sizeof(GLbyte)*4;
- glColor4bv( a30 );
+ glColor4bv( a40 );
  break;
 
 case ACW_COLOR4BV:
  i += sizeof(glCommand);
- GLbyte* a31 = (GLbyte*) &unbuffer[i];
+ GLbyte* a41 = (GLbyte*) &buffer[i];
  i += sizeof(GLbyte)*4;
- glColor4bv( a31 );
+ glColor4bv( a41 );
  break;
 
 case ACW_COLOR4D:
  i += sizeof(glCommand);
- GLdouble* a32 = (GLdouble*) &unbuffer[i];
+ GLdouble* a42 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*4;
- glColor4dv( a32 );
+ glColor4dv( a42 );
  break;
 
 case ACW_COLOR4DV:
  i += sizeof(glCommand);
- GLdouble* a33 = (GLdouble*) &unbuffer[i];
+ GLdouble* a43 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*4;
- glColor4dv( a33 );
+ glColor4dv( a43 );
  break;
 
 case ACW_COLOR4F:
  i += sizeof(glCommand);
- GLfloat* a34 = (GLfloat*) &unbuffer[i];
+ GLfloat* a44 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*4;
- glColor4fv( a34 );
+ glColor4fv( a44 );
  break;
 
 case ACW_COLOR4FV:
  i += sizeof(glCommand);
- GLfloat* a35 = (GLfloat*) &unbuffer[i];
+ GLfloat* a45 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*4;
- glColor4fv( a35 );
+ glColor4fv( a45 );
  break;
 
 case ACW_COLOR4I:
  i += sizeof(glCommand);
- GLint* a36 = (GLint*) &unbuffer[i];
+ GLint* a46 = (GLint*) &buffer[i];
  i += sizeof(GLint)*4;
- glColor4iv( a36 );
+ glColor4iv( a46 );
  break;
 
 case ACW_COLOR4IV:
  i += sizeof(glCommand);
- GLint* a37 = (GLint*) &unbuffer[i];
+ GLint* a47 = (GLint*) &buffer[i];
  i += sizeof(GLint)*4;
- glColor4iv( a37 );
+ glColor4iv( a47 );
  break;
 
 case ACW_COLOR4S:
  i += sizeof(glCommand);
- GLshort* a38 = (GLshort*) &unbuffer[i];
+ GLshort* a48 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*4;
- glColor4sv( a38 );
+ glColor4sv( a48 );
  break;
 
 case ACW_COLOR4SV:
  i += sizeof(glCommand);
- GLshort* a39 = (GLshort*) &unbuffer[i];
+ GLshort* a49 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*4;
- glColor4sv( a39 );
+ glColor4sv( a49 );
  break;
 
 case ACW_COLOR4UB:
  i += sizeof(glCommand);
- GLubyte* a40 = (GLubyte*) &unbuffer[i];
+ GLubyte* a50 = (GLubyte*) &buffer[i];
  i += sizeof(GLubyte);
- GLubyte* b40 = (GLubyte*) &unbuffer[i];
+ GLubyte* b50 = (GLubyte*) &buffer[i];
  i += sizeof(GLubyte);
- GLubyte* c40 = (GLubyte*) &unbuffer[i];
+ GLubyte* c50 = (GLubyte*) &buffer[i];
  i += sizeof(GLubyte);
- GLubyte* d40 = (GLubyte*) &unbuffer[i];
+ GLubyte* d50 = (GLubyte*) &buffer[i];
  i += sizeof(GLubyte);
- glColor4ub( *a40, *b40, *c40, *d40 );
+ glColor4ub( *a50, *b50, *c50, *d50 );
  break;
 
 case ACW_COLOR4UBV:
  i += sizeof(glCommand);
- GLubyte** a41 = (GLubyte**) &unbuffer[i];
+ GLubyte** a51 = (GLubyte**) &buffer[i];
  i += sizeof(GLubyte*);
- glColor4ubv( *a41 );
+ glColor4ubv( *a51 );
  break;
 
 case ACW_COLOR4UI:
  i += sizeof(glCommand);
- GLuint* a42 = (GLuint*) &unbuffer[i];
+ GLuint* a52 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- GLuint* b42 = (GLuint*) &unbuffer[i];
+ GLuint* b52 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- GLuint* c42 = (GLuint*) &unbuffer[i];
+ GLuint* c52 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- GLuint* d42 = (GLuint*) &unbuffer[i];
+ GLuint* d52 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- glColor4ui( *a42, *b42, *c42, *d42 );
+ glColor4ui( *a52, *b52, *c52, *d52 );
  break;
 
 case ACW_COLOR4UIV:
  i += sizeof(glCommand);
- GLuint** a43 = (GLuint**) &unbuffer[i];
+ GLuint** a53 = (GLuint**) &buffer[i];
  i += sizeof(GLuint*);
- glColor4uiv( *a43 );
+ glColor4uiv( *a53 );
  break;
 
 case ACW_COLOR4US:
  i += sizeof(glCommand);
- GLushort* a44 = (GLushort*) &unbuffer[i];
+ GLushort* a54 = (GLushort*) &buffer[i];
  i += sizeof(GLushort);
- GLushort* b44 = (GLushort*) &unbuffer[i];
+ GLushort* b54 = (GLushort*) &buffer[i];
  i += sizeof(GLushort);
- GLushort* c44 = (GLushort*) &unbuffer[i];
+ GLushort* c54 = (GLushort*) &buffer[i];
  i += sizeof(GLushort);
- GLushort* d44 = (GLushort*) &unbuffer[i];
+ GLushort* d54 = (GLushort*) &buffer[i];
  i += sizeof(GLushort);
- glColor4us( *a44, *b44, *c44, *d44 );
+ glColor4us( *a54, *b54, *c54, *d54 );
  break;
 
 case ACW_COLOR4USV:
  i += sizeof(glCommand);
- GLushort** a45 = (GLushort**) &unbuffer[i];
+ GLushort** a55 = (GLushort**) &buffer[i];
  i += sizeof(GLushort*);
- glColor4usv( *a45 );
+ glColor4usv( *a55 );
  break;
 
 case ACW_COLORMASK:
  i += sizeof(glCommand);
- GLboolean* a46 = (GLboolean*) &unbuffer[i];
+ GLboolean* a56 = (GLboolean*) &buffer[i];
  i += sizeof(GLboolean);
- GLboolean* b46 = (GLboolean*) &unbuffer[i];
+ GLboolean* b56 = (GLboolean*) &buffer[i];
  i += sizeof(GLboolean);
- GLboolean* c46 = (GLboolean*) &unbuffer[i];
+ GLboolean* c56 = (GLboolean*) &buffer[i];
  i += sizeof(GLboolean);
- GLboolean* d46 = (GLboolean*) &unbuffer[i];
+ GLboolean* d56 = (GLboolean*) &buffer[i];
  i += sizeof(GLboolean);
- glColorMask( *a46, *b46, *c46, *d46 );
+ glColorMask( *a56, *b56, *c56, *d56 );
  break;
 
 case ACW_COLORMATERIAL:
  i += sizeof(glCommand);
- GLenum* a47 = (GLenum*) &unbuffer[i];
+ GLenum* a57 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b47 = (GLenum*) &unbuffer[i];
+ GLenum* b57 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glColorMaterial( *a47, *b47 );
+ glColorMaterial( *a57, *b57 );
+ break;
+
+case ACW_COLORPOINTER:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glColorPointer\n");
+ break;
+
+case ACW_COLORPOINTEREXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glColorPointerEXT\n");
+ break;
+
+case ACW_COLORSUBTABLE:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glColorSubTable\n");
+ break;
+
+case ACW_COLORTABLE:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glColorTable\n");
+ break;
+
+case ACW_COLORTABLEPARAMETERFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glColorTableParameterfv\n");
+ break;
+
+case ACW_COLORTABLEPARAMETERFVSGI:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glColorTableParameterfvSGI\n");
+ break;
+
+case ACW_COLORTABLEPARAMETERIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glColorTableParameteriv\n");
+ break;
+
+case ACW_COLORTABLEPARAMETERIVSGI:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glColorTableParameterivSGI\n");
+ break;
+
+case ACW_COLORTABLESGI:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glColorTableSGI\n");
+ break;
+
+case ACW_CONVOLUTIONFILTER1D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glConvolutionFilter1D\n");
+ break;
+
+case ACW_CONVOLUTIONFILTER1DEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glConvolutionFilter1DEXT\n");
+ break;
+
+case ACW_CONVOLUTIONFILTER2D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glConvolutionFilter2D\n");
+ break;
+
+case ACW_CONVOLUTIONFILTER2DEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glConvolutionFilter2DEXT\n");
+ break;
+
+case ACW_CONVOLUTIONPARAMETERF:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glConvolutionParameterf\n");
+ break;
+
+case ACW_CONVOLUTIONPARAMETERFEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glConvolutionParameterfEXT\n");
+ break;
+
+case ACW_CONVOLUTIONPARAMETERFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glConvolutionParameterfv\n");
+ break;
+
+case ACW_CONVOLUTIONPARAMETERFVEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glConvolutionParameterfvEXT\n");
+ break;
+
+case ACW_CONVOLUTIONPARAMETERI:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glConvolutionParameteri\n");
+ break;
+
+case ACW_CONVOLUTIONPARAMETERIEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glConvolutionParameteriEXT\n");
+ break;
+
+case ACW_CONVOLUTIONPARAMETERIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glConvolutionParameteriv\n");
+ break;
+
+case ACW_CONVOLUTIONPARAMETERIVEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glConvolutionParameterivEXT\n");
+ break;
+
+case ACW_COPYCOLORSUBTABLE:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCopyColorSubTable\n");
+ break;
+
+case ACW_COPYCOLORTABLE:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCopyColorTable\n");
+ break;
+
+case ACW_COPYCOLORTABLESGI:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCopyColorTableSGI\n");
+ break;
+
+case ACW_COPYCONVOLUTIONFILTER1D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCopyConvolutionFilter1D\n");
+ break;
+
+case ACW_COPYCONVOLUTIONFILTER1DEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCopyConvolutionFilter1DEXT\n");
+ break;
+
+case ACW_COPYCONVOLUTIONFILTER2D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCopyConvolutionFilter2D\n");
+ break;
+
+case ACW_COPYCONVOLUTIONFILTER2DEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCopyConvolutionFilter2DEXT\n");
  break;
 
 case ACW_COPYPIXELS:
  i += sizeof(glCommand);
- GLint* a48 = (GLint*) &unbuffer[i];
+ GLint* a86 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLint* b48 = (GLint*) &unbuffer[i];
+ GLint* b86 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLsizei* c48 = (GLsizei*) &unbuffer[i];
+ GLsizei* c86 = (GLsizei*) &buffer[i];
  i += sizeof(GLsizei);
- GLsizei* d48 = (GLsizei*) &unbuffer[i];
+ GLsizei* d86 = (GLsizei*) &buffer[i];
  i += sizeof(GLsizei);
- GLenum* e48 = (GLenum*) &unbuffer[i];
+ GLenum* e86 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glCopyPixels( *a48, *b48, *c48, *d48, *e48 );
+ glCopyPixels( *a86, *b86, *c86, *d86, *e86 );
+ break;
+
+case ACW_COPYTEXIMAGE1D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCopyTexImage1D\n");
+ break;
+
+case ACW_COPYTEXIMAGE1DEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCopyTexImage1DEXT\n");
+ break;
+
+case ACW_COPYTEXIMAGE2D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCopyTexImage2D\n");
+ break;
+
+case ACW_COPYTEXIMAGE2DEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCopyTexImage2DEXT\n");
+ break;
+
+case ACW_COPYTEXSUBIMAGE1D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCopyTexSubImage1D\n");
+ break;
+
+case ACW_COPYTEXSUBIMAGE1DEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCopyTexSubImage1DEXT\n");
+ break;
+
+case ACW_COPYTEXSUBIMAGE2D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCopyTexSubImage2D\n");
+ break;
+
+case ACW_COPYTEXSUBIMAGE2DEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCopyTexSubImage2DEXT\n");
+ break;
+
+case ACW_COPYTEXSUBIMAGE3D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCopyTexSubImage3D\n");
+ break;
+
+case ACW_COPYTEXSUBIMAGE3DEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glCopyTexSubImage3DEXT\n");
  break;
 
 case ACW_CULLFACE:
  i += sizeof(glCommand);
- GLenum* a49 = (GLenum*) &unbuffer[i];
+ GLenum* a97 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glCullFace( *a49 );
+ glCullFace( *a97 );
  break;
 
 case ACW_DEFORMSGIX:
  i += sizeof(glCommand);
- GLbitfield* a50 = (GLbitfield*) &unbuffer[i];
+ GLbitfield* a98 = (GLbitfield*) &buffer[i];
  i += sizeof(GLbitfield);
- glDeformSGIX( *a50 );
+ glDeformSGIX( *a98 );
+ break;
+
+case ACW_DEFORMATIONMAP3DSGIX:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glDeformationMap3dSGIX\n");
+ break;
+
+case ACW_DEFORMATIONMAP3FSGIX:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glDeformationMap3fSGIX\n");
  break;
 
 case ACW_DELETELISTS:
  i += sizeof(glCommand);
- GLuint* a51 = (GLuint*) &unbuffer[i];
+ GLuint* a101 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- GLsizei* b51 = (GLsizei*) &unbuffer[i];
+ GLsizei* b101 = (GLsizei*) &buffer[i];
  i += sizeof(GLsizei);
- glDeleteLists( *a51, *b51 );
+ glDeleteLists( *a101, *b101 );
+ break;
+
+case ACW_DELETETEXTURES:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glDeleteTextures\n");
+ break;
+
+case ACW_DELETETEXTURESEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glDeleteTexturesEXT\n");
  break;
 
 case ACW_DEPTHFUNC:
  i += sizeof(glCommand);
- GLenum* a52 = (GLenum*) &unbuffer[i];
+ GLenum* a104 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glDepthFunc( *a52 );
+ glDepthFunc( *a104 );
  break;
 
 case ACW_DEPTHMASK:
  i += sizeof(glCommand);
- GLboolean* a53 = (GLboolean*) &unbuffer[i];
+ GLboolean* a105 = (GLboolean*) &buffer[i];
  i += sizeof(GLboolean);
- glDepthMask( *a53 );
+ glDepthMask( *a105 );
  break;
 
 case ACW_DEPTHRANGE:
  i += sizeof(glCommand);
- GLclampd* a54 = (GLclampd*) &unbuffer[i];
+ GLclampd* a106 = (GLclampd*) &buffer[i];
  i += sizeof(GLclampd);
- GLclampd* b54 = (GLclampd*) &unbuffer[i];
+ GLclampd* b106 = (GLclampd*) &buffer[i];
  i += sizeof(GLclampd);
- glDepthRange( *a54, *b54 );
+ glDepthRange( *a106, *b106 );
+ break;
+
+case ACW_DETAILTEXFUNCSGIS:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glDetailTexFuncSGIS\n");
  break;
 
 case ACW_DISABLE:
  i += sizeof(glCommand);
- GLenum* a55 = (GLenum*) &unbuffer[i];
+ GLenum* a108 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glDisable( *a55 );
+ glDisable( *a108 );
  break;
 
 case ACW_DISABLECLIENTSTATE:
  i += sizeof(glCommand);
- GLenum* a56 = (GLenum*) &unbuffer[i];
+ GLenum* a109 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glDisableClientState( *a56 );
+ glDisableClientState( *a109 );
  break;
 
 case ACW_DRAWARRAYS:
  i += sizeof(glCommand);
- GLenum* a57 = (GLenum*) &unbuffer[i];
+ GLenum* a110 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLint* b57 = (GLint*) &unbuffer[i];
+ GLint* b110 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLsizei* c57 = (GLsizei*) &unbuffer[i];
+ GLsizei* c110 = (GLsizei*) &buffer[i];
  i += sizeof(GLsizei);
- glDrawArrays( *a57, *b57, *c57 );
+ glDrawArrays( *a110, *b110, *c110 );
  break;
 
 case ACW_DRAWARRAYSEXT:
  i += sizeof(glCommand);
- GLenum* a58 = (GLenum*) &unbuffer[i];
+ GLenum* a111 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLint* b58 = (GLint*) &unbuffer[i];
+ GLint* b111 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLsizei* c58 = (GLsizei*) &unbuffer[i];
+ GLsizei* c111 = (GLsizei*) &buffer[i];
  i += sizeof(GLsizei);
- glDrawArraysEXT( *a58, *b58, *c58 );
+ glDrawArraysEXT( *a111, *b111, *c111 );
  break;
 
 case ACW_DRAWBUFFER:
  i += sizeof(glCommand);
- GLenum* a59 = (GLenum*) &unbuffer[i];
+ GLenum* a112 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glDrawBuffer( *a59 );
+ glDrawBuffer( *a112 );
+ break;
+
+case ACW_DRAWELEMENTS:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glDrawElements\n");
+ break;
+
+case ACW_DRAWPIXELS:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glDrawPixels\n");
+ break;
+
+case ACW_DRAWRANGEELEMENTS:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glDrawRangeElements\n");
  break;
 
 case ACW_EDGEFLAG:
  i += sizeof(glCommand);
- GLboolean* a60 = (GLboolean*) &unbuffer[i];
+ GLboolean* a116 = (GLboolean*) &buffer[i];
  i += sizeof(GLboolean);
- glEdgeFlag( *a60 );
+ glEdgeFlag( *a116 );
+ break;
+
+case ACW_EDGEFLAGPOINTER:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glEdgeFlagPointer\n");
+ break;
+
+case ACW_EDGEFLAGPOINTEREXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glEdgeFlagPointerEXT\n");
+ break;
+
+case ACW_EDGEFLAGV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glEdgeFlagv\n");
  break;
 
 case ACW_ENABLE:
  i += sizeof(glCommand);
- GLenum* a61 = (GLenum*) &unbuffer[i];
+ GLenum* a120 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glEnable( *a61 );
+ glEnable( *a120 );
  break;
 
 case ACW_ENABLECLIENTSTATE:
  i += sizeof(glCommand);
- GLenum* a62 = (GLenum*) &unbuffer[i];
+ GLenum* a121 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glEnableClientState( *a62 );
+ glEnableClientState( *a121 );
  break;
 
 case ACW_END:
@@ -595,100 +877,110 @@ case ACW_ENDLIST:
 
 case ACW_EVALCOORD1D:
  i += sizeof(glCommand);
- GLdouble* a65 = (GLdouble*) &unbuffer[i];
+ GLdouble* a124 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*1;
- glEvalCoord1dv( a65 );
+ glEvalCoord1dv( a124 );
  break;
 
 case ACW_EVALCOORD1DV:
  i += sizeof(glCommand);
- GLdouble* a66 = (GLdouble*) &unbuffer[i];
+ GLdouble* a125 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*1;
- glEvalCoord1dv( a66 );
+ glEvalCoord1dv( a125 );
  break;
 
 case ACW_EVALCOORD1F:
  i += sizeof(glCommand);
- GLfloat* a67 = (GLfloat*) &unbuffer[i];
+ GLfloat* a126 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*1;
- glEvalCoord1fv( a67 );
+ glEvalCoord1fv( a126 );
  break;
 
 case ACW_EVALCOORD1FV:
  i += sizeof(glCommand);
- GLfloat* a68 = (GLfloat*) &unbuffer[i];
+ GLfloat* a127 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*1;
- glEvalCoord1fv( a68 );
+ glEvalCoord1fv( a127 );
  break;
 
 case ACW_EVALCOORD2D:
  i += sizeof(glCommand);
- GLdouble* a69 = (GLdouble*) &unbuffer[i];
+ GLdouble* a128 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*2;
- glEvalCoord2dv( a69 );
+ glEvalCoord2dv( a128 );
  break;
 
 case ACW_EVALCOORD2DV:
  i += sizeof(glCommand);
- GLdouble* a70 = (GLdouble*) &unbuffer[i];
+ GLdouble* a129 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*2;
- glEvalCoord2dv( a70 );
+ glEvalCoord2dv( a129 );
  break;
 
 case ACW_EVALCOORD2F:
  i += sizeof(glCommand);
- GLfloat* a71 = (GLfloat*) &unbuffer[i];
+ GLfloat* a130 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*2;
- glEvalCoord2fv( a71 );
+ glEvalCoord2fv( a130 );
  break;
 
 case ACW_EVALCOORD2FV:
  i += sizeof(glCommand);
- GLfloat* a72 = (GLfloat*) &unbuffer[i];
+ GLfloat* a131 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*2;
- glEvalCoord2fv( a72 );
+ glEvalCoord2fv( a131 );
  break;
 
 case ACW_EVALMESH1:
  i += sizeof(glCommand);
- GLenum* a73 = (GLenum*) &unbuffer[i];
+ GLenum* a132 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLint* b73 = (GLint*) &unbuffer[i];
+ GLint* b132 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLint* c73 = (GLint*) &unbuffer[i];
+ GLint* c132 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glEvalMesh1( *a73, *b73, *c73 );
+ glEvalMesh1( *a132, *b132, *c132 );
  break;
 
 case ACW_EVALMESH2:
  i += sizeof(glCommand);
- GLenum* a74 = (GLenum*) &unbuffer[i];
+ GLenum* a133 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLint* b74 = (GLint*) &unbuffer[i];
+ GLint* b133 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLint* c74 = (GLint*) &unbuffer[i];
+ GLint* c133 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLint* d74 = (GLint*) &unbuffer[i];
+ GLint* d133 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLint* e74 = (GLint*) &unbuffer[i];
+ GLint* e133 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glEvalMesh2( *a74, *b74, *c74, *d74, *e74 );
+ glEvalMesh2( *a133, *b133, *c133, *d133, *e133 );
  break;
 
 case ACW_EVALPOINT1:
  i += sizeof(glCommand);
- GLint* a75 = (GLint*) &unbuffer[i];
+ GLint* a134 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glEvalPoint1( *a75 );
+ glEvalPoint1( *a134 );
  break;
 
 case ACW_EVALPOINT2:
  i += sizeof(glCommand);
- GLint* a76 = (GLint*) &unbuffer[i];
+ GLint* a135 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLint* b76 = (GLint*) &unbuffer[i];
+ GLint* b135 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glEvalPoint2( *a76, *b76 );
+ glEvalPoint2( *a135, *b135 );
+ break;
+
+case ACW_FEEDBACKBUFFER:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glFeedbackBuffer\n");
+ break;
+
+case ACW_FINISH:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glFinish\n");
  break;
 
 case ACW_FLUSH:
@@ -701,69 +993,169 @@ case ACW_FLUSHRASTERSGIX:
  glFlushRasterSGIX( );
  break;
 
+case ACW_FOGFUNCSGIS:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glFogFuncSGIS\n");
+ break;
+
 case ACW_FOGF:
  i += sizeof(glCommand);
- GLenum* a79 = (GLenum*) &unbuffer[i];
+ GLenum* a141 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLfloat* b79 = (GLfloat*) &unbuffer[i];
+ GLfloat* b141 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glFogf( *a79, *b79 );
+ glFogf( *a141, *b141 );
+ break;
+
+case ACW_FOGFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glFogfv\n");
  break;
 
 case ACW_FOGI:
  i += sizeof(glCommand);
- GLenum* a80 = (GLenum*) &unbuffer[i];
+ GLenum* a143 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLint* b80 = (GLint*) &unbuffer[i];
+ GLint* b143 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glFogi( *a80, *b80 );
+ glFogi( *a143, *b143 );
+ break;
+
+case ACW_FOGIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glFogiv\n");
  break;
 
 case ACW_FRAMEZOOMSGIX:
  i += sizeof(glCommand);
- GLint* a81 = (GLint*) &unbuffer[i];
+ GLint* a145 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glFrameZoomSGIX( *a81 );
+ glFrameZoomSGIX( *a145 );
  break;
 
 case ACW_FRONTFACE:
  i += sizeof(glCommand);
- GLenum* a82 = (GLenum*) &unbuffer[i];
+ GLenum* a146 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glFrontFace( *a82 );
+ glFrontFace( *a146 );
  break;
 
 case ACW_FRUSTUM:
  i += sizeof(glCommand);
- GLdouble* a83 = (GLdouble*) &unbuffer[i];
+ GLdouble* a147 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- GLdouble* b83 = (GLdouble*) &unbuffer[i];
+ GLdouble* b147 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- GLdouble* c83 = (GLdouble*) &unbuffer[i];
+ GLdouble* c147 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- GLdouble* d83 = (GLdouble*) &unbuffer[i];
+ GLdouble* d147 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- GLdouble* e83 = (GLdouble*) &unbuffer[i];
+ GLdouble* e147 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- GLdouble* f83 = (GLdouble*) &unbuffer[i];
+ GLdouble* f147 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- glFrustum( *a83, *b83, *c83, *d83, *e83, *f83 );
+ glFrustum( *a147, *b147, *c147, *d147, *e147, *f147 );
  break;
 
 case ACW_GENLISTS:
  i += sizeof(glCommand);
- GLsizei* a84 = (GLsizei*) &unbuffer[i];
+ GLsizei* a148 = (GLsizei*) &buffer[i];
  i += sizeof(GLsizei);
- glGenLists( *a84 );
+ glGenLists( *a148 );
  break;
 
 case ACW_GENTEXTURES:
  i += sizeof(glCommand);
- GLsizei* a85 = (GLsizei*) &unbuffer[i];
+ GLsizei* a149 = (GLsizei*) &buffer[i];
  i += sizeof(GLsizei);
- GLuint** b85 = (GLuint**) &unbuffer[i];
+ GLuint** b149 = (GLuint**) &buffer[i];
  i += sizeof(GLuint*);
- glGenTextures( *a85, *b85 );
+ glGenTextures( *a149, *b149 );
+ break;
+
+case ACW_GENTEXTURESEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGenTexturesEXT\n");
+ break;
+
+case ACW_GETBOOLEANV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetBooleanv\n");
+ break;
+
+case ACW_GETCLIPPLANE:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetClipPlane\n");
+ break;
+
+case ACW_GETCOLORTABLE:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetColorTable\n");
+ break;
+
+case ACW_GETCOLORTABLEPARAMETERFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetColorTableParameterfv\n");
+ break;
+
+case ACW_GETCOLORTABLEPARAMETERFVSGI:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetColorTableParameterfvSGI\n");
+ break;
+
+case ACW_GETCOLORTABLEPARAMETERIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetColorTableParameteriv\n");
+ break;
+
+case ACW_GETCOLORTABLEPARAMETERIVSGI:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetColorTableParameterivSGI\n");
+ break;
+
+case ACW_GETCOLORTABLESGI:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetColorTableSGI\n");
+ break;
+
+case ACW_GETCONVOLUTIONFILTER:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetConvolutionFilter\n");
+ break;
+
+case ACW_GETCONVOLUTIONFILTEREXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetConvolutionFilterEXT\n");
+ break;
+
+case ACW_GETCONVOLUTIONPARAMETERFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetConvolutionParameterfv\n");
+ break;
+
+case ACW_GETCONVOLUTIONPARAMETERFVEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetConvolutionParameterfvEXT\n");
+ break;
+
+case ACW_GETCONVOLUTIONPARAMETERIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetConvolutionParameteriv\n");
+ break;
+
+case ACW_GETCONVOLUTIONPARAMETERIVEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetConvolutionParameterivEXT\n");
+ break;
+
+case ACW_GETDETAILTEXFUNCSGIS:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetDetailTexFuncSGIS\n");
+ break;
+
+case ACW_GETDOUBLEV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetDoublev\n");
  break;
 
 case ACW_GETERROR:
@@ -771,67 +1163,337 @@ case ACW_GETERROR:
  glGetError( );
  break;
 
+case ACW_GETFLOATV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetFloatv\n");
+ break;
+
+case ACW_GETHISTOGRAM:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetHistogram\n");
+ break;
+
+case ACW_GETHISTOGRAMEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetHistogramEXT\n");
+ break;
+
+case ACW_GETHISTOGRAMPARAMETERFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetHistogramParameterfv\n");
+ break;
+
+case ACW_GETHISTOGRAMPARAMETERFVEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetHistogramParameterfvEXT\n");
+ break;
+
+case ACW_GETHISTOGRAMPARAMETERIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetHistogramParameteriv\n");
+ break;
+
+case ACW_GETHISTOGRAMPARAMETERIVEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetHistogramParameterivEXT\n");
+ break;
+
+case ACW_GETINSTRUMENTSSGIX:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetInstrumentsSGIX\n");
+ break;
+
+case ACW_GETINTEGERV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetIntegerv\n");
+ break;
+
+case ACW_GETLIGHTFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetLightfv\n");
+ break;
+
+case ACW_GETLIGHTIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetLightiv\n");
+ break;
+
+case ACW_GETLISTPARAMETERFVSGIX:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetListParameterfvSGIX\n");
+ break;
+
+case ACW_GETLISTPARAMETERIVSGIX:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetListParameterivSGIX\n");
+ break;
+
+case ACW_GETMAPDV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetMapdv\n");
+ break;
+
+case ACW_GETMAPFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetMapfv\n");
+ break;
+
+case ACW_GETMAPIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetMapiv\n");
+ break;
+
+case ACW_GETMATERIALFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetMaterialfv\n");
+ break;
+
+case ACW_GETMATERIALIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetMaterialiv\n");
+ break;
+
+case ACW_GETMINMAX:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetMinmax\n");
+ break;
+
+case ACW_GETMINMAXEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetMinmaxEXT\n");
+ break;
+
+case ACW_GETMINMAXPARAMETERFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetMinmaxParameterfv\n");
+ break;
+
+case ACW_GETMINMAXPARAMETERFVEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetMinmaxParameterfvEXT\n");
+ break;
+
+case ACW_GETMINMAXPARAMETERIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetMinmaxParameteriv\n");
+ break;
+
+case ACW_GETMINMAXPARAMETERIVEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetMinmaxParameterivEXT\n");
+ break;
+
+case ACW_GETPIXELMAPFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetPixelMapfv\n");
+ break;
+
+case ACW_GETPIXELMAPUIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetPixelMapuiv\n");
+ break;
+
+case ACW_GETPIXELMAPUSV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetPixelMapusv\n");
+ break;
+
+case ACW_GETPOINTERV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetPointerv\n");
+ break;
+
+case ACW_GETPOINTERVEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetPointervEXT\n");
+ break;
+
+case ACW_GETPOLYGONSTIPPLE:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetPolygonStipple\n");
+ break;
+
+case ACW_GETSEPARABLEFILTER:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetSeparableFilter\n");
+ break;
+
+case ACW_GETSEPARABLEFILTEREXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetSeparableFilterEXT\n");
+ break;
+
+case ACW_GETSHARPENTEXFUNCSGIS:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetSharpenTexFuncSGIS\n");
+ break;
+
+case ACW_GETSTRING:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetString\n");
+ break;
+
+case ACW_GETTEXENVFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetTexEnvfv\n");
+ break;
+
+case ACW_GETTEXENVIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetTexEnviv\n");
+ break;
+
+case ACW_GETTEXFILTERFUNCSGIS:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetTexFilterFuncSGIS\n");
+ break;
+
+case ACW_GETTEXGENDV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetTexGendv\n");
+ break;
+
+case ACW_GETTEXGENFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetTexGenfv\n");
+ break;
+
+case ACW_GETTEXGENIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetTexGeniv\n");
+ break;
+
+case ACW_GETTEXIMAGE:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetTexImage\n");
+ break;
+
+case ACW_GETTEXLEVELPARAMETERFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetTexLevelParameterfv\n");
+ break;
+
+case ACW_GETTEXLEVELPARAMETERIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetTexLevelParameteriv\n");
+ break;
+
+case ACW_GETTEXPARAMETERFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetTexParameterfv\n");
+ break;
+
+case ACW_GETTEXPARAMETERIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glGetTexParameteriv\n");
+ break;
+
 case ACW_HINT:
  i += sizeof(glCommand);
- GLenum* a87 = (GLenum*) &unbuffer[i];
+ GLenum* a213 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b87 = (GLenum*) &unbuffer[i];
+ GLenum* b213 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glHint( *a87, *b87 );
+ glHint( *a213, *b213 );
  break;
 
 case ACW_HISTOGRAM:
  i += sizeof(glCommand);
- GLenum* a88 = (GLenum*) &unbuffer[i];
+ GLenum* a214 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLsizei* b88 = (GLsizei*) &unbuffer[i];
+ GLsizei* b214 = (GLsizei*) &buffer[i];
  i += sizeof(GLsizei);
- GLenum* c88 = (GLenum*) &unbuffer[i];
+ GLenum* c214 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLboolean* d88 = (GLboolean*) &unbuffer[i];
+ GLboolean* d214 = (GLboolean*) &buffer[i];
  i += sizeof(GLboolean);
- glHistogram( *a88, *b88, *c88, *d88 );
+ glHistogram( *a214, *b214, *c214, *d214 );
  break;
 
 case ACW_HISTOGRAMEXT:
  i += sizeof(glCommand);
- GLenum* a89 = (GLenum*) &unbuffer[i];
+ GLenum* a215 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLsizei* b89 = (GLsizei*) &unbuffer[i];
+ GLsizei* b215 = (GLsizei*) &buffer[i];
  i += sizeof(GLsizei);
- GLenum* c89 = (GLenum*) &unbuffer[i];
+ GLenum* c215 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLboolean* d89 = (GLboolean*) &unbuffer[i];
+ GLboolean* d215 = (GLboolean*) &buffer[i];
  i += sizeof(GLboolean);
- glHistogramEXT( *a89, *b89, *c89, *d89 );
+ glHistogramEXT( *a215, *b215, *c215, *d215 );
  break;
 
 case ACW_INDEXMASK:
  i += sizeof(glCommand);
- GLuint* a90 = (GLuint*) &unbuffer[i];
+ GLuint* a216 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- glIndexMask( *a90 );
+ glIndexMask( *a216 );
+ break;
+
+case ACW_INDEXPOINTER:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glIndexPointer\n");
+ break;
+
+case ACW_INDEXPOINTEREXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glIndexPointerEXT\n");
  break;
 
 case ACW_INDEXD:
  i += sizeof(glCommand);
- GLdouble* a91 = (GLdouble*) &unbuffer[i];
+ GLdouble* a219 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- glIndexd( *a91 );
+ glIndexd( *a219 );
+ break;
+
+case ACW_INDEXDV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glIndexdv\n");
  break;
 
 case ACW_INDEXF:
  i += sizeof(glCommand);
- GLfloat* a92 = (GLfloat*) &unbuffer[i];
+ GLfloat* a221 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glIndexf( *a92 );
+ glIndexf( *a221 );
+ break;
+
+case ACW_INDEXFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glIndexfv\n");
  break;
 
 case ACW_INDEXI:
  i += sizeof(glCommand);
- GLint* a93 = (GLint*) &unbuffer[i];
+ GLint* a223 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glIndexi( *a93 );
+ glIndexi( *a223 );
+ break;
+
+case ACW_INDEXIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glIndexiv\n");
+ break;
+
+case ACW_INDEXS:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glIndexs\n");
+ break;
+
+case ACW_INDEXSV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glIndexsv\n");
+ break;
+
+case ACW_INDEXUB:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glIndexub\n");
+ break;
+
+case ACW_INDEXUBV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glIndexubv\n");
  break;
 
 case ACW_INITNAMES:
@@ -839,117 +1501,157 @@ case ACW_INITNAMES:
  glInitNames( );
  break;
 
+case ACW_INSTRUMENTSBUFFERSGIX:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glInstrumentsBufferSGIX\n");
+ break;
+
+case ACW_INTERLEAVEDARRAYS:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glInterleavedArrays\n");
+ break;
+
 case ACW_ISENABLED:
  i += sizeof(glCommand);
- GLenum* a95 = (GLenum*) &unbuffer[i];
+ GLenum* a232 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glIsEnabled( *a95 );
+ glIsEnabled( *a232 );
  break;
 
 case ACW_ISLIST:
  i += sizeof(glCommand);
- GLuint* a96 = (GLuint*) &unbuffer[i];
+ GLuint* a233 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- glIsList( *a96 );
+ glIsList( *a233 );
  break;
 
 case ACW_ISTEXTURE:
  i += sizeof(glCommand);
- GLuint* a97 = (GLuint*) &unbuffer[i];
+ GLuint* a234 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- glIsTexture( *a97 );
+ glIsTexture( *a234 );
  break;
 
 case ACW_ISTEXTUREEXT:
  i += sizeof(glCommand);
- GLuint* a98 = (GLuint*) &unbuffer[i];
+ GLuint* a235 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- glIsTextureEXT( *a98 );
+ glIsTextureEXT( *a235 );
  break;
 
 case ACW_LIGHTMODELF:
  i += sizeof(glCommand);
- GLenum* a99 = (GLenum*) &unbuffer[i];
+ GLenum* a236 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLfloat* b99 = (GLfloat*) &unbuffer[i];
+ GLfloat* b236 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glLightModelf( *a99, *b99 );
+ glLightModelf( *a236, *b236 );
+ break;
+
+case ACW_LIGHTMODELFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glLightModelfv\n");
  break;
 
 case ACW_LIGHTMODELI:
  i += sizeof(glCommand);
- GLenum* a100 = (GLenum*) &unbuffer[i];
+ GLenum* a238 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLint* b100 = (GLint*) &unbuffer[i];
+ GLint* b238 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glLightModeli( *a100, *b100 );
+ glLightModeli( *a238, *b238 );
+ break;
+
+case ACW_LIGHTMODELIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glLightModeliv\n");
  break;
 
 case ACW_LIGHTF:
  i += sizeof(glCommand);
- GLenum* a101 = (GLenum*) &unbuffer[i];
+ GLenum* a240 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b101 = (GLenum*) &unbuffer[i];
+ GLenum* b240 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLfloat* c101 = (GLfloat*) &unbuffer[i];
+ GLfloat* c240 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glLightf( *a101, *b101, *c101 );
+ glLightf( *a240, *b240, *c240 );
+ break;
+
+case ACW_LIGHTFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glLightfv\n");
  break;
 
 case ACW_LIGHTI:
  i += sizeof(glCommand);
- GLenum* a102 = (GLenum*) &unbuffer[i];
+ GLenum* a242 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b102 = (GLenum*) &unbuffer[i];
+ GLenum* b242 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLint* c102 = (GLint*) &unbuffer[i];
+ GLint* c242 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glLighti( *a102, *b102, *c102 );
+ glLighti( *a242, *b242, *c242 );
+ break;
+
+case ACW_LIGHTIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glLightiv\n");
  break;
 
 case ACW_LINESTIPPLE:
  i += sizeof(glCommand);
- GLint* a103 = (GLint*) &unbuffer[i];
+ GLint* a244 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLushort* b103 = (GLushort*) &unbuffer[i];
+ GLushort* b244 = (GLushort*) &buffer[i];
  i += sizeof(GLushort);
- glLineStipple( *a103, *b103 );
+ glLineStipple( *a244, *b244 );
  break;
 
 case ACW_LINEWIDTH:
  i += sizeof(glCommand);
- GLfloat* a104 = (GLfloat*) &unbuffer[i];
+ GLfloat* a245 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glLineWidth( *a104 );
+ glLineWidth( *a245 );
  break;
 
 case ACW_LISTBASE:
  i += sizeof(glCommand);
- GLuint* a105 = (GLuint*) &unbuffer[i];
+ GLuint* a246 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- glListBase( *a105 );
+ glListBase( *a246 );
  break;
 
 case ACW_LISTPARAMETERFSGIX:
  i += sizeof(glCommand);
- GLuint* a106 = (GLuint*) &unbuffer[i];
+ GLuint* a247 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- GLenum* b106 = (GLenum*) &unbuffer[i];
+ GLenum* b247 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLfloat* c106 = (GLfloat*) &unbuffer[i];
+ GLfloat* c247 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glListParameterfSGIX( *a106, *b106, *c106 );
+ glListParameterfSGIX( *a247, *b247, *c247 );
+ break;
+
+case ACW_LISTPARAMETERFVSGIX:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glListParameterfvSGIX\n");
  break;
 
 case ACW_LISTPARAMETERISGIX:
  i += sizeof(glCommand);
- GLuint* a107 = (GLuint*) &unbuffer[i];
+ GLuint* a249 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- GLenum* b107 = (GLenum*) &unbuffer[i];
+ GLenum* b249 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLint* c107 = (GLint*) &unbuffer[i];
+ GLint* c249 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glListParameteriSGIX( *a107, *b107, *c107 );
+ glListParameteriSGIX( *a249, *b249, *c249 );
+ break;
+
+case ACW_LISTPARAMETERIVSGIX:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glListParameterivSGIX\n");
  break;
 
 case ACW_LOADIDENTITY:
@@ -959,272 +1661,382 @@ case ACW_LOADIDENTITY:
 
 case ACW_LOADIDENTITYDEFORMATIONMAPSGIX:
  i += sizeof(glCommand);
- GLbitfield* a109 = (GLbitfield*) &unbuffer[i];
+ GLbitfield* a252 = (GLbitfield*) &buffer[i];
  i += sizeof(GLbitfield);
- glLoadIdentityDeformationMapSGIX( *a109 );
+ glLoadIdentityDeformationMapSGIX( *a252 );
+ break;
+
+case ACW_LOADMATRIXD:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glLoadMatrixd\n");
+ break;
+
+case ACW_LOADMATRIXF:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glLoadMatrixf\n");
  break;
 
 case ACW_LOADNAME:
  i += sizeof(glCommand);
- GLuint* a110 = (GLuint*) &unbuffer[i];
+ GLuint* a255 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- glLoadName( *a110 );
+ glLoadName( *a255 );
  break;
 
 case ACW_LOGICOP:
  i += sizeof(glCommand);
- GLenum* a111 = (GLenum*) &unbuffer[i];
+ GLenum* a256 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glLogicOp( *a111 );
+ glLogicOp( *a256 );
+ break;
+
+case ACW_MAP1D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glMap1d\n");
+ break;
+
+case ACW_MAP1F:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glMap1f\n");
+ break;
+
+case ACW_MAP2D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glMap2d\n");
+ break;
+
+case ACW_MAP2F:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glMap2f\n");
+ break;
+
+case ACW_MAPGRID1D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glMapGrid1d\n");
+ break;
+
+case ACW_MAPGRID1F:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glMapGrid1f\n");
+ break;
+
+case ACW_MAPGRID2D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glMapGrid2d\n");
+ break;
+
+case ACW_MAPGRID2F:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glMapGrid2f\n");
  break;
 
 case ACW_MATERIALF:
  i += sizeof(glCommand);
- GLenum* a112 = (GLenum*) &unbuffer[i];
+ GLenum* a265 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b112 = (GLenum*) &unbuffer[i];
+ GLenum* b265 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLfloat* c112 = (GLfloat*) &unbuffer[i];
+ GLfloat* c265 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glMaterialf( *a112, *b112, *c112 );
+ glMaterialf( *a265, *b265, *c265 );
+ break;
+
+case ACW_MATERIALFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glMaterialfv\n");
  break;
 
 case ACW_MATERIALI:
  i += sizeof(glCommand);
- GLenum* a113 = (GLenum*) &unbuffer[i];
+ GLenum* a267 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b113 = (GLenum*) &unbuffer[i];
+ GLenum* b267 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLint* c113 = (GLint*) &unbuffer[i];
+ GLint* c267 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glMateriali( *a113, *b113, *c113 );
+ glMateriali( *a267, *b267, *c267 );
+ break;
+
+case ACW_MATERIALIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glMaterialiv\n");
  break;
 
 case ACW_MATRIXMODE:
  i += sizeof(glCommand);
- GLenum* a114 = (GLenum*) &unbuffer[i];
+ GLenum* a269 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glMatrixMode( *a114 );
+ glMatrixMode( *a269 );
  break;
 
 case ACW_MINMAX:
  i += sizeof(glCommand);
- GLenum* a115 = (GLenum*) &unbuffer[i];
+ GLenum* a270 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b115 = (GLenum*) &unbuffer[i];
+ GLenum* b270 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLboolean* c115 = (GLboolean*) &unbuffer[i];
+ GLboolean* c270 = (GLboolean*) &buffer[i];
  i += sizeof(GLboolean);
- glMinmax( *a115, *b115, *c115 );
+ glMinmax( *a270, *b270, *c270 );
  break;
 
 case ACW_MINMAXEXT:
  i += sizeof(glCommand);
- GLenum* a116 = (GLenum*) &unbuffer[i];
+ GLenum* a271 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b116 = (GLenum*) &unbuffer[i];
+ GLenum* b271 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLboolean* c116 = (GLboolean*) &unbuffer[i];
+ GLboolean* c271 = (GLboolean*) &buffer[i];
  i += sizeof(GLboolean);
- glMinmaxEXT( *a116, *b116, *c116 );
+ glMinmaxEXT( *a271, *b271, *c271 );
+ break;
+
+case ACW_MULTMATRIXD:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glMultMatrixd\n");
+ break;
+
+case ACW_MULTMATRIXF:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glMultMatrixf\n");
  break;
 
 case ACW_NEWLIST:
  i += sizeof(glCommand);
- GLuint* a117 = (GLuint*) &unbuffer[i];
+ GLuint* a274 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- GLenum* b117 = (GLenum*) &unbuffer[i];
+ GLenum* b274 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glNewList( *a117, *b117 );
+ glNewList( *a274, *b274 );
  break;
 
 case ACW_NORMAL3B:
  i += sizeof(glCommand);
- GLbyte* a118 = (GLbyte*) &unbuffer[i];
+ GLbyte* a275 = (GLbyte*) &buffer[i];
  i += sizeof(GLbyte)*3;
- glNormal3bv( a118 );
+ glNormal3bv( a275 );
  break;
 
 case ACW_NORMAL3BV:
  i += sizeof(glCommand);
- GLbyte* a119 = (GLbyte*) &unbuffer[i];
+ GLbyte* a276 = (GLbyte*) &buffer[i];
  i += sizeof(GLbyte)*3;
- glNormal3bv( a119 );
+ glNormal3bv( a276 );
  break;
 
 case ACW_NORMAL3D:
  i += sizeof(glCommand);
- GLdouble* a120 = (GLdouble*) &unbuffer[i];
+ GLdouble* a277 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*3;
- glNormal3dv( a120 );
+ glNormal3dv( a277 );
  break;
 
 case ACW_NORMAL3DV:
  i += sizeof(glCommand);
- GLdouble* a121 = (GLdouble*) &unbuffer[i];
+ GLdouble* a278 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*3;
- glNormal3dv( a121 );
+ glNormal3dv( a278 );
  break;
 
 case ACW_NORMAL3F:
  i += sizeof(glCommand);
- GLfloat* a122 = (GLfloat*) &unbuffer[i];
+ GLfloat* a279 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*3;
- glNormal3fv( a122 );
+ glNormal3fv( a279 );
  break;
 
 case ACW_NORMAL3FV:
  i += sizeof(glCommand);
- GLfloat* a123 = (GLfloat*) &unbuffer[i];
+ GLfloat* a280 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*3;
- glNormal3fv( a123 );
+ glNormal3fv( a280 );
  break;
 
 case ACW_NORMAL3I:
  i += sizeof(glCommand);
- GLint* a124 = (GLint*) &unbuffer[i];
+ GLint* a281 = (GLint*) &buffer[i];
  i += sizeof(GLint)*3;
- glNormal3iv( a124 );
+ glNormal3iv( a281 );
  break;
 
 case ACW_NORMAL3IV:
  i += sizeof(glCommand);
- GLint* a125 = (GLint*) &unbuffer[i];
+ GLint* a282 = (GLint*) &buffer[i];
  i += sizeof(GLint)*3;
- glNormal3iv( a125 );
+ glNormal3iv( a282 );
  break;
 
 case ACW_NORMAL3S:
  i += sizeof(glCommand);
- GLshort* a126 = (GLshort*) &unbuffer[i];
+ GLshort* a283 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*3;
- glNormal3sv( a126 );
+ glNormal3sv( a283 );
  break;
 
 case ACW_NORMAL3SV:
  i += sizeof(glCommand);
- GLshort* a127 = (GLshort*) &unbuffer[i];
+ GLshort* a284 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*3;
- glNormal3sv( a127 );
+ glNormal3sv( a284 );
+ break;
+
+case ACW_NORMALPOINTER:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glNormalPointer\n");
+ break;
+
+case ACW_NORMALPOINTEREXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glNormalPointerEXT\n");
  break;
 
 case ACW_ORTHO:
  i += sizeof(glCommand);
- GLdouble* a128 = (GLdouble*) &unbuffer[i];
+ GLdouble* a287 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- GLdouble* b128 = (GLdouble*) &unbuffer[i];
+ GLdouble* b287 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- GLdouble* c128 = (GLdouble*) &unbuffer[i];
+ GLdouble* c287 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- GLdouble* d128 = (GLdouble*) &unbuffer[i];
+ GLdouble* d287 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- GLdouble* e128 = (GLdouble*) &unbuffer[i];
+ GLdouble* e287 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- GLdouble* f128 = (GLdouble*) &unbuffer[i];
+ GLdouble* f287 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- glOrtho( *a128, *b128, *c128, *d128, *e128, *f128 );
+ glOrtho( *a287, *b287, *c287, *d287, *e287, *f287 );
  break;
 
 case ACW_PASSTHROUGH:
  i += sizeof(glCommand);
- GLfloat* a129 = (GLfloat*) &unbuffer[i];
+ GLfloat* a288 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glPassThrough( *a129 );
+ glPassThrough( *a288 );
+ break;
+
+case ACW_PIXELMAPFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glPixelMapfv\n");
+ break;
+
+case ACW_PIXELMAPUIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glPixelMapuiv\n");
+ break;
+
+case ACW_PIXELMAPUSV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glPixelMapusv\n");
  break;
 
 case ACW_PIXELSTOREF:
  i += sizeof(glCommand);
- GLenum* a130 = (GLenum*) &unbuffer[i];
+ GLenum* a292 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLfloat* b130 = (GLfloat*) &unbuffer[i];
+ GLfloat* b292 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glPixelStoref( *a130, *b130 );
+ glPixelStoref( *a292, *b292 );
  break;
 
 case ACW_PIXELSTOREI:
  i += sizeof(glCommand);
- GLenum* a131 = (GLenum*) &unbuffer[i];
+ GLenum* a293 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLint* b131 = (GLint*) &unbuffer[i];
+ GLint* b293 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glPixelStorei( *a131, *b131 );
+ glPixelStorei( *a293, *b293 );
  break;
 
 case ACW_PIXELTEXGENSGIX:
  i += sizeof(glCommand);
- GLenum* a132 = (GLenum*) &unbuffer[i];
+ GLenum* a294 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glPixelTexGenSGIX( *a132 );
+ glPixelTexGenSGIX( *a294 );
  break;
 
 case ACW_PIXELTRANSFERF:
  i += sizeof(glCommand);
- GLenum* a133 = (GLenum*) &unbuffer[i];
+ GLenum* a295 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLfloat* b133 = (GLfloat*) &unbuffer[i];
+ GLfloat* b295 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glPixelTransferf( *a133, *b133 );
+ glPixelTransferf( *a295, *b295 );
  break;
 
 case ACW_PIXELTRANSFERI:
  i += sizeof(glCommand);
- GLenum* a134 = (GLenum*) &unbuffer[i];
+ GLenum* a296 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLint* b134 = (GLint*) &unbuffer[i];
+ GLint* b296 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glPixelTransferi( *a134, *b134 );
+ glPixelTransferi( *a296, *b296 );
  break;
 
 case ACW_PIXELZOOM:
  i += sizeof(glCommand);
- GLfloat* a135 = (GLfloat*) &unbuffer[i];
+ GLfloat* a297 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- GLfloat* b135 = (GLfloat*) &unbuffer[i];
+ GLfloat* b297 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glPixelZoom( *a135, *b135 );
+ glPixelZoom( *a297, *b297 );
  break;
 
 case ACW_POINTPARAMETERFSGIS:
  i += sizeof(glCommand);
- GLenum* a136 = (GLenum*) &unbuffer[i];
+ GLenum* a298 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLfloat* b136 = (GLfloat*) &unbuffer[i];
+ GLfloat* b298 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glPointParameterfSGIS( *a136, *b136 );
+ glPointParameterfSGIS( *a298, *b298 );
+ break;
+
+case ACW_POINTPARAMETERFVSGIS:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glPointParameterfvSGIS\n");
  break;
 
 case ACW_POINTSIZE:
  i += sizeof(glCommand);
- GLfloat* a137 = (GLfloat*) &unbuffer[i];
+ GLfloat* a300 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glPointSize( *a137 );
+ glPointSize( *a300 );
+ break;
+
+case ACW_POLLINSTRUMENTSSGIX:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glPollInstrumentsSGIX\n");
  break;
 
 case ACW_POLYGONMODE:
  i += sizeof(glCommand);
- GLenum* a138 = (GLenum*) &unbuffer[i];
+ GLenum* a302 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b138 = (GLenum*) &unbuffer[i];
+ GLenum* b302 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glPolygonMode( *a138, *b138 );
+ glPolygonMode( *a302, *b302 );
  break;
 
 case ACW_POLYGONOFFSET:
  i += sizeof(glCommand);
- GLfloat* a139 = (GLfloat*) &unbuffer[i];
+ GLfloat* a303 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- GLfloat* b139 = (GLfloat*) &unbuffer[i];
+ GLfloat* b303 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glPolygonOffset( *a139, *b139 );
+ glPolygonOffset( *a303, *b303 );
  break;
 
 case ACW_POLYGONOFFSETEXT:
  i += sizeof(glCommand);
- GLfloat* a140 = (GLfloat*) &unbuffer[i];
+ GLfloat* a304 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- GLfloat* b140 = (GLfloat*) &unbuffer[i];
+ GLfloat* b304 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glPolygonOffsetEXT( *a140, *b140 );
+ glPolygonOffsetEXT( *a304, *b304 );
+ break;
+
+case ACW_POLYGONSTIPPLE:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glPolygonStipple\n");
  break;
 
 case ACW_POPATTRIB:
@@ -1247,18 +2059,28 @@ case ACW_POPNAME:
  glPopName( );
  break;
 
+case ACW_PRIORITIZETEXTURES:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glPrioritizeTextures\n");
+ break;
+
+case ACW_PRIORITIZETEXTURESEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glPrioritizeTexturesEXT\n");
+ break;
+
 case ACW_PUSHATTRIB:
  i += sizeof(glCommand);
- GLbitfield* a145 = (GLbitfield*) &unbuffer[i];
+ GLbitfield* a312 = (GLbitfield*) &buffer[i];
  i += sizeof(GLbitfield);
- glPushAttrib( *a145 );
+ glPushAttrib( *a312 );
  break;
 
 case ACW_PUSHCLIENTATTRIB:
  i += sizeof(glCommand);
- GLbitfield* a146 = (GLbitfield*) &unbuffer[i];
+ GLbitfield* a313 = (GLbitfield*) &buffer[i];
  i += sizeof(GLbitfield);
- glPushClientAttrib( *a146 );
+ glPushClientAttrib( *a313 );
  break;
 
 case ACW_PUSHMATRIX:
@@ -1268,321 +2090,416 @@ case ACW_PUSHMATRIX:
 
 case ACW_PUSHNAME:
  i += sizeof(glCommand);
- GLuint* a148 = (GLuint*) &unbuffer[i];
+ GLuint* a315 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- glPushName( *a148 );
+ glPushName( *a315 );
  break;
 
 case ACW_RASTERPOS2D:
  i += sizeof(glCommand);
- GLdouble* a149 = (GLdouble*) &unbuffer[i];
+ GLdouble* a316 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*2;
- glRasterPos2dv( a149 );
+ glRasterPos2dv( a316 );
  break;
 
 case ACW_RASTERPOS2DV:
  i += sizeof(glCommand);
- GLdouble* a150 = (GLdouble*) &unbuffer[i];
+ GLdouble* a317 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*2;
- glRasterPos2dv( a150 );
+ glRasterPos2dv( a317 );
  break;
 
 case ACW_RASTERPOS2F:
  i += sizeof(glCommand);
- GLfloat* a151 = (GLfloat*) &unbuffer[i];
+ GLfloat* a318 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*2;
- glRasterPos2fv( a151 );
+ glRasterPos2fv( a318 );
  break;
 
 case ACW_RASTERPOS2FV:
  i += sizeof(glCommand);
- GLfloat* a152 = (GLfloat*) &unbuffer[i];
+ GLfloat* a319 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*2;
- glRasterPos2fv( a152 );
+ glRasterPos2fv( a319 );
  break;
 
 case ACW_RASTERPOS2I:
  i += sizeof(glCommand);
- GLint* a153 = (GLint*) &unbuffer[i];
+ GLint* a320 = (GLint*) &buffer[i];
  i += sizeof(GLint)*2;
- glRasterPos2iv( a153 );
+ glRasterPos2iv( a320 );
  break;
 
 case ACW_RASTERPOS2IV:
  i += sizeof(glCommand);
- GLint* a154 = (GLint*) &unbuffer[i];
+ GLint* a321 = (GLint*) &buffer[i];
  i += sizeof(GLint)*2;
- glRasterPos2iv( a154 );
+ glRasterPos2iv( a321 );
  break;
 
 case ACW_RASTERPOS2S:
  i += sizeof(glCommand);
- GLshort* a155 = (GLshort*) &unbuffer[i];
+ GLshort* a322 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*2;
- glRasterPos2sv( a155 );
+ glRasterPos2sv( a322 );
  break;
 
 case ACW_RASTERPOS2SV:
  i += sizeof(glCommand);
- GLshort* a156 = (GLshort*) &unbuffer[i];
+ GLshort* a323 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*2;
- glRasterPos2sv( a156 );
+ glRasterPos2sv( a323 );
  break;
 
 case ACW_RASTERPOS3D:
  i += sizeof(glCommand);
- GLdouble* a157 = (GLdouble*) &unbuffer[i];
+ GLdouble* a324 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*3;
- glRasterPos3dv( a157 );
+ glRasterPos3dv( a324 );
  break;
 
 case ACW_RASTERPOS3DV:
  i += sizeof(glCommand);
- GLdouble* a158 = (GLdouble*) &unbuffer[i];
+ GLdouble* a325 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*3;
- glRasterPos3dv( a158 );
+ glRasterPos3dv( a325 );
  break;
 
 case ACW_RASTERPOS3F:
  i += sizeof(glCommand);
- GLfloat* a159 = (GLfloat*) &unbuffer[i];
+ GLfloat* a326 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*3;
- glRasterPos3fv( a159 );
+ glRasterPos3fv( a326 );
  break;
 
 case ACW_RASTERPOS3FV:
  i += sizeof(glCommand);
- GLfloat* a160 = (GLfloat*) &unbuffer[i];
+ GLfloat* a327 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*3;
- glRasterPos3fv( a160 );
+ glRasterPos3fv( a327 );
  break;
 
 case ACW_RASTERPOS3I:
  i += sizeof(glCommand);
- GLint* a161 = (GLint*) &unbuffer[i];
+ GLint* a328 = (GLint*) &buffer[i];
  i += sizeof(GLint)*3;
- glRasterPos3iv( a161 );
+ glRasterPos3iv( a328 );
  break;
 
 case ACW_RASTERPOS3IV:
  i += sizeof(glCommand);
- GLint* a162 = (GLint*) &unbuffer[i];
+ GLint* a329 = (GLint*) &buffer[i];
  i += sizeof(GLint)*3;
- glRasterPos3iv( a162 );
+ glRasterPos3iv( a329 );
  break;
 
 case ACW_RASTERPOS3S:
  i += sizeof(glCommand);
- GLshort* a163 = (GLshort*) &unbuffer[i];
+ GLshort* a330 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*3;
- glRasterPos3sv( a163 );
+ glRasterPos3sv( a330 );
  break;
 
 case ACW_RASTERPOS3SV:
  i += sizeof(glCommand);
- GLshort* a164 = (GLshort*) &unbuffer[i];
+ GLshort* a331 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*3;
- glRasterPos3sv( a164 );
+ glRasterPos3sv( a331 );
  break;
 
 case ACW_RASTERPOS4D:
  i += sizeof(glCommand);
- GLdouble* a165 = (GLdouble*) &unbuffer[i];
+ GLdouble* a332 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*4;
- glRasterPos4dv( a165 );
+ glRasterPos4dv( a332 );
  break;
 
 case ACW_RASTERPOS4DV:
  i += sizeof(glCommand);
- GLdouble* a166 = (GLdouble*) &unbuffer[i];
+ GLdouble* a333 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*4;
- glRasterPos4dv( a166 );
+ glRasterPos4dv( a333 );
  break;
 
 case ACW_RASTERPOS4F:
  i += sizeof(glCommand);
- GLfloat* a167 = (GLfloat*) &unbuffer[i];
+ GLfloat* a334 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*4;
- glRasterPos4fv( a167 );
+ glRasterPos4fv( a334 );
  break;
 
 case ACW_RASTERPOS4FV:
  i += sizeof(glCommand);
- GLfloat* a168 = (GLfloat*) &unbuffer[i];
+ GLfloat* a335 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*4;
- glRasterPos4fv( a168 );
+ glRasterPos4fv( a335 );
  break;
 
 case ACW_RASTERPOS4I:
  i += sizeof(glCommand);
- GLint* a169 = (GLint*) &unbuffer[i];
+ GLint* a336 = (GLint*) &buffer[i];
  i += sizeof(GLint)*4;
- glRasterPos4iv( a169 );
+ glRasterPos4iv( a336 );
  break;
 
 case ACW_RASTERPOS4IV:
  i += sizeof(glCommand);
- GLint* a170 = (GLint*) &unbuffer[i];
+ GLint* a337 = (GLint*) &buffer[i];
  i += sizeof(GLint)*4;
- glRasterPos4iv( a170 );
+ glRasterPos4iv( a337 );
  break;
 
 case ACW_RASTERPOS4S:
  i += sizeof(glCommand);
- GLshort* a171 = (GLshort*) &unbuffer[i];
+ GLshort* a338 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*4;
- glRasterPos4sv( a171 );
+ glRasterPos4sv( a338 );
  break;
 
 case ACW_RASTERPOS4SV:
  i += sizeof(glCommand);
- GLshort* a172 = (GLshort*) &unbuffer[i];
+ GLshort* a339 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*4;
- glRasterPos4sv( a172 );
+ glRasterPos4sv( a339 );
  break;
 
 case ACW_READBUFFER:
  i += sizeof(glCommand);
- GLenum* a173 = (GLenum*) &unbuffer[i];
+ GLenum* a340 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glReadBuffer( *a173 );
+ glReadBuffer( *a340 );
  break;
 
 case ACW_READINSTRUMENTSSGIX:
  i += sizeof(glCommand);
- GLint* a174 = (GLint*) &unbuffer[i];
+ GLint* a341 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glReadInstrumentsSGIX( *a174 );
+ glReadInstrumentsSGIX( *a341 );
+ break;
+
+case ACW_READPIXELS:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glReadPixels\n");
  break;
 
 case ACW_RECTD:
  i += sizeof(glCommand);
- GLdouble* a175 = (GLdouble*) &unbuffer[i];
+ GLdouble* a343 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- GLdouble* b175 = (GLdouble*) &unbuffer[i];
+ GLdouble* b343 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- GLdouble* c175 = (GLdouble*) &unbuffer[i];
+ GLdouble* c343 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- GLdouble* d175 = (GLdouble*) &unbuffer[i];
+ GLdouble* d343 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- glRectd( *a175, *b175, *c175, *d175 );
+ glRectd( *a343, *b343, *c343, *d343 );
+ break;
+
+case ACW_RECTDV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glRectdv\n");
  break;
 
 case ACW_RECTF:
  i += sizeof(glCommand);
- GLfloat* a176 = (GLfloat*) &unbuffer[i];
+ GLfloat* a345 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- GLfloat* b176 = (GLfloat*) &unbuffer[i];
+ GLfloat* b345 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- GLfloat* c176 = (GLfloat*) &unbuffer[i];
+ GLfloat* c345 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- GLfloat* d176 = (GLfloat*) &unbuffer[i];
+ GLfloat* d345 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glRectf( *a176, *b176, *c176, *d176 );
+ glRectf( *a345, *b345, *c345, *d345 );
+ break;
+
+case ACW_RECTFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glRectfv\n");
  break;
 
 case ACW_RECTI:
  i += sizeof(glCommand);
- GLint* a177 = (GLint*) &unbuffer[i];
+ GLint* a347 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLint* b177 = (GLint*) &unbuffer[i];
+ GLint* b347 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLint* c177 = (GLint*) &unbuffer[i];
+ GLint* c347 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLint* d177 = (GLint*) &unbuffer[i];
+ GLint* d347 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glRecti( *a177, *b177, *c177, *d177 );
+ glRecti( *a347, *b347, *c347, *d347 );
+ break;
+
+case ACW_RECTIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glRectiv\n");
  break;
 
 case ACW_RECTS:
  i += sizeof(glCommand);
- GLshort* a178 = (GLshort*) &unbuffer[i];
+ GLshort* a349 = (GLshort*) &buffer[i];
  i += sizeof(GLshort);
- GLshort* b178 = (GLshort*) &unbuffer[i];
+ GLshort* b349 = (GLshort*) &buffer[i];
  i += sizeof(GLshort);
- GLshort* c178 = (GLshort*) &unbuffer[i];
+ GLshort* c349 = (GLshort*) &buffer[i];
  i += sizeof(GLshort);
- GLshort* d178 = (GLshort*) &unbuffer[i];
+ GLshort* d349 = (GLshort*) &buffer[i];
  i += sizeof(GLshort);
- glRects( *a178, *b178, *c178, *d178 );
+ glRects( *a349, *b349, *c349, *d349 );
+ break;
+
+case ACW_RECTSV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glRectsv\n");
+ break;
+
+case ACW_REFERENCEPLANESGIX:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glReferencePlaneSGIX\n");
  break;
 
 case ACW_RENDERMODE:
  i += sizeof(glCommand);
- GLenum* a179 = (GLenum*) &unbuffer[i];
+ GLenum* a352 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glRenderMode( *a179 );
+ glRenderMode( *a352 );
+ break;
+
+case ACW_RESETHISTOGRAM:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glResetHistogram\n");
+ break;
+
+case ACW_RESETHISTOGRAMEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glResetHistogramEXT\n");
+ break;
+
+case ACW_RESETMINMAX:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glResetMinmax\n");
+ break;
+
+case ACW_RESETMINMAXEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glResetMinmaxEXT\n");
+ break;
+
+case ACW_ROTATED:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glRotated\n");
  break;
 
 case ACW_ROTATEF:
  i += sizeof(glCommand);
- GLfloat* a180 = (GLfloat*) &unbuffer[i];
+ GLfloat* a358 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- GLfloat* b180 = (GLfloat*) &unbuffer[i];
+ GLfloat* b358 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- GLfloat* c180 = (GLfloat*) &unbuffer[i];
+ GLfloat* c358 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- GLfloat* d180 = (GLfloat*) &unbuffer[i];
+ GLfloat* d358 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glRotatef( *a180, *b180, *c180, *d180 );
+ glRotatef( *a358, *b358, *c358, *d358 );
  break;
 
 case ACW_SAMPLEMASKSGIS:
  i += sizeof(glCommand);
- GLclampf* a181 = (GLclampf*) &unbuffer[i];
+ GLclampf* a359 = (GLclampf*) &buffer[i];
  i += sizeof(GLclampf);
- GLboolean* b181 = (GLboolean*) &unbuffer[i];
+ GLboolean* b359 = (GLboolean*) &buffer[i];
  i += sizeof(GLboolean);
- glSampleMaskSGIS( *a181, *b181 );
+ glSampleMaskSGIS( *a359, *b359 );
  break;
 
 case ACW_SAMPLEPATTERNSGIS:
  i += sizeof(glCommand);
- GLenum* a182 = (GLenum*) &unbuffer[i];
+ GLenum* a360 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glSamplePatternSGIS( *a182 );
+ glSamplePatternSGIS( *a360 );
  break;
 
 case ACW_SCALED:
  i += sizeof(glCommand);
- GLdouble* a183 = (GLdouble*) &unbuffer[i];
+ GLdouble* a361 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- GLdouble* b183 = (GLdouble*) &unbuffer[i];
+ GLdouble* b361 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- GLdouble* c183 = (GLdouble*) &unbuffer[i];
+ GLdouble* c361 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- glScaled( *a183, *b183, *c183 );
+ glScaled( *a361, *b361, *c361 );
  break;
 
 case ACW_SCALEF:
  i += sizeof(glCommand);
- GLfloat* a184 = (GLfloat*) &unbuffer[i];
+ GLfloat* a362 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- GLfloat* b184 = (GLfloat*) &unbuffer[i];
+ GLfloat* b362 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- GLfloat* c184 = (GLfloat*) &unbuffer[i];
+ GLfloat* c362 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glScalef( *a184, *b184, *c184 );
+ glScalef( *a362, *b362, *c362 );
  break;
 
 case ACW_SCISSOR:
  i += sizeof(glCommand);
- GLint* a185 = (GLint*) &unbuffer[i];
+ GLint* a363 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLint* b185 = (GLint*) &unbuffer[i];
+ GLint* b363 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLsizei* c185 = (GLsizei*) &unbuffer[i];
+ GLsizei* c363 = (GLsizei*) &buffer[i];
  i += sizeof(GLsizei);
- GLsizei* d185 = (GLsizei*) &unbuffer[i];
+ GLsizei* d363 = (GLsizei*) &buffer[i];
  i += sizeof(GLsizei);
- glScissor( *a185, *b185, *c185, *d185 );
+ glScissor( *a363, *b363, *c363, *d363 );
+ break;
+
+case ACW_SELECTBUFFER:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glSelectBuffer\n");
+ break;
+
+case ACW_SEPARABLEFILTER2D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glSeparableFilter2D\n");
+ break;
+
+case ACW_SEPARABLEFILTER2DEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glSeparableFilter2DEXT\n");
  break;
 
 case ACW_SHADEMODEL:
  i += sizeof(glCommand);
- GLenum* a186 = (GLenum*) &unbuffer[i];
+ GLenum* a367 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glShadeModel( *a186 );
+ glShadeModel( *a367 );
+ break;
+
+case ACW_SHARPENTEXFUNCSGIS:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glSharpenTexFuncSGIS\n");
+ break;
+
+case ACW_SPRITEPARAMETERFSGIX:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glSpriteParameterfSGIX\n");
+ break;
+
+case ACW_SPRITEPARAMETERFVSGIX:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glSpriteParameterfvSGIX\n");
+ break;
+
+case ACW_SPRITEPARAMETERISGIX:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glSpriteParameteriSGIX\n");
+ break;
+
+case ACW_SPRITEPARAMETERIVSGIX:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glSpriteParameterivSGIX\n");
  break;
 
 case ACW_STARTINSTRUMENTSSGIX:
@@ -1592,38 +2509,38 @@ case ACW_STARTINSTRUMENTSSGIX:
 
 case ACW_STENCILFUNC:
  i += sizeof(glCommand);
- GLenum* a188 = (GLenum*) &unbuffer[i];
+ GLenum* a374 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLint* b188 = (GLint*) &unbuffer[i];
+ GLint* b374 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLuint* c188 = (GLuint*) &unbuffer[i];
+ GLuint* c374 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- glStencilFunc( *a188, *b188, *c188 );
+ glStencilFunc( *a374, *b374, *c374 );
  break;
 
 case ACW_STENCILMASK:
  i += sizeof(glCommand);
- GLuint* a189 = (GLuint*) &unbuffer[i];
+ GLuint* a375 = (GLuint*) &buffer[i];
  i += sizeof(GLuint);
- glStencilMask( *a189 );
+ glStencilMask( *a375 );
  break;
 
 case ACW_STENCILOP:
  i += sizeof(glCommand);
- GLenum* a190 = (GLenum*) &unbuffer[i];
+ GLenum* a376 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b190 = (GLenum*) &unbuffer[i];
+ GLenum* b376 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* c190 = (GLenum*) &unbuffer[i];
+ GLenum* c376 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- glStencilOp( *a190, *b190, *c190 );
+ glStencilOp( *a376, *b376, *c376 );
  break;
 
 case ACW_STOPINSTRUMENTSSGIX:
  i += sizeof(glCommand);
- GLint* a191 = (GLint*) &unbuffer[i];
+ GLint* a377 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glStopInstrumentsSGIX( *a191 );
+ glStopInstrumentsSGIX( *a377 );
  break;
 
 case ACW_TAGSAMPLEBUFFERSGIX:
@@ -1633,506 +2550,626 @@ case ACW_TAGSAMPLEBUFFERSGIX:
 
 case ACW_TEXCOORD1D:
  i += sizeof(glCommand);
- GLdouble* a193 = (GLdouble*) &unbuffer[i];
+ GLdouble* a379 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*1;
- glTexCoord1dv( a193 );
+ glTexCoord1dv( a379 );
  break;
 
 case ACW_TEXCOORD1DV:
  i += sizeof(glCommand);
- GLdouble* a194 = (GLdouble*) &unbuffer[i];
+ GLdouble* a380 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*1;
- glTexCoord1dv( a194 );
+ glTexCoord1dv( a380 );
  break;
 
 case ACW_TEXCOORD1F:
  i += sizeof(glCommand);
- GLfloat* a195 = (GLfloat*) &unbuffer[i];
+ GLfloat* a381 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*1;
- glTexCoord1fv( a195 );
+ glTexCoord1fv( a381 );
  break;
 
 case ACW_TEXCOORD1FV:
  i += sizeof(glCommand);
- GLfloat* a196 = (GLfloat*) &unbuffer[i];
+ GLfloat* a382 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*1;
- glTexCoord1fv( a196 );
+ glTexCoord1fv( a382 );
  break;
 
 case ACW_TEXCOORD1I:
  i += sizeof(glCommand);
- GLint* a197 = (GLint*) &unbuffer[i];
+ GLint* a383 = (GLint*) &buffer[i];
  i += sizeof(GLint)*1;
- glTexCoord1iv( a197 );
+ glTexCoord1iv( a383 );
  break;
 
 case ACW_TEXCOORD1IV:
  i += sizeof(glCommand);
- GLint* a198 = (GLint*) &unbuffer[i];
+ GLint* a384 = (GLint*) &buffer[i];
  i += sizeof(GLint)*1;
- glTexCoord1iv( a198 );
+ glTexCoord1iv( a384 );
  break;
 
 case ACW_TEXCOORD1S:
  i += sizeof(glCommand);
- GLshort* a199 = (GLshort*) &unbuffer[i];
+ GLshort* a385 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*1;
- glTexCoord1sv( a199 );
+ glTexCoord1sv( a385 );
  break;
 
 case ACW_TEXCOORD1SV:
  i += sizeof(glCommand);
- GLshort* a200 = (GLshort*) &unbuffer[i];
+ GLshort* a386 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*1;
- glTexCoord1sv( a200 );
+ glTexCoord1sv( a386 );
  break;
 
 case ACW_TEXCOORD2D:
  i += sizeof(glCommand);
- GLdouble* a201 = (GLdouble*) &unbuffer[i];
+ GLdouble* a387 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*2;
- glTexCoord2dv( a201 );
+ glTexCoord2dv( a387 );
  break;
 
 case ACW_TEXCOORD2DV:
  i += sizeof(glCommand);
- GLdouble* a202 = (GLdouble*) &unbuffer[i];
+ GLdouble* a388 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*2;
- glTexCoord2dv( a202 );
+ glTexCoord2dv( a388 );
  break;
 
 case ACW_TEXCOORD2F:
  i += sizeof(glCommand);
- GLfloat* a203 = (GLfloat*) &unbuffer[i];
+ GLfloat* a389 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*2;
- glTexCoord2fv( a203 );
+ glTexCoord2fv( a389 );
  break;
 
 case ACW_TEXCOORD2FV:
  i += sizeof(glCommand);
- GLfloat* a204 = (GLfloat*) &unbuffer[i];
+ GLfloat* a390 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*2;
- glTexCoord2fv( a204 );
+ glTexCoord2fv( a390 );
  break;
 
 case ACW_TEXCOORD2I:
  i += sizeof(glCommand);
- GLint* a205 = (GLint*) &unbuffer[i];
+ GLint* a391 = (GLint*) &buffer[i];
  i += sizeof(GLint)*2;
- glTexCoord2iv( a205 );
+ glTexCoord2iv( a391 );
  break;
 
 case ACW_TEXCOORD2IV:
  i += sizeof(glCommand);
- GLint* a206 = (GLint*) &unbuffer[i];
+ GLint* a392 = (GLint*) &buffer[i];
  i += sizeof(GLint)*2;
- glTexCoord2iv( a206 );
+ glTexCoord2iv( a392 );
  break;
 
 case ACW_TEXCOORD2S:
  i += sizeof(glCommand);
- GLshort* a207 = (GLshort*) &unbuffer[i];
+ GLshort* a393 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*2;
- glTexCoord2sv( a207 );
+ glTexCoord2sv( a393 );
  break;
 
 case ACW_TEXCOORD2SV:
  i += sizeof(glCommand);
- GLshort* a208 = (GLshort*) &unbuffer[i];
+ GLshort* a394 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*2;
- glTexCoord2sv( a208 );
+ glTexCoord2sv( a394 );
  break;
 
 case ACW_TEXCOORD3D:
  i += sizeof(glCommand);
- GLdouble* a209 = (GLdouble*) &unbuffer[i];
+ GLdouble* a395 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*3;
- glTexCoord3dv( a209 );
+ glTexCoord3dv( a395 );
  break;
 
 case ACW_TEXCOORD3DV:
  i += sizeof(glCommand);
- GLdouble* a210 = (GLdouble*) &unbuffer[i];
+ GLdouble* a396 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*3;
- glTexCoord3dv( a210 );
+ glTexCoord3dv( a396 );
  break;
 
 case ACW_TEXCOORD3F:
  i += sizeof(glCommand);
- GLfloat* a211 = (GLfloat*) &unbuffer[i];
+ GLfloat* a397 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*3;
- glTexCoord3fv( a211 );
+ glTexCoord3fv( a397 );
  break;
 
 case ACW_TEXCOORD3FV:
  i += sizeof(glCommand);
- GLfloat* a212 = (GLfloat*) &unbuffer[i];
+ GLfloat* a398 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*3;
- glTexCoord3fv( a212 );
+ glTexCoord3fv( a398 );
  break;
 
 case ACW_TEXCOORD3I:
  i += sizeof(glCommand);
- GLint* a213 = (GLint*) &unbuffer[i];
+ GLint* a399 = (GLint*) &buffer[i];
  i += sizeof(GLint)*3;
- glTexCoord3iv( a213 );
+ glTexCoord3iv( a399 );
  break;
 
 case ACW_TEXCOORD3IV:
  i += sizeof(glCommand);
- GLint* a214 = (GLint*) &unbuffer[i];
+ GLint* a400 = (GLint*) &buffer[i];
  i += sizeof(GLint)*3;
- glTexCoord3iv( a214 );
+ glTexCoord3iv( a400 );
  break;
 
 case ACW_TEXCOORD3S:
  i += sizeof(glCommand);
- GLshort* a215 = (GLshort*) &unbuffer[i];
+ GLshort* a401 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*3;
- glTexCoord3sv( a215 );
+ glTexCoord3sv( a401 );
  break;
 
 case ACW_TEXCOORD3SV:
  i += sizeof(glCommand);
- GLshort* a216 = (GLshort*) &unbuffer[i];
+ GLshort* a402 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*3;
- glTexCoord3sv( a216 );
+ glTexCoord3sv( a402 );
  break;
 
 case ACW_TEXCOORD4D:
  i += sizeof(glCommand);
- GLdouble* a217 = (GLdouble*) &unbuffer[i];
+ GLdouble* a403 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*4;
- glTexCoord4dv( a217 );
+ glTexCoord4dv( a403 );
  break;
 
 case ACW_TEXCOORD4DV:
  i += sizeof(glCommand);
- GLdouble* a218 = (GLdouble*) &unbuffer[i];
+ GLdouble* a404 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*4;
- glTexCoord4dv( a218 );
+ glTexCoord4dv( a404 );
  break;
 
 case ACW_TEXCOORD4F:
  i += sizeof(glCommand);
- GLfloat* a219 = (GLfloat*) &unbuffer[i];
+ GLfloat* a405 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*4;
- glTexCoord4fv( a219 );
+ glTexCoord4fv( a405 );
  break;
 
 case ACW_TEXCOORD4FV:
  i += sizeof(glCommand);
- GLfloat* a220 = (GLfloat*) &unbuffer[i];
+ GLfloat* a406 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*4;
- glTexCoord4fv( a220 );
+ glTexCoord4fv( a406 );
  break;
 
 case ACW_TEXCOORD4I:
  i += sizeof(glCommand);
- GLint* a221 = (GLint*) &unbuffer[i];
+ GLint* a407 = (GLint*) &buffer[i];
  i += sizeof(GLint)*4;
- glTexCoord4iv( a221 );
+ glTexCoord4iv( a407 );
  break;
 
 case ACW_TEXCOORD4IV:
  i += sizeof(glCommand);
- GLint* a222 = (GLint*) &unbuffer[i];
+ GLint* a408 = (GLint*) &buffer[i];
  i += sizeof(GLint)*4;
- glTexCoord4iv( a222 );
+ glTexCoord4iv( a408 );
  break;
 
 case ACW_TEXCOORD4S:
  i += sizeof(glCommand);
- GLshort* a223 = (GLshort*) &unbuffer[i];
+ GLshort* a409 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*4;
- glTexCoord4sv( a223 );
+ glTexCoord4sv( a409 );
  break;
 
 case ACW_TEXCOORD4SV:
  i += sizeof(glCommand);
- GLshort* a224 = (GLshort*) &unbuffer[i];
+ GLshort* a410 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*4;
- glTexCoord4sv( a224 );
+ glTexCoord4sv( a410 );
+ break;
+
+case ACW_TEXCOORDPOINTER:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexCoordPointer\n");
+ break;
+
+case ACW_TEXCOORDPOINTEREXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexCoordPointerEXT\n");
  break;
 
 case ACW_TEXENVF:
  i += sizeof(glCommand);
- GLenum* a225 = (GLenum*) &unbuffer[i];
+ GLenum* a413 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b225 = (GLenum*) &unbuffer[i];
+ GLenum* b413 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLfloat* c225 = (GLfloat*) &unbuffer[i];
+ GLfloat* c413 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glTexEnvf( *a225, *b225, *c225 );
+ glTexEnvf( *a413, *b413, *c413 );
+ break;
+
+case ACW_TEXENVFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexEnvfv\n");
  break;
 
 case ACW_TEXENVI:
  i += sizeof(glCommand);
- GLenum* a226 = (GLenum*) &unbuffer[i];
+ GLenum* a415 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b226 = (GLenum*) &unbuffer[i];
+ GLenum* b415 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLint* c226 = (GLint*) &unbuffer[i];
+ GLint* c415 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glTexEnvi( *a226, *b226, *c226 );
+ glTexEnvi( *a415, *b415, *c415 );
+ break;
+
+case ACW_TEXENVIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexEnviv\n");
+ break;
+
+case ACW_TEXFILTERFUNCSGIS:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexFilterFuncSGIS\n");
  break;
 
 case ACW_TEXGEND:
  i += sizeof(glCommand);
- GLenum* a227 = (GLenum*) &unbuffer[i];
+ GLenum* a418 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b227 = (GLenum*) &unbuffer[i];
+ GLenum* b418 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLdouble* c227 = (GLdouble*) &unbuffer[i];
+ GLdouble* c418 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- glTexGend( *a227, *b227, *c227 );
+ glTexGend( *a418, *b418, *c418 );
+ break;
+
+case ACW_TEXGENDV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexGendv\n");
  break;
 
 case ACW_TEXGENF:
  i += sizeof(glCommand);
- GLenum* a228 = (GLenum*) &unbuffer[i];
+ GLenum* a420 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b228 = (GLenum*) &unbuffer[i];
+ GLenum* b420 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLfloat* c228 = (GLfloat*) &unbuffer[i];
+ GLfloat* c420 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glTexGenf( *a228, *b228, *c228 );
+ glTexGenf( *a420, *b420, *c420 );
+ break;
+
+case ACW_TEXGENFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexGenfv\n");
  break;
 
 case ACW_TEXGENI:
  i += sizeof(glCommand);
- GLenum* a229 = (GLenum*) &unbuffer[i];
+ GLenum* a422 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b229 = (GLenum*) &unbuffer[i];
+ GLenum* b422 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLint* c229 = (GLint*) &unbuffer[i];
+ GLint* c422 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glTexGeni( *a229, *b229, *c229 );
+ glTexGeni( *a422, *b422, *c422 );
+ break;
+
+case ACW_TEXGENIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexGeniv\n");
+ break;
+
+case ACW_TEXIMAGE1D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexImage1D\n");
+ break;
+
+case ACW_TEXIMAGE2D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexImage2D\n");
+ break;
+
+case ACW_TEXIMAGE3D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexImage3D\n");
+ break;
+
+case ACW_TEXIMAGE3DEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexImage3DEXT\n");
+ break;
+
+case ACW_TEXIMAGE4DSGIS:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexImage4DSGIS\n");
  break;
 
 case ACW_TEXPARAMETERF:
  i += sizeof(glCommand);
- GLenum* a230 = (GLenum*) &unbuffer[i];
+ GLenum* a429 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b230 = (GLenum*) &unbuffer[i];
+ GLenum* b429 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLfloat* c230 = (GLfloat*) &unbuffer[i];
+ GLfloat* c429 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glTexParameterf( *a230, *b230, *c230 );
+ glTexParameterf( *a429, *b429, *c429 );
+ break;
+
+case ACW_TEXPARAMETERFV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexParameterfv\n");
  break;
 
 case ACW_TEXPARAMETERI:
  i += sizeof(glCommand);
- GLenum* a231 = (GLenum*) &unbuffer[i];
+ GLenum* a431 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLenum* b231 = (GLenum*) &unbuffer[i];
+ GLenum* b431 = (GLenum*) &buffer[i];
  i += sizeof(GLenum);
- GLint* c231 = (GLint*) &unbuffer[i];
+ GLint* c431 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- glTexParameteri( *a231, *b231, *c231 );
+ glTexParameteri( *a431, *b431, *c431 );
+ break;
+
+case ACW_TEXPARAMETERIV:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexParameteriv\n");
+ break;
+
+case ACW_TEXSUBIMAGE1D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexSubImage1D\n");
+ break;
+
+case ACW_TEXSUBIMAGE1DEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexSubImage1DEXT\n");
+ break;
+
+case ACW_TEXSUBIMAGE2D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexSubImage2D\n");
+ break;
+
+case ACW_TEXSUBIMAGE2DEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexSubImage2DEXT\n");
+ break;
+
+case ACW_TEXSUBIMAGE3D:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexSubImage3D\n");
+ break;
+
+case ACW_TEXSUBIMAGE3DEXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexSubImage3DEXT\n");
+ break;
+
+case ACW_TEXSUBIMAGE4DSGIS:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glTexSubImage4DSGIS\n");
  break;
 
 case ACW_TRANSLATED:
  i += sizeof(glCommand);
- GLdouble* a232 = (GLdouble*) &unbuffer[i];
+ GLdouble* a440 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- GLdouble* b232 = (GLdouble*) &unbuffer[i];
+ GLdouble* b440 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- GLdouble* c232 = (GLdouble*) &unbuffer[i];
+ GLdouble* c440 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble);
- glTranslated( *a232, *b232, *c232 );
+ glTranslated( *a440, *b440, *c440 );
  break;
 
 case ACW_TRANSLATEF:
  i += sizeof(glCommand);
- GLfloat* a233 = (GLfloat*) &unbuffer[i];
+ GLfloat* a441 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- GLfloat* b233 = (GLfloat*) &unbuffer[i];
+ GLfloat* b441 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- GLfloat* c233 = (GLfloat*) &unbuffer[i];
+ GLfloat* c441 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat);
- glTranslatef( *a233, *b233, *c233 );
+ glTranslatef( *a441, *b441, *c441 );
  break;
 
 case ACW_VERTEX2D:
  i += sizeof(glCommand);
- GLdouble* a234 = (GLdouble*) &unbuffer[i];
+ GLdouble* a442 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*2;
- glVertex2dv( a234 );
+ glVertex2dv( a442 );
  break;
 
 case ACW_VERTEX2DV:
  i += sizeof(glCommand);
- GLdouble* a235 = (GLdouble*) &unbuffer[i];
+ GLdouble* a443 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*2;
- glVertex2dv( a235 );
+ glVertex2dv( a443 );
  break;
 
 case ACW_VERTEX2F:
  i += sizeof(glCommand);
- GLfloat* a236 = (GLfloat*) &unbuffer[i];
+ GLfloat* a444 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*2;
- glVertex2fv( a236 );
+ glVertex2fv( a444 );
  break;
 
 case ACW_VERTEX2FV:
  i += sizeof(glCommand);
- GLfloat* a237 = (GLfloat*) &unbuffer[i];
+ GLfloat* a445 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*2;
- glVertex2fv( a237 );
+ glVertex2fv( a445 );
  break;
 
 case ACW_VERTEX2I:
  i += sizeof(glCommand);
- GLint* a238 = (GLint*) &unbuffer[i];
+ GLint* a446 = (GLint*) &buffer[i];
  i += sizeof(GLint)*2;
- glVertex2iv( a238 );
+ glVertex2iv( a446 );
  break;
 
 case ACW_VERTEX2IV:
  i += sizeof(glCommand);
- GLint* a239 = (GLint*) &unbuffer[i];
+ GLint* a447 = (GLint*) &buffer[i];
  i += sizeof(GLint)*2;
- glVertex2iv( a239 );
+ glVertex2iv( a447 );
  break;
 
 case ACW_VERTEX2S:
  i += sizeof(glCommand);
- GLshort* a240 = (GLshort*) &unbuffer[i];
+ GLshort* a448 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*2;
- glVertex2sv( a240 );
+ glVertex2sv( a448 );
  break;
 
 case ACW_VERTEX2SV:
  i += sizeof(glCommand);
- GLshort* a241 = (GLshort*) &unbuffer[i];
+ GLshort* a449 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*2;
- glVertex2sv( a241 );
+ glVertex2sv( a449 );
  break;
 
 case ACW_VERTEX3D:
  i += sizeof(glCommand);
- GLdouble* a242 = (GLdouble*) &unbuffer[i];
+ GLdouble* a450 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*3;
- glVertex3dv( a242 );
+ glVertex3dv( a450 );
  break;
 
 case ACW_VERTEX3DV:
  i += sizeof(glCommand);
- GLdouble* a243 = (GLdouble*) &unbuffer[i];
+ GLdouble* a451 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*3;
- glVertex3dv( a243 );
+ glVertex3dv( a451 );
  break;
 
 case ACW_VERTEX3F:
  i += sizeof(glCommand);
- GLfloat* a244 = (GLfloat*) &unbuffer[i];
+ GLfloat* a452 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*3;
- glVertex3fv( a244 );
+ glVertex3fv( a452 );
  break;
 
 case ACW_VERTEX3FV:
  i += sizeof(glCommand);
- GLfloat* a245 = (GLfloat*) &unbuffer[i];
+ GLfloat* a453 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*3;
- glVertex3fv( a245 );
+ glVertex3fv( a453 );
  break;
 
 case ACW_VERTEX3I:
  i += sizeof(glCommand);
- GLint* a246 = (GLint*) &unbuffer[i];
+ GLint* a454 = (GLint*) &buffer[i];
  i += sizeof(GLint)*3;
- glVertex3iv( a246 );
+ glVertex3iv( a454 );
  break;
 
 case ACW_VERTEX3IV:
  i += sizeof(glCommand);
- GLint* a247 = (GLint*) &unbuffer[i];
+ GLint* a455 = (GLint*) &buffer[i];
  i += sizeof(GLint)*3;
- glVertex3iv( a247 );
+ glVertex3iv( a455 );
  break;
 
 case ACW_VERTEX3S:
  i += sizeof(glCommand);
- GLshort* a248 = (GLshort*) &unbuffer[i];
+ GLshort* a456 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*3;
- glVertex3sv( a248 );
+ glVertex3sv( a456 );
  break;
 
 case ACW_VERTEX3SV:
  i += sizeof(glCommand);
- GLshort* a249 = (GLshort*) &unbuffer[i];
+ GLshort* a457 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*3;
- glVertex3sv( a249 );
+ glVertex3sv( a457 );
  break;
 
 case ACW_VERTEX4D:
  i += sizeof(glCommand);
- GLdouble* a250 = (GLdouble*) &unbuffer[i];
+ GLdouble* a458 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*4;
- glVertex4dv( a250 );
+ glVertex4dv( a458 );
  break;
 
 case ACW_VERTEX4DV:
  i += sizeof(glCommand);
- GLdouble* a251 = (GLdouble*) &unbuffer[i];
+ GLdouble* a459 = (GLdouble*) &buffer[i];
  i += sizeof(GLdouble)*4;
- glVertex4dv( a251 );
+ glVertex4dv( a459 );
  break;
 
 case ACW_VERTEX4F:
  i += sizeof(glCommand);
- GLfloat* a252 = (GLfloat*) &unbuffer[i];
+ GLfloat* a460 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*4;
- glVertex4fv( a252 );
+ glVertex4fv( a460 );
  break;
 
 case ACW_VERTEX4FV:
  i += sizeof(glCommand);
- GLfloat* a253 = (GLfloat*) &unbuffer[i];
+ GLfloat* a461 = (GLfloat*) &buffer[i];
  i += sizeof(GLfloat)*4;
- glVertex4fv( a253 );
+ glVertex4fv( a461 );
  break;
 
 case ACW_VERTEX4I:
  i += sizeof(glCommand);
- GLint* a254 = (GLint*) &unbuffer[i];
+ GLint* a462 = (GLint*) &buffer[i];
  i += sizeof(GLint)*4;
- glVertex4iv( a254 );
+ glVertex4iv( a462 );
  break;
 
 case ACW_VERTEX4IV:
  i += sizeof(glCommand);
- GLint* a255 = (GLint*) &unbuffer[i];
+ GLint* a463 = (GLint*) &buffer[i];
  i += sizeof(GLint)*4;
- glVertex4iv( a255 );
+ glVertex4iv( a463 );
  break;
 
 case ACW_VERTEX4S:
  i += sizeof(glCommand);
- GLshort* a256 = (GLshort*) &unbuffer[i];
+ GLshort* a464 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*4;
- glVertex4sv( a256 );
+ glVertex4sv( a464 );
  break;
 
 case ACW_VERTEX4SV:
  i += sizeof(glCommand);
- GLshort* a257 = (GLshort*) &unbuffer[i];
+ GLshort* a465 = (GLshort*) &buffer[i];
  i += sizeof(GLshort)*4;
- glVertex4sv( a257 );
+ glVertex4sv( a465 );
+ break;
+
+case ACW_VERTEXPOINTER:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glVertexPointer\n");
+ break;
+
+case ACW_VERTEXPOINTEREXT:
+ i += sizeof(glCommand);
+ printf("unwrapped gl: glVertexPointerEXT\n");
  break;
 
 case ACW_VIEWPORT:
  i += sizeof(glCommand);
- GLint* a258 = (GLint*) &unbuffer[i];
+ GLint* a468 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLint* b258 = (GLint*) &unbuffer[i];
+ GLint* b468 = (GLint*) &buffer[i];
  i += sizeof(GLint);
- GLsizei* c258 = (GLsizei*) &unbuffer[i];
+ GLsizei* c468 = (GLsizei*) &buffer[i];
  i += sizeof(GLsizei);
- GLsizei* d258 = (GLsizei*) &unbuffer[i];
+ GLsizei* d468 = (GLsizei*) &buffer[i];
  i += sizeof(GLsizei);
- glViewport( *a258, *b258, *c258, *d258 );
+ glViewport( *a468, *b468, *c468, *d468 );
  break;
 
 }
