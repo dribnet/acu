@@ -30,7 +30,7 @@ static float mazoAspect = 4.0/3.0;
 static float mazoEyeX = 320;
 static float mazoEyeY = 240;
 static GLubyte *mazoBuffer = NULL;
-static int mazoDoBuffer = 0;
+//static int mazoDoBuffer = 0;
 
 /* this is a glut callback, set by acuOpen() */
 void reshape(int width, int height) {

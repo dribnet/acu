@@ -25,6 +25,7 @@ acVectorFont::acVectorFont(const char* filename) {
   int currentPoint = 0;
   float bigWidth = 0;
   float bigHeight = 0;
+  leading = 0;
 
   // fgets reads until newline or eof
   while (fgets(str, 64, fp)) {
@@ -71,6 +72,10 @@ acVectorFont::acVectorFont(const char* filename) {
       sscanf(str, "W %f\n", &width[currentLetter]);
       break;
 
+    case 'D':  // leading
+      sscanf("D %f\n", &leading);
+      break;
+
     case 0:  // blank line
     case '#':  // comment
       break;
@@ -100,6 +105,10 @@ acVectorFont::acVectorFont(const char* filename) {
       if (y[i][p] < descent) descent = y[i][p];
       if (y[i][p] > maxHeight) maxHeight = y[i][p];
     }
+  }
+  if (leading == 0) {
+    // default leading, if not defined in font
+    leading = getHeight() * 1.2;
   }
   valid = TRUE;
 }
@@ -140,4 +149,9 @@ float acVectorFont::charHeight(char c) {
 
 boolean acVectorFont::charExists(char c) {
   return (numPoints[c] != 0);
+}
+
+
+float getDefaultLeading() { 
+  return leading;
 }
