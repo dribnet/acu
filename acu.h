@@ -506,10 +506,16 @@ void acuNamedTexRectf(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2,
 		      GLint name, GLfloat maxU, GLfloat maxV);
 
 /* Convenience function, draw a two-dimensional line */
-void acuLinef(float x1, float y1, float x2, float y2);
+void acuLine2f(float x1, float y1, float x2, float y2);
 
 /* Draw multiple, connected two-dimensional lines */
-void acuLinefv(int count, float *x, float *y);
+void acuLine2fv(int count, float *x, float *y);
+
+/* Guess what this does */
+void acuLine3f(float x1, float y1, float z1, float x2, float y2, float z2);
+
+/* Extra credit: figure this one out */
+void acuLine3fv(int count, float *x, float *y, float *z);
 
 
 /******************* video.c *******************/

@@ -1,4 +1,5 @@
-#include "acux.h"
+#include "acx.h"
+
 
 
 ////////////////////////////////////////////////////////////
@@ -54,7 +55,7 @@ void multCatmullRom(float m[4][4], float g[4][2], float mg[4][2]) {
   }
 }
 
-void drawCatmullRom(int pointCount, float *xpoints, float *ypoints) {
+void acxDrawCatmullRom(int pointCount, float *xpoints, float *ypoints) {
   float geom[4][2];
   float plot[4][2];
   float mg[4][2];
@@ -100,7 +101,7 @@ void drawCatmullRom(int pointCount, float *xpoints, float *ypoints) {
 }
 
 
-void drawCatmullRomBezier(int pointCount, float *xpoints, float *ypoints) {
+void acxDrawCatmullRomBezier(int pointCount, float *xpoints, float *ypoints) {
   float control[4][3];  // 4 points, 3 for xyz
 
   for (int i = 0; i < pointCount-4; i++) {
@@ -137,7 +138,7 @@ void drawCatmullRomBezier(int pointCount, float *xpoints, float *ypoints) {
 }
 
 
-void drawBezier(int pointCount, float *xpoints, float *ypoints) {
+void acxDrawBezier(int pointCount, float *xpoints, float *ypoints) {
   // hey ben, write this later when you want to take the time
   // the code is inside innocents3 -> edge.cpp -> Edge::drawBezier
 }
@@ -148,16 +149,16 @@ void drawBezier(int pointCount, float *xpoints, float *ypoints) {
 // FRAME RATE
 
 // can't be used with multiple apps
-float acuxFPS = 10.0f;
-long acuxLastTime = 0;
-float acuxFrameRate() {
+float acxFPS = 10.0f;
+long acxLastTime = 0;
+float acxFrameRate() {
   long currentTime = acuCurrentTimeMillis();
-  if (acuxLastTime != 0) {
-    float elapsed = currentTime - acuxLastTime;
-    acuxFPS = (acuxFPS * 0.9f) + ((1.0f / (elapsed / 1000.0f)) * 0.1f);
+  if (acxLastTime != 0) {
+    float elapsed = currentTime - acxLastTime;
+    acxFPS = (acxFPS * 0.9f) + ((1.0f / (elapsed / 1000.0f)) * 0.1f);
   }
-  acuxLastTime = currentTime;
-  return acuxFPS;
+  acxLastTime = currentTime;
+  return acxFPS;
 }
 
 
@@ -165,7 +166,7 @@ float acuxFrameRate() {
 
 // FILE I/O
 
-void acuxNumberedFilename(char *dest, char *tmpl, int *num) {
+void acxNumberedFilename(char *dest, char *tmpl, int *num) {
   int counter = 0;
   int fd = -1;
   do {
@@ -181,7 +182,7 @@ void acuxNumberedFilename(char *dest, char *tmpl, int *num) {
 }
 
 
-void acuxReadToEOL(FILE *fp) {
+void acxReadToEOL(FILE *fp) {
   char c;
   do { 
     c = getc(fp); 
@@ -194,7 +195,7 @@ void acuxReadToEOL(FILE *fp) {
 }
 
 
-void acuxReadSpace(FILE *fp) {
+void acxReadSpace(FILE *fp) {
   char c;
   do {
     c = getc( fp );
@@ -205,8 +206,8 @@ void acuxReadSpace(FILE *fp) {
 }
 
 
-void acuxReadWord(FILE *fp, char *word) {
-  acuxReadSpace(fp);
+void acxReadWord(FILE *fp, char *word) {
+  acxReadSpace(fp);
   int test = fscanf(fp, "%s", word);
   if (test == EOF) word[0] = 0;
   else if (test != 1) {
@@ -215,11 +216,47 @@ void acuxReadWord(FILE *fp, char *word) {
 }
 
 
-float acuxReadFloat(FILE *fp) {
+float acxReadFloat(FILE *fp) {
   char temp[16];
-  acuxReadWord(fp, temp);
+  acxReadWord(fp, temp);
   return atof(temp);
 }
+
+
+////////////////////////////////////////////////////////////
+
+// SPHERICAL / CARTESIAN COORDINATES
+
+
+inline void acxSphericalToCartesian(float x, float y, float z,
+				    float *cx, float *cy, float *cz) {
+  float x0 = (x) * TWO_PI;
+  float y0 = (y) * PI;
+  float z0 = (z) * TWO_PI;
+  
+  *cx = z0 * cos(x0) * sin(y0);
+  *cy = z0 * sin(x0) * sin(y0);
+  *cz = z0 * cos(y0);
+}
+
+
+inline void acxCartesianToSpherical(float cx, float cy, float cz, 
+				    float *x, float *y, float *z) {
+  *z = sqrt(cx*cx + cy*cy + cz*cz) / TWO_PI;
+
+  if (cx != 0) 
+    *x = atan(cy / cx) / TWO_PI;
+  else 
+    *x = 0.0;
+
+  if (cz != 0) 
+    *y = atan(sqrt(cx*cx + cy*cy) / cz) / PI;
+  else 
+    *y = 0.0;
+
+  //printf("%12.4f %12.4f %12.4f\n", *x, *y, *z);
+}
+
 
 /*
 // not sure why you'd want this
@@ -234,3 +271,4 @@ float acuxReadFloat(FILE *fp) {
     system(command);
   }
 */
+

@@ -178,7 +178,7 @@ void acuPolygonClose() {
 }
 
 
-void acuLinef(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2) {
+void acuLine2f(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2) {
   glBegin(GL_LINES);
   glVertex3f(x1, y1, 0);
   glVertex3f(x2, y2, 0);
@@ -186,11 +186,30 @@ void acuLinef(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2) {
 }
 
 
-void acuLinefv(int count, GLfloat *x, GLfloat *y) {
+void acuLine2fv(int count, GLfloat *x, GLfloat *y) {
   int i;
   glBegin(GL_LINE_STRIP);
   for (i = 0; i < count; i++) {
     glVertex3f(x[i], y[i], 0);
+  }
+  glEnd();
+}
+
+
+void acuLine3f(float x1, float y1, float z1, float x2, float y2, float z2) {
+  glBegin(GL_LINES);
+  //glNormal3f(1.0, 1.0, 1.0);
+  glVertex3f(x1, y1, z1);
+  glVertex3f(x2, y2, z2);
+  glEnd();
+}
+
+
+void acuLine3fv(int count, GLfloat *x, GLfloat *y, GLfloat *z) {
+  int i;
+  glBegin(GL_LINE_STRIP);
+  for (i = 0; i < count; i++) {
+    glVertex3f(x[i], y[i], z[i]);
   }
   glEnd();
 }
