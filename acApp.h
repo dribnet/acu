@@ -4,8 +4,6 @@
 #include "acu.h"
 #include "acGeo.h"
 
-#include <fcntl.h>
-#include <unistd.h>
 
 class acApp : public acGeo {
 public:
@@ -21,6 +19,7 @@ public:
    */
   acApp();
   virtual void selfStart();
+  virtual void subStart();
 
   /* Called to let you know your program is (or isn't) getting attention. */
   virtual void setFocus(bool state);
@@ -103,8 +102,10 @@ public:
    */
   virtual void specialKeyDown(int key); 
 
-  static acApp *theApp;
+  //static acApp *theApp;
 };
+
+acApp* apps[10];
 
 void display_cb(void);
 void mouse_cb(int button, int state, int x, int y);

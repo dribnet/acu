@@ -1,6 +1,6 @@
 #include "acApp.h"
 
-acApp *acApp::theApp = NULL;
+//acApp *acApp::theApp = NULL;
 int aaGrabCount;
 int aaLastMouseButton;
 boolean aaValidWindowSize;
@@ -8,6 +8,10 @@ boolean aaValidWindowSize;
 /* for mouseCallback Y switcheroo and reshaping */
 extern "C" GLint acuWindowHeight;
 extern "C" GLint acuWindowWidth;
+
+// keep these here, otherwise will cause conflicts! (don't put in .h)
+#include <fcntl.h>
+#include <unistd.h>
 
 
 /* This is some glue that connects the app to the window system */
@@ -36,7 +40,8 @@ acApp::acApp()
 void acApp::selfStart()
 {
   GLint screenSize[2];
-  theApp = this;
+  //theApp = this;
+  apps[glutGetWindow()] = this;
 
   glutDisplayFunc(display_cb); 
   glutMouseFunc(mouse_cb);
@@ -52,6 +57,21 @@ void acApp::selfStart()
   resize(0, 0, screenSize[0], screenSize[1]);
   setFocus(true);
   glutMainLoop();
+}
+
+void acApp::subStart() {
+  //theApp = this;
+  apps[glutGetWindow()] = this;
+
+  glutDisplayFunc(display_cb); 
+  glutMouseFunc(mouse_cb);
+  glutMotionFunc(motion_cb);
+  glutPassiveMotionFunc(passive_motion_cb);
+  glutIdleFunc(idle_cb);
+  glutKeyboardFunc(keyboard_cb);
+  glutSpecialFunc(special_key_cb);
+  glutReshapeFunc(NULL); // why first set to null?
+  glutReshapeFunc(reshape_cb);
 }
 
 void acApp::setFocus(bool state) { }
@@ -121,7 +141,8 @@ void display_cb(void) {
   if (aaValidWindowSize) {
     /* BENJAMIN FRY -- FIX ME!!! */
     acuOpenMazoFrame();
-    acApp::theApp->draw();
+    //acApp::theApp->draw();
+    apps[glutGetWindow()]->draw();
     acuCloseMazoFrame();
   }
 }
@@ -129,43 +150,43 @@ void display_cb(void) {
 void mouse_cb(int button, int state, int x, int y) {
   //lastModifiers = glutGetModifiers();
   if (state == GLUT_DOWN) {
-    acApp::theApp->mouseDown(x, ((acuWindowHeight-1)-y), button);
+    apps[glutGetWindow()]->mouseDown(x, ((acuWindowHeight-1)-y), button);
   } else if (state == GLUT_UP) {
-    acApp::theApp->mouseUp(x, ((acuWindowHeight-1)-y), button);
+    apps[glutGetWindow()]->mouseUp(x, ((acuWindowHeight-1)-y), button);
   }
   aaLastMouseButton = button;
 }
 
 void motion_cb(int x, int y) {
   //lastModifiers = glutGetModifiers();
-  acApp::theApp->mouseDrag(x, ((acuWindowHeight-1)-y));
-  acApp::theApp->mouseDrag(x, ((acuWindowHeight-1)-y), aaLastMouseButton);
+  apps[glutGetWindow()]->mouseDrag(x, ((acuWindowHeight-1)-y));
+  apps[glutGetWindow()]->mouseDrag(x, ((acuWindowHeight-1)-y), aaLastMouseButton);
 }
 
 void passive_motion_cb(int x, int y) {
   //lastModifiers = glutGetModifiers();
-  acApp::theApp->mouseMove(x, ((acuWindowHeight-1)-y));
+  apps[glutGetWindow()]->mouseMove(x, ((acuWindowHeight-1)-y));
 }
 
 void idle_cb(void) {
-  acApp::theApp->idle();
+  apps[glutGetWindow()]->idle();
   glutPostRedisplay();
 }
 
 void keyboard_cb(unsigned char key, int x, int y) {
   //lastModifiers = glutGetModifiers();
-  acApp::theApp->keyDown(key);
+  apps[glutGetWindow()]->keyDown(key);
 }
 
 void special_key_cb(int key, int x, int y) {
   //lastModifiers = glutGetModifiers();
-  acApp::theApp->specialKeyDown(key);
+  apps[glutGetWindow()]->specialKeyDown(key);
 }
 
 void reshape_cb(int width, int height) {
   acuWindowWidth = width;
   acuWindowHeight = height;
-  acApp::theApp->resize(0, 0, width, height);
+  apps[glutGetWindow()]->resize(0, 0, width, height);
 }
 
 
