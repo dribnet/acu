@@ -9,7 +9,8 @@ ACLIB_DIR = /acg/lib
 
 default: lib
 
-extralibs = -lsocket -lpthread
+#jarold extralibs = -lsocket -lpthread
+extralibs =
 
 CC=CC
 OPTIONS=-g -DACU_IRIX -DAC_GLWRAP  -LANG:ansi-for-init-scope=ON
