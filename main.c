@@ -70,7 +70,7 @@ void acuOpen() {
 #elif defined(ACU_MAC)
   strcpy(acuResourceLocation, "/whatever/");
 #else
-  strcpy(acuResourceLocation, "//help/here");
+  strcpy(acuResourceLocation, "//um/a/little/help/here/");
 #endif
 
   // InitDisplayMode must appear before CreateWindow
