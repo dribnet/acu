@@ -53,6 +53,8 @@ unsigned char *acuvTempBuffer = NULL;
 
 
 #ifdef ACU_WIN32
+#ifndef __CYGWIN__
+/* cygwin doesn't know what Vfw.h is */
 /* including windows.h causes a lot of errors to spew out.. but
    it appears to be harmless (and unavoidable without a lotta hacking) */
 #include <windows.h>
@@ -62,6 +64,7 @@ unsigned char *acuvTempBuffer = NULL;
 boolean acuvWindowsInited = FALSE;
 boolean acuvGotFrame = FALSE;
 HWND acuvVideoWindow;
+#endif
 #endif
 
 
@@ -255,12 +258,14 @@ void acuvLinuxRequestSize(int width, int height) {
 
 void acuvWindowsRequestSize(int width, int height) {
 #ifdef ACU_WIN32
+#ifndef __CYGWIN__
   acuVideoWidth = width;
   acuVideoHeight = height;
 
   //if (acuvTempBuffer != NULL) free(acuvTempBuffer);
   acuvTempBufferCount = width * height * 3;
   acuvTempBuffer = malloc(acuvTempBufferCount);
+#endif
 #endif
 }
 
@@ -481,6 +486,8 @@ void acuvLinuxGetFrame(unsigned char *frame) {
 
 
 #ifdef ACU_WIN32
+#ifndef __CYGWIN__
+/* cygwin doens't know about any of this */
 //#include <gl/glut.h>
 LRESULT CALLBACK capVideoStreamCallback(HWND capWnd, LPVIDEOHDR lpVHdr) {
   memcpy(lpVHdr->lpData, acuvTempBuffer, acuvTempBufferCount);
@@ -504,9 +511,11 @@ LRESULT CALLBACK capVideoStreamCallback(HWND capWnd, LPVIDEOHDR lpVHdr) {
   */
 }
 #endif
+#endif
 
 void acuvWindowsGetFrame(unsigned char *frame) {
 #ifdef ACU_WIN32
+#ifndef __CYGWIN__
   int i, j;
   int srcOffset, srcIndex, destIndex;
 
@@ -580,6 +589,7 @@ void acuvWindowsGetFrame(unsigned char *frame) {
     }
   }
 #endif
+#endif
 }
 
 
@@ -627,10 +637,12 @@ void acuCloseVideo() {
 #endif /* ACU_LINUX */
 
 #ifdef ACU_WIN32
+#ifndef __CYGWIN__
   acuvGotFrame = false;
   capCaptureStop(acuvVideoWindow);
   capDriverDisconnect(acuvVideoWindow);
   CloseWindow(acuvVideoWindow);
   DestroyWindow(acuvVideoWindow);
+#endif
 #endif /* ACU_WIN32 */
 }

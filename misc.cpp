@@ -389,3 +389,17 @@ void acuWriteTiffFile(char *filename, unsigned char *data,
   fclose(fp);
 }
 
+/* video.c calls these functions, so they better be defined somewhere */
+#ifdef NO_JPEG
+unsigned char* acuReadJpegFile(char *filename,
+                               int *width, int *height) 
+{
+  acuDebug(ACU_DEBUG_EMERGENCY, "This platform does not have acuReadJpegFile");
+}
+
+void acuWriteJpegFile(char *filename, unsigned char *data,
+                      int width, int height, int quality)
+{
+  acuDebug(ACU_DEBUG_EMERGENCY, "This platform does not have acuWriteJpegFile");
+}
+#endif

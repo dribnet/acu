@@ -12,9 +12,13 @@ default: lib
 #jarold extralibs = -lsocket -lpthread
 extralibs =
 
-CC=CC
+# these are the linux (?) options
+#CC=CC
 #OPTIONS=-g -DACU_LINUX -DAC_GLWRAP -LANG:ansi-for-init-scope=ON
-OPTIONS=-g -DACU_IRIX -DAC_GLWRAP -LANG:ansi-for-init-scope=ON
+
+# these are the options for cygwin make with gcc
+CC=gcc
+OPTIONS=-g -DNO_JPEG 
 
 .c.o:
 	$(CC) $(OPTIONS) $(extralibs) -c $<
@@ -23,15 +27,17 @@ OPTIONS=-g -DACU_IRIX -DAC_GLWRAP -LANG:ansi-for-init-scope=ON
 	$(CC) $(OPTIONS) $(extralibs)  -c $<
 
 OBJS=\
-	acApp.o acGeo.o acVec3f.o acVec4f.o acMatrix4f.o ai.o acx.o \
-	geometry.o jpeg.o main.o misc.o text.o video.o \
-	acBitmapFont.o acVectorFont.o # acFreeTypeFont.o 
+	acApp.o acGeo.o acVec3f.o acVec4f.o acMatrix4f.o \
+	geometry.o main.o misc.o text.o video.o \
+	acBitmapFont.o acVectorFont.o 
+# NOT USED IN CYGWIN -- jpeg.o
+# RETIRED -- acFreeTypeFont.o ai.o acx.o 
 
 lib:	$(OBJS)
 	rm -f libacu.a libacu.so
 	/usr/bin/ar ru libacu.a $?
-	/usr/bin/ld -shared $(OBJS) -o libacu.so
-	chmod 555 libacu.a libacu.so
+	# NO SHARED LIBRARIES /usr/bin/ld -shared $(OBJS) -o libacu.so
+	# SGI HACK NOT NEEDED chmod 555 libacu.a libacu.so
 
 clean:
 	rm -f *.o libacu.a libacu.so *~

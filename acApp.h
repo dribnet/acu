@@ -120,7 +120,10 @@ void reshape_cb(int x, int y);
 
 /* This is some glue that connects the app to the window system */
 #ifdef ACU_WIN32
+#ifndef __CYGWIN__
+/* cygwin doesn't know what this file is */
 #include "ansi_prefix.win32.h"
+#endif
 #define ExportApp extern "C" __declspec(dllexport) acApp
 #define ExportType extern "C" __declspec(dllexport) char
 #else

@@ -12,7 +12,10 @@ public:
 
 /* This is some glue that connects the app to the window system */
 #ifdef ACU_WIN32
+/* cygwin doesn't know what this file is */
+#ifndef __CYGWIN__
 #include "ansi_prefix.win32.h"
+#endif
 #define ExportGeo extern "C" __declspec(dllexport) acGeo
 #define ExportType extern "C" __declspec(dllexport) char
 #else
