@@ -47,7 +47,7 @@ public:
     while (c[index] != 0) {
       if (c[index] == '\n') {
 	x = startX;
-	y += getDefaultLeading();
+	y -= getDefaultLeading();
 	previous = 0;
       } else {
 	drawChar(c[index], x, y);
