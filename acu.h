@@ -60,10 +60,6 @@ extern "C" {
 #undef ACU_WIN32
 #endif
 
-#ifdef ACU_WIN32
-#define NO_JPEG
-#endif
-
 #ifdef ACU_MAC
 #define NO_JPEG
 #endif

@@ -7,31 +7,32 @@
 class acVec3f
 {
 public:
+  float	x,y,z;
+
   acVec3f(float newX, float newY, float newZ);
   acVec3f(void);
   
-  ~acVec3f(void);
+  void set(float newX, float newY, float newZ);
+  void set(acVec3f B);
+  void get(float v[]);
   
-  void		set(float newX, float newY, float newZ);
-  void		set(acVec3f B);
-  void 		get(float v[]);
+  int operator==(acVec3f B);
+  void operator=(acVec3f B);
+  void operator+=(acVec3f B);
+  void operator-=(acVec3f B);
+  void operator*=(float F);
+  void operator/=(float F);
   
-  void 		operator=(acVec3f B);
-  int			operator==(acVec3f B);
-  void		operator+=(acVec3f B);
-  void		operator-=(acVec3f B);
-  void		operator*=(float F);
-  void		operator/=(float F);
-  
-  static acVec3f 	normalize(acVec3f &A);
-  void		normalize();
-  float		length();
-  float		lengthSquared();
-  float		dot(acVec3f &B);
-  acVec3f	cross(acVec3f &B);
-  void		componentMult(acVec3f &B);
-  
-  float	x,y,z;
+  static acVec3f normalize(acVec3f &A);
+  void normalize();
+  float length();
+  float lengthSquared();
+  float dot(acVec3f &B);
+  acVec3f cross(acVec3f &B);
+  void componentMult(acVec3f &B);
+
+  void scale(float amount);
+  void add(acVec3f *what);    
 };
 
 

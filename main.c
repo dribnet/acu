@@ -94,11 +94,7 @@ void acuOpen() {
   acuScreenGrabBuffer = NULL;
   acuScreenGrabFlip = TRUE;
   acuScreenGrabFlipper = NULL;
-#ifndef NO_JPEG
-  acuScreenGrabFormat = ACU_FILE_FORMAT_JPEG;
-#else
-  acuScreenGrabFormat = ACU_FILE_FORMAT_RAW;
-#endif
+  acuScreenGrabFormat = ACU_FILE_FORMAT_TIFF;
 
   /* seed random number generator */
 #if defined(ACU_IRIX)
