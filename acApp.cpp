@@ -164,3 +164,229 @@ void reshape_cb(int width, int height) {
   acApp::theApp->resize(0, 0, width, height);
 }
 
+/*----------------- gl wrapper code -----------------*/
+
+#ifdef AC_GLWRAP
+
+#define getTime() ((float)clock())
+#define TIME_CONVERT 1000000.0
+
+#define	LISTENQ		1024
+#define bzero(ptr,n)    memset(ptr, 0, n)
+#define	SA	        struct sockaddr
+#define	MAXLINE		4096	
+
+void* eventcaller( void* arg );
+void* waitforquit( void* arg );
+
+struct threadStruct
+{
+  char* hostname;
+  acApp* App;
+};
+
+static bool QUIT_NOW = false;
+
+void acApp::wrapStart( char* hostname )
+{
+  // ---------------- prelaunch ------------------
+  int sockfd;
+  long wrapFrameCount = 0;
+  
+  struct sockaddr_in servaddr;
+  struct in_addr **pptr;
+  
+  struct hostent *hp;
+  if ( (hp = gethostbyname(hostname)) == NULL )
+    {
+      printf("host name error\n");
+      exit(0);
+    }
+  pptr = (struct in_addr**) hp->h_addr_list;
+  
+  if ( (sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0 )
+    {
+      printf("socket error");
+      exit(0);
+    }
+
+  bzero( &servaddr, sizeof(servaddr) );
+  servaddr.sin_family = AF_INET;
+  servaddr.sin_port = htons(9999);
+  memcpy( &servaddr.sin_addr, *pptr, sizeof(struct in_addr) );
+  printf( "trying %s\n", Sock_ntop( (SA*)&servaddr,
+				    sizeof(servaddr)) );
+  
+  // put exit(0) back in 
+  if ( connect(sockfd, (SA*)&servaddr, sizeof(servaddr)) < 0 )
+    {
+      printf("connect error\n");
+      exit(0);
+    }
+  printf("connected to draw server\n");
+  
+  // launch event thread
+  threadStruct* pass = new threadStruct;
+  pass->hostname = hostname;
+  pass->App = this;
+
+  int status;
+  pthread_t thread;
+  status = pthread_create( &thread, NULL, eventcaller, (void*)pass );
+  if ( status != 0 )
+    {
+      printf("error creating thread\n");
+      exit(0);
+    }
+  printf("successful thread creation\n");
+
+  pthread_create( &thread, NULL, waitforquit, (void*)NULL );
+
+
+  // ---------------- postlaunch ------------------
+
+  float lastTime = getTime();
+  long timeStart = getTime();
+  long frameNum = 0;
+  
+  while( true )
+    {
+      if ( getTime() - lastTime > TIME_CONVERT*0.005 )
+	{
+	  idle();
+	  acGLWrapStart();
+	  draw();
+	  acGLWrapFinish();
+	  int bufferSize = acGLWrapGetBufferSize();
+	  int curTime = time(0);
+	
+	  if ( Writen( sockfd, &bufferSize, sizeof(int) )==0 )
+	    goto closelabel;
+	  if ( Writen( sockfd, &curTime, sizeof(int) )==0 )
+	    goto closelabel;
+	  if ( Writen( sockfd, acGLWrapGetBuffer(), bufferSize )==0 )
+	    goto closelabel;
+	  frameNum++;
+	  if ( frameNum%100==50 )
+	    {
+	      long nowTime = ((float)getTime());
+	      float rate = (float) frameNum * TIME_CONVERT;
+	      rate /= (float)(nowTime-timeStart);
+	      printf("client frame rate: %f\n", rate );
+	      printf("client bytes/frame: %d\n", bufferSize );
+	      //  printf("event: %d\n", eventInt );
+	    }
+	  lastTime = getTime();
+	  wrapFrameCount++;
+	}
+      if ( QUIT_NOW )
+	goto closelabel;
+      sleep(0);
+    }
+closelabel:
+  printf("closing connection: %d\n", sockfd );
+  close(sockfd);
+}
+
+void* eventcaller( void* arg )
+{
+  int status = pthread_detach( pthread_self() );
+  if ( status != 0 )
+    {
+      printf("bad detach\n");
+      exit(0);
+    }
+
+  int esockfd;
+  struct sockaddr_in eservaddr;
+  struct in_addr **pptr;
+  
+  threadStruct* pass = (threadStruct*) arg;
+  char* hostname = pass->hostname;
+
+  struct hostent *hp;
+  if ( (hp = gethostbyname(hostname)) == NULL )
+    {
+      printf("host name error\n");
+      exit(0);
+    }
+  pptr = (struct in_addr**) hp->h_addr_list;
+
+  if ( (esockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0 )
+    {
+      printf("socket error");
+      exit(0);
+    } 
+
+  bzero( &eservaddr, sizeof(eservaddr) );
+  eservaddr.sin_family = AF_INET;
+  eservaddr.sin_port = htons(9876);
+  memcpy( &eservaddr.sin_addr, *pptr, sizeof(struct in_addr) );
+  printf( "trying %s\n", Sock_ntop( (SA*)&eservaddr,
+				    sizeof(eservaddr)) );
+
+  if ( connect(esockfd, (SA*)&eservaddr, sizeof(eservaddr)) < 0 )
+    {
+      printf("connect error\n");
+      exit(0);
+    } 
+
+  printf("event connect success\n");
+
+  // actual event communication
+  EventStruct events;
+  EventStruct lastEvents;
+  long checkCount = 0;
+  bool callMouseDown = false;
+  bool callKeyDown = false;
+  bool callMouseUp = false;
+
+  long startTime = getTime();
+  for( ; ; )
+    {
+      long nowTime = getTime();
+      if ( checkCount%2000==1000 )
+	printf("client EVENT rate: %.3f\n", 
+	       (float)checkCount*TIME_CONVERT/(float)(nowTime-startTime) );
+      
+      if ( Readn( esockfd, &events, sizeof(events) )==0 )
+	goto closelabel;
+
+      if ( checkCount!=0 && !callMouseDown && 
+	   events.mouseIsDown && !lastEvents.mouseIsDown )
+	callMouseDown = true;
+
+      if ( checkCount!=0 && !callMouseUp && 
+	   !events.mouseIsDown && lastEvents.mouseIsDown )
+	callMouseUp = true;
+      
+      if ( checkCount!=0 && ! callKeyDown && 
+	   events.keyDown != lastEvents.keyDown )
+	callKeyDown = true;
+      
+      lastEvents = events;
+      // process events once per frame
+      checkCount++;
+      if ( callMouseDown )
+	acApp::theApp->mouseDown( events.mouseX, events.mouseY, events.mouseButton );
+      if ( callMouseUp )
+	acApp::theApp->mouseUp( events.mouseX, events.mouseY, events.mouseButton );
+      if ( events.mouseIsDown )
+	acApp::theApp->mouseDrag( events.mouseX, events.mouseY );
+      else
+	acApp::theApp->mouseMove( events.mouseX, events.mouseY );
+
+      callMouseDown = callMouseUp = callKeyDown = false;
+	  
+      if ( QUIT_NOW )
+	goto closelabel;
+      sleep(0);
+    }
+  
+closelabel:
+  printf("closing connection: %d\n", esockfd );
+  close(esockfd);
+  return NULL;
+}
+
+#endif
