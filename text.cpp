@@ -1,5 +1,7 @@
 #include "acu.h"
 #include "acFont.h"
+#include "acBitmapFont.h"
+#include "acVectorFont.h"
 
 boolean acuTextInited;
 acFont **fontList;
@@ -23,8 +25,17 @@ void acuTextInit() {
 int acuLoadFont(char *filename) {
   if (!acuTextInited) acuTextInit();
 
-  acFont *newbie = new acFont(filename);
-  if (!newbie->isValid()) {
+  // construct it depending on what type of font it is
+  acFont *newbie;
+  if (strstr(filename, ".jvf") || strstr(filename, ".JVF")) {
+    newbie = new acVectorFont(filename);
+  } else if (strstr(filename, ".ttf") || strstr(filename, ".TTF")) {
+    //newbie = new acTrueTypeFont(filename);
+  } else {
+    newbie = new acBitmapFont(filename);
+  }
+
+  if ((newbie == NULL) || (!newbie->isValid())) {
     return ACU_ERROR;
   }
 
@@ -57,17 +68,10 @@ void acuDrawChar(char c, GLfloat x, GLfloat y) {
   fontList[currentFont]->drawChar(c, x, y);
 }
 
+
 void acuDrawString(char *c, GLfloat x, GLfloat y) {
   if (currentFont == ACU_ERROR) return;
-  glPushMatrix();
-  int index = 0;
-  while (c[index] != 0) {
-    fontList[currentFont]->drawChar(c[index], x, y);
-    x += fontList[currentFont]->charWidth(c[index]);
-    //glTranslatef(fontList[currentFont]->charWidth(c[index]), 0, 0);
-    index++;
-  }
-  glPopMatrix();
+  fontList[currentFont]->drawString(c, x, y);
 }
 
 
@@ -99,6 +103,6 @@ void acuGetCharMetrics(acuEnum pname, char *c, GLfloat *metrics) {
     sprintf(acuDebugStr, 
 	    "acuGetCharMetrics: %d is not a valid param.", pname);
     acuDebugString(ACU_DEBUG_PROBLEM);
+    break;
   }
 }
-

@@ -3,45 +3,53 @@
 
 #include "acu.h"
 
+
 class acFont {
 public:
-  int numChars;
-  int numBits;
-  int mboxX;
-  int mboxY;
-  int baseHt;
+  virtual float getAscent() { return charHeight('H'); }
+  virtual float getDescent() { return 0; }
+  virtual float getXHeight() { return charHeight('x'); }
+  virtual float getHeight() { return 0; }
+  virtual float getEmWidth() { return charWidth('M'); }
+  virtual float getDefaultLeading() { return getHeight() * 1.2; }
+  virtual float charWidth(char c) { return 0; }
+  virtual float charHeight(char c) { return 0; }
+  virtual boolean charExists(char c) { return FALSE; }
+  virtual void drawChar(char c, float x, float y) { }
+  virtual float kernWidth(char a, char b) { return 0; }
+  virtual boolean isValid() { return valid; }
 
-  // per character
-  int *value;
-  int *height;
-  int *width;
-  int *setWidth;
-  int *topExtent;
-  int *leftExtent;
+  virtual float stringWidth(char *s) {
+    float wide = 0.0;
+    char previous = 0;
+    while (*s != 0) {
+      wide += charWidth(*s);
+      if (previous != 0) 
+	wide += kernWidth(previous, *s);
+      previous = *s++;
+    }
+    return wide;
+  }
 
-  unsigned char **images;
-  GLuint *texNames;
+  virtual void drawString(char *c, float x, float y) {
+    glPushMatrix();
+    int index = 0;
+    char previous = 0;
+    while (c[index] != 0) {
+      drawChar(c[index], x, y);
+      x += charWidth(c[index]);
+      if (previous != 0)
+	x += kernWidth(previous, c[index]);
+      previous = c[index];
+      index++;
+    }
+    glPopMatrix();
+  }
   
+  
+protected:
   boolean valid;
-
-  acFont(const char *filename);
-  float getAscent();
-  float getDescent();
-  float getXHeight();
-  float getHeight();
-  float getEmWidth();
-  float getDefaultLeading();
-  float stringWidth(char *s);
-  float charWidth(char c);
-  float charHeight(char c);
-  float charBitmapWidth(char c);
-  float charBitmapHeight(char c);
-  float charTop(char c);
-  float charTopExtent(char c);
-  float charLeftExtent(char c);
-  boolean charExists(char c);
-  float kernWidth(char a, char b);
-  void drawChar(char c, float x, float y);
-  boolean isValid();
 };
+
+
 #endif

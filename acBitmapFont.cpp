@@ -1,12 +1,11 @@
-#include "acFont.h"
+#include "acBitmapFont.h"
 
-acFont::acFont(const char *filename) {
-  int i;
 
+acBitmapFont::acBitmapFont(const char *filename) {
   valid = FALSE;
   FILE *fp = fopen(filename, "rb");
   if (fp == NULL) {
-    sprintf(acuDebugStr, "Could not open file %s", filename);
+    sprintf(acuDebugStr, "Could not open font file %s", filename);
     acuDebugString(ACU_DEBUG_PROBLEM);
     return;
   }
@@ -28,7 +27,7 @@ acFont::acFont(const char *filename) {
   leftExtent = new int[numChars];
 
   // read the information about the individual characters
-  for (i = 0; i < numChars; i++) {
+  for (int i = 0; i < numChars; i++) {
     value[i] = acuReadInt(fp);
     height[i] = acuReadInt(fp);
     width[i] = acuReadInt(fp);
@@ -41,7 +40,7 @@ acFont::acFont(const char *filename) {
   // read in the bitmap data
   //images = new unsigned char[numChars][64*64*4];
   images = new unsigned char*[numChars];
-  for (i = 0 ; i < numChars; i++) {
+  for (int i = 0; i < numChars; i++) {
     images[i] = new unsigned char[64*64*4];
     int bitmapSize = height[i] * width[i];
     //printf("bitmap size is %d\n", bitmapSize);
@@ -73,7 +72,7 @@ acFont::acFont(const char *filename) {
   //printf("%d ", texNames[m]);
   //}
     
-  for (i = 0; i < numChars; i++) {
+  for (int i = 0; i < numChars; i++) {
     glBindTexture(GL_TEXTURE_2D, texNames[i]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 64, 0,
 		 GL_RGBA, GL_UNSIGNED_BYTE, images[i]);
@@ -86,86 +85,55 @@ acFont::acFont(const char *filename) {
   valid = TRUE;
 }
 
-
-float acFont::getAscent() {
-  return (float)height['H'-33] / 64.0f;
-}
-
-float acFont::getDescent() {
+float acBitmapFont::getDescent() {
   return (float)(height['p'-33] - topExtent['p'-33]) / 64.0f;
 }
 
-float acFont::getXHeight() {
-  return (float)height['x'-33] / 64.0f;
-}
-
-float acFont::getHeight() {
+float acBitmapFont::getHeight() {
   return (float)mboxY / 64.0f;
 }
 
-float acFont::getEmWidth() {
-  return (float)width['M'-33] / 64.0f;
-}
-
-float acFont::getDefaultLeading() {
-  return getHeight() * 1.1f; // + or * some value??;
-}
-
-float acFont::stringWidth(char *s) {
-  float wide = 0.0;
-  while (*s != 0) {
-    wide += charWidth(*s++);
-  }
-  return wide;
-}
-
-float acFont::charWidth(char c) {
+float acBitmapFont::charWidth(char c) {
   // width of the horizontal space char takes up
   if (c != ' ') {
     return (float)setWidth[c-33] / 64.0f;
   } else {
-    return charWidth('i')*1.2f;
+    //return charWidth('i')*1.2f;
+    return charWidth('n'); // support monospace better
   }
 }
 
-float acFont::charHeight(char c) {
+float acBitmapFont::charHeight(char c) {
   return (float)height[c-33] / 64.0f;
 }
 
-float acFont::charBitmapWidth(char c) {
+float acBitmapFont::charBitmapWidth(char c) {
   // width of the bitmap itself
   return (float)width[c-33] / 64.0f;
 }
 
-float acFont::charBitmapHeight(char c) {
+float acBitmapFont::charBitmapHeight(char c) {
   // same as charHeight
   return (float)height[c-33] / 64.0f;
 }
 
-float acFont::charTop(char c) {
+float acBitmapFont::charTop(char c) {
   return -charHeight(c) + (float)(topExtent[c-33]) / 64.0f;
 }
 
-float acFont::charTopExtent(char c) {
+float acBitmapFont::charTopExtent(char c) {
   return (float)topExtent[c-33] / 64.0f;
 }
 
-float acFont::charLeftExtent(char c) {
+float acBitmapFont::charLeftExtent(char c) {
   return (float)leftExtent[c-33] / 64.0f;
 }
 
-boolean acFont::charExists(char c) {
+boolean acBitmapFont::charExists(char c) {
   return (c-33 < numChars);
 }
 
-// these old school bitmaps have no 
-// kerning info, so this returns 0
-float acFont::kernWidth(char a, char b) {
-  return 0.0f;
-}
-
-
-void acFont::drawChar(char c, float x, float y) {
+void acBitmapFont::drawChar(char c, float x, float y) {
   // x,y is insertion point, lower-left, on baseline
   if (c < 33) return;
   if (c > numChars + 32) return;
@@ -207,6 +175,3 @@ void acFont::drawChar(char c, float x, float y) {
 }
 
 
-boolean acFont::isValid() {
-  return valid;
-}
