@@ -183,6 +183,11 @@ void acuCloseFrame();
 void acuOpenFrame2D();
 void acuCloseFrame2D();
 
+/* this opens a frame for drawing an acGeo */
+/* ie: centered around origin and can see the unit sphere or so */
+void acuOpenGeoFrame();
+void acuCloseGeoFrame();
+
 /* Thank god for mazo! Mazo is a combined 2D/3D hoopajoop from Tom */
 void acuOpenMazoFrame();
 void acuCloseMazoFrame();
