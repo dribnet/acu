@@ -87,34 +87,30 @@ void acuNamedTexRectf(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2,
  * { x1, y1, z1, x2, y2, z2, ... , xN-1, yN-1, zN-1 }
  */
 void acuPolygon(int count, GLfloat *vertices) {
+  GLdouble *p, *pts;
+  int i;
+
   if (acuTesselator == NULL) {
-    //acuDebug(ACU_DEBUG_USEFUL,
-	       //"It is recommended, though not required, to "
-	       //"explicitly call acuPolygonOpen and acuPolygonClose");
     acuPolygonOpen();
-    // if it fails, then the program dies
+    // if it fails, then the program dies (ha ha ha, sorry)
   }
 
   gluBeginPolygon(acuTesselator);
 
-  /* According to the GL Reference Manual, this should not
-   * be done this way -- the temporary memory created might be
-   * deallocated before the end call, which would make a one
-   * pixel polygon.. So watch for it.
-   */
-  {
-    int i = 0;
-    GLdouble points[3];
-    for (i = 0; i < count; i++) {
-      points[0] = vertices[i*3+0];
-      points[1] = vertices[i*3+1];
-      points[2] = vertices[i*3+2];
+  //GLdouble *pts = new GLdouble[count*3];
+  pts = malloc(sizeof(GLdouble) * count*3);
+  for (i = 0; i < count*3; i++) {
+    pts[i] = (double)vertices[i];
+  }
 
-      gluTessVertex(acuTesselator, 
-		    (GLdouble*)points, (void*)(&(points)));
-    }
+  for (i = 0; i < count; i++) {
+    //GLdouble *p = &pts[i*3];
+    p = &pts[i*3];
+    gluTessVertex(acuTesselator, p, p); 
   }
   gluEndPolygon(acuTesselator);  
+  //delete pts;
+  free(pts);
 }
 
 

@@ -1,5 +1,14 @@
 about acu, a twice-weekly newsletter for the acu community
 
+[ august 10 1999 ]
+stuff from tom
+- acApp and acWindow are one, and all of the apps are broken
+  in between.
+stuff from ben
+- fixed bugs in polygon drawing code, thanks to casey, who
+  tried using it for the first time since acu's inception
+- windows version now supports jpeg. yay.
+
 [ july 2 1999 ]
 stuff from ben 
 - acuScreenGrab (and subsequently acApp::screenGrab) can now write

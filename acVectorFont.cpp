@@ -82,6 +82,15 @@ acVectorFont::acVectorFont(const char* filename) {
       break;
     }
   }
+  // cleanup for the last char read from the file
+  if (currentLetter != 0) {
+    numPoints[currentLetter] = currentPoint;
+    height[currentLetter] = bigHeight;
+    if (width[currentLetter] == 0) {
+      // support the old-school format, not for long
+      width[currentLetter] = bigWidth * 1.5;
+    }
+  }
   fclose(fp);
 
   descent = 0;

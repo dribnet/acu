@@ -266,14 +266,14 @@ void acuCloseFrame2D() {
  * about the origin. What a nice coordinate system.
  */
 void acuOpenGeoFrame() {
+  boolean topLevel;
   float aspect;
   GLfloat fov;
-  GLint wSize[2];
+  //GLint wSize[2];
   GLfloat sNear, sFar;
   //  GLfloat dist = 1.1547; // 2 / sqr(3) = dist away for 60 degree fov
   GLfloat dist = 2.0;
   fov = 60.0f;
-  boolean topLevel;
 
   /* this handles nested openFrame calls */
   if(frameDepth == 0) topLevel = TRUE;
@@ -392,7 +392,14 @@ void acuOpenMazoFrame() {
    * so I just do nothing 
    */
   if(topLevel) {
-    GLfloat params[] = { mazoEyeX, mazoEyeY, mazoDist, 0 };
+    // not legal in C! tom must be using a non ansi-compliant compiler
+    //GLfloat params[4] = { mazoEyeX, mazoEyeY, mazoDist, 0 };
+    GLfloat params[4];
+    params[0] = mazoEyeX;
+    params[1] = mazoEyeY;
+    params[2] = mazoDist;
+    params[3] = 0;
+
     glLightfv(GL_LIGHT0, GL_POSITION, params);
 
     // sets up standard camera projection;

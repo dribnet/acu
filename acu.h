@@ -433,10 +433,7 @@ extern GLUtriangulatorObj *acuTesselator;
 /* Draw a polygon, and put it through the tesselator.
  * Unlike standard GL, this method handles both concave
  * and convex polygons.
- * NOTE: THIS HAS NOT YET BEEN TESTED. IF SOMEONE TRIES
- * IT AND IT WORKS OR IS HAVING TROUBLE, LET ME KNOW SO
- * THAT I CAN FIX IT OR REMOVE THIS MESSAGE. OR JUST FIX
- * IT YO DAMN SELF AND SEND ME THE CHANGES.
+ * (now fully tested and working, with help from creas)
  */
 void acuPolygon(GLint count, GLfloat *vertices);
 
