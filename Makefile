@@ -29,5 +29,11 @@ lib:	$(OBJS)
 clean:
 	rm -f *.o libacu.a *~
 
+install: $(lib)
+	rm -f /acg/lib/libacu.a
+	cp libacu.a /acg/lib/.
+	chmod 555 /acg/lib/libacu.a
+	cp *.h /acg/include/.
+
 again: clean lib
 

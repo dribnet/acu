@@ -105,7 +105,7 @@ void passive_motion_cb(int x, int y)
 void idle_cb(void)
 {
   acApp::theApp->idle();
-  display_cb();
+  glutPostRedisplay();
 }
 
 void keyboard_cb(unsigned char key, int x, int y)
