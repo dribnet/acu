@@ -10,7 +10,7 @@ ACLIB_DIR = /acg/lib
 default: lib
 
 CC=CC
-OPTIONS=-g -DACU_IRIX -LANG:ansi-for-init-scope=ON
+OPTIONS=-g -DACU_IRIX -DAC_GLWRAP  -LANG:ansi-for-init-scope=ON
 
 .c.o:
 	$(CC) $(OPTIONS) -c $<

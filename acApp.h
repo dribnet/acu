@@ -6,7 +6,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#define AC_GLWRAP 1
 
 #ifdef AC_GLWRAP
 #include "acGLWrapper.h"
