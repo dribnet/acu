@@ -131,13 +131,33 @@ float acBitmapFont::charLeftExtent(char c) {
 }
 
 boolean acBitmapFont::charExists(char c) {
-  return (c-33 < numChars);
+  //return (c-33 < numChars);
+  return ((c > 32) && (c-33 < numChars));
+
+}
+
+unsigned char* acBitmapFont::getCharData(char c, float *x, float *y, float *w, float *h) {
+  if (!charExists(c)) return NULL;
+  *x = charLeftExtent(c);
+  *y = charTop(c);
+  *w = charBitmapWidth(c);
+  *h = charHeight(c);
+  /*
+  params[0] = charLeftExtent(c); // x
+  params[1] = charTop(c); // y
+  params[2] = charBitmapWidth(c); // width
+  params[3] = charHeight(c); // height
+  //params[4] = bwidth; // maxu
+  //params[5] = height; // maxv
+  */
+  return images[c-33];
 }
 
 void acBitmapFont::drawChar(char c, float x, float y) {
   // x,y is insertion point, lower-left, on baseline
-  if (c < 33) return;
-  if (c > numChars + 32) return;
+  //if (c < 33) return;
+  //if (c > numChars + 32) return;
+  if (!charExists(c)) return;
 
   //glEnable(GL_TEXTURE_2D);
 

@@ -43,15 +43,19 @@
 extern "C" {
 #endif
 
-/* un-comment for the target platform */
-#define ACU_WIN32
-/* #define ACU_MAC */
-/* #define ACU_IRIX */
-
 /* on irix, ACU_IRIX is defined by the Makefile,
- * and since it shares a .h with the windows version
+ * (on mac it should just be un-commented)
+ * and since all the versions share the same .h
  * we get the following silliness:
  */
+
+/* uncomment this for macintosh */
+/* #define ACU_MAC */
+
+#ifndef ACU_MAC
+#define ACU_WIN32
+#endif
+
 #ifdef ACU_IRIX
 #undef ACU_WIN32
 #endif
@@ -391,6 +395,10 @@ void acuTextInit();
  * acuDrawString("potato", 0.0, 0.0);
  * To change the font, use acuSetFont().
  *
+ * To find out if a font has already been loaded, use 
+ * acuFindFont, which will return the font number or 
+ * ACU_ERROR if the font doesn't exist yet.
+ *
  * Because fonts are 1.0 units tall, Mazo and 2D apps will
  * also need a glScale(48, 48, 1) before acuDrawString.
  * Otherwise, the font is 1 pixel tall. For 3D apps, you
@@ -404,6 +412,7 @@ void acuTextInit();
  * if you need all those things.
  */
 int acuLoadFont(char *fontname);
+int acuFindFont(char *fontname);
 void acuSetFont(int index);
 
 /* Draw characters and strings to the screen */

@@ -3,21 +3,32 @@
 #include "acBitmapFont.h"
 #include "acVectorFont.h"
 
+#define ACU_FONT_LIST_MAX 50
+
 boolean acuTextInited;
-acFont **fontList;
-int fontListMax;
-int currentFont;
+acFont* acutFontList[ACU_FONT_LIST_MAX];
+char acutFontNames[ACU_FONT_LIST_MAX][128];
+int acutCurrentFont;
 
 
 void acuTextInit() {
   //printf("text init called\n");
-  fontListMax = 50;
-  fontList = new acFont*[fontListMax];
-  for (int i = 0; i < fontListMax; i++) {
-    fontList[i] = NULL;
+  //acutFontList = new acFont*[ACU_FONT_LIST_MAX];
+  for (int i = 0; i < ACU_FONT_LIST_MAX; i++) {
+    acutFontList[i] = NULL;
+    acutFontNames[i][0] = 0; // empty string
   }
-  currentFont = ACU_ERROR;
+  acutCurrentFont = ACU_ERROR;
   acuTextInited = TRUE;
+}
+
+
+int acuFindFont(char *filename) {
+  for (int i = 0; i < ACU_FONT_LIST_MAX; i++) {
+    if (strcmp(acutFontNames[i], filename) == 0)
+      return i;
+  }
+  return ACU_ERROR;
 }
 
 
@@ -39,10 +50,11 @@ int acuLoadFont(char *filename) {
     return ACU_ERROR;
   }
 
-  for (int i = 0; i < fontListMax; i++) {
-    if (fontList[i] == NULL) {
-      fontList[i] = newbie;
+  for (int i = 0; i < ACU_FONT_LIST_MAX; i++) {
+    if (acutFontList[i] == NULL) {
+      acutFontList[i] = newbie;
       //printf("setting font %d, %d to %s\n", newbie, i, filename);
+      strcpy(acutFontNames[i], filename);
       return i;
     }
   }
@@ -54,8 +66,8 @@ int acuLoadFont(char *filename) {
 
 
 void acuSetFont(int index) {
-  if (fontList[index] != NULL) {
-    currentFont = index;
+  if (acutFontList[index] != NULL) {
+    acutCurrentFont = index;
   } else {
     sprintf(acuDebugStr, "Index %d is not a valid font.", index);
     acuDebugString(ACU_DEBUG_PROBLEM);
@@ -64,26 +76,26 @@ void acuSetFont(int index) {
 
 
 void acuDrawChar(char c, GLfloat x, GLfloat y) {
-  if (currentFont == ACU_ERROR) return;
-  fontList[currentFont]->drawChar(c, x, y);
+  if (acutCurrentFont == ACU_ERROR) return;
+  acutFontList[acutCurrentFont]->drawChar(c, x, y);
 }
 
 
 void acuDrawString(char *c, GLfloat x, GLfloat y) {
-  if (currentFont == ACU_ERROR) return;
-  fontList[currentFont]->drawString(c, x, y);
+  if (acutCurrentFont == ACU_ERROR) return;
+  acutFontList[acutCurrentFont]->drawString(c, x, y);
 }
 
 
 float acuGetCharMetric(acuEnum pname, char c) {
-  if (currentFont == ACU_ERROR) {
+  if (acutCurrentFont == ACU_ERROR) {
     acuDebug(ACU_DEBUG_PROBLEM,
 	     "Can't get char metrics when no font is set");
     return 0;
   }
   switch (pname) {
   case ACU_CHAR_WIDTH:
-    return fontList[currentFont]->charWidth(c);
+    return acutFontList[acutCurrentFont]->charWidth(c);
   default:
     break;
   }
@@ -92,11 +104,11 @@ float acuGetCharMetric(acuEnum pname, char c) {
 
 
 void acuGetCharMetrics(acuEnum pname, char *c, GLfloat *metrics) {
-  if (currentFont == ACU_ERROR) return;
+  if (acutCurrentFont == ACU_ERROR) return;
 
   switch (pname) {
   case ACU_STRING_WIDTH:
-    metrics[0] = fontList[currentFont]->stringWidth(c);
+    metrics[0] = acutFontList[acutCurrentFont]->stringWidth(c);
     break;
 
   default:

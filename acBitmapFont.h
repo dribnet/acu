@@ -16,6 +16,8 @@ public:
   boolean charExists(char c);
   void drawChar(char c, float x, float y);
 
+  unsigned char* getCharData(char c, float *x, float *y, 
+			     float *w, float *h);
 protected:
   int numChars;
   int numBits;
