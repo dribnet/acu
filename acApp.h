@@ -2,6 +2,7 @@
 #define _AC_APP_H_
 
 #include "acu.h"
+#include "acGeo.h"
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -34,7 +35,7 @@
 #endif
 
 
-class acApp {
+class acApp : public acGeo {
 public:
   /* Your application can just have a simple 'main' in
    * a separate main.cpp file that looks something like this:
@@ -72,12 +73,17 @@ public:
   /* (Generally) called once every frame, just before draw().
    * This is automatically called repeatedly as your
    * application 'idles'. Move things around here.
+   *
+   * This is inherited from acGeo.
    */
-  virtual void idle();
+   virtual void idle();
 
-  /* Override this to do your actual drawing to the screen */
-  /* A good acApp should draw the same thing if draw is called */
-  /* twice in succession since idle(), not draw(), changes the model */
+  /* Override this to do your actual drawing to the screen 
+   * A good acApp should draw the same thing if draw is called 
+   * twice in succession since idle(), not draw(), changes the model
+   *
+   * This is inherited from acGeo.
+   */
   virtual void draw();
 
   /* Writes the current GL buffer (your application's window)
