@@ -497,10 +497,16 @@ void acuScreenGrab(char *filename) {
   int j, k;
   FILE *fp; /* for ppm */
 
-  if (acuScreenGrabWidth == 0) {  // not set yet
+  if ((acuScreenGrabWidth == 0) ||
+      (acuScreenGrabHeight == 0)) {  // not set yet
     acuScreenGrabWidth = acuWindowWidth;
     acuScreenGrabHeight = acuWindowHeight;
   }
+
+  //printf("sg %d %d %d %d  %d %d\n", 
+  //    acuScreenGrabX, acuScreenGrabY,
+  //    acuScreenGrabWidth, acuScreenGrabHeight,
+  //    acuWindowWidth, acuWindowHeight);
 
   if (acuScreenGrabFormat == ACU_FILE_FORMAT_SCRSAVE) {
     char command[256];
@@ -656,13 +662,19 @@ void acuGetIntegerv(acuEnum pname, GLint *params) {
     params[0] = acuScreenGrabX;
     break;
   case ACU_SCREEN_GRAB_Y:
-    params[0] = acuScreenGrabX;
+    params[0] = acuScreenGrabY;
     break;
   case ACU_SCREEN_GRAB_WIDTH:
     params[0] = acuScreenGrabWidth;
     break;
   case ACU_SCREEN_GRAB_HEIGHT:
     params[0] = acuScreenGrabHeight;
+    break;
+  case ACU_SCREEN_GRAB_RECT:
+    params[0] = acuScreenGrabX;
+    params[1] = acuScreenGrabY;
+    params[2] = acuScreenGrabWidth;
+    params[3] = acuScreenGrabHeight;
     break;
 
   case ACU_TIME_STEP:
@@ -750,6 +762,12 @@ void acuSetIntegerv(acuEnum pname, GLint *params) {
     break;
   case ACU_SCREEN_GRAB_HEIGHT:
     acuScreenGrabHeight = params[0];
+    break;
+  case ACU_SCREEN_GRAB_RECT:
+    acuScreenGrabX = params[0];
+    acuScreenGrabY = params[1];
+    acuScreenGrabWidth = params[2];
+    acuScreenGrabHeight = params[3];
     break;
 
   case ACU_TIME_STEP:
