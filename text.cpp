@@ -23,6 +23,16 @@ void acuTextInit() {
 }
 
 
+void acuUnloadFont(int which) {
+  if (acutCurrentFont == which) {
+    acuDebug(ACU_DEBUG_PROBLEM, "you cannot unload the current font");
+    return;
+  }
+  acutFontList[which] = NULL;
+  acutFontNames[which][0] = 0;
+}
+
+
 int acuFindFont(char *filename) {
   for (int i = 0; i < ACU_FONT_LIST_MAX; i++) {
     if (strcmp(acutFontNames[i], filename) == 0)

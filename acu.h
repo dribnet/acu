@@ -414,6 +414,7 @@ void acuTextInit();
  * if you need all those things.
  */
 int acuLoadFont(char *fontname);
+void acuUnloadFont(int index); /* may just be temporary */
 int acuFindFont(char *fontname);
 void acuSetFont(int index);
 

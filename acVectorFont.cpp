@@ -69,11 +69,11 @@ acVectorFont::acVectorFont(const char* filename) {
       break;
 
     case 'W':  // width
-      //sscanf(str, "W %f\n", &width[currentLetter]);
+      sscanf(str, "W %f\n", &width[currentLetter]);
       break;
 
     case 'D':  // leading
-      //sscanf(str, "D %f\n", &leading);
+      sscanf(str, "D %f\n", &leading);
       break;
 
     case 0:  // blank line

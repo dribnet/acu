@@ -5,8 +5,8 @@ int grabCount;
 boolean validWindowSize;
 
 /* for mouseCallback Y switcheroo and reshaping */
-extern GLint acuWindowHeight;
-extern GLint acuWindowWidth;
+extern "C" GLint acuWindowHeight;
+extern "C" GLint acuWindowWidth;
 
 acApp::acApp()
 {
