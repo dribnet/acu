@@ -1,7 +1,7 @@
 #!gmake
 include $(ROOT)/usr/include/make/commondefs
 
-default: lib
+default: mine
 
 CC=CC
 OPTIONS=-g -DACU_IRIX
@@ -28,6 +28,9 @@ install: $(lib)
 	cp libacu.a libacu.so /acg/lib/.
 	chmod 555 /acg/lib/libacu.a /acg/lib/libacu.so
 	cp *.h /acg/include/.
+
+mine: lib
+	cp libacu.* /mas/u/$(USER)/lib
 
 again: clean lib
 
