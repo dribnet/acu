@@ -100,10 +100,7 @@ void acApp::screenGrab() {
 void acApp::mouseMove(float x, float y) { }
 void acApp::mouseDown(float x, float y, int button) { }
 
-void acApp::mouseDrag(float x, float y) { 
-  mouseDrag(x, y, aaLastMouseButton);
-}
-
+void acApp::mouseDrag(float x, float y) { }
 void acApp::mouseDrag(float x, float y, int button) { }
 void acApp::mouseUp(float x, float y, int button) { }
 
@@ -141,6 +138,7 @@ void mouse_cb(int button, int state, int x, int y) {
 void motion_cb(int x, int y) {
   //lastModifiers = glutGetModifiers();
   acApp::theApp->mouseDrag(x, ((acuWindowHeight-1)-y));
+  acApp::theApp->mouseDrag(x, ((acuWindowHeight-1)-y), aaLastMouseButton);
 }
 
 void passive_motion_cb(int x, int y) {
