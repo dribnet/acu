@@ -328,7 +328,7 @@ void writeTiffFileEntry(FILE *fp, int tag, int fieldType,
 
 void acuWriteTiffFile(char *filename, unsigned char *data, 
 		      int width, int height) {
-  int bitsPerSample = 8;
+  //int bitsPerSample = 8;
   int imageSize = width * height;
   int nEntries = 9;
 
