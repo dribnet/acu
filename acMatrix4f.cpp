@@ -6,6 +6,11 @@ acMatrix4f temp;
 float a[4][4];
 
 
+acMatrix4f::acMatrix4f(float source[4][4]) {
+  set(source);
+}
+
+
 acMatrix4f::acMatrix4f() {
 }
 

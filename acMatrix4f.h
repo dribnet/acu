@@ -8,6 +8,7 @@ public:
   float m[4][4];
 
   acMatrix4f();
+  acMatrix4f(float source[4][4]);
   void set(acMatrix4f *source);
   void set(float source[4][4]);
 

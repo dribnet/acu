@@ -26,6 +26,7 @@ float bezierToCatmullRom[4][4] = {
   {  0,     sixth, 1,     -sixth },
   {  0,     0,     1,      0     }
 };
+acMatrix4f bezierToCatmullRomMatrix(bezierToCatmullRom);
 
 #define PRECISION 10
 float fstep = 1.0 / (float)PRECISION;
@@ -63,7 +64,7 @@ void drawCatmullRom(int pointCount, float *xpoints, float *ypoints) {
       geom[j][0] = xpoints[i+j];
       geom[j][1] = ypoints[i+j];
     }
-    multCatmullRom(catmullRomMatrix, geom, mg);
+    multCatmullRom(catmullRomBasis, geom, mg);
     i += 1;
     
     multCatmullRom(forwardMatrix, mg, plot);
@@ -108,14 +109,16 @@ void drawCatmullRomBezier(int pointCount, float *xpoints, float *ypoints) {
     // transform the x points
     for (int m = 0; m < 4; m++)
       convIn[m] = xpoints[i+m];
-    transform4x4(conversionMatrix, convIn, convOut);
+    //transform4x4(bezierToCatmullRom, convIn, convOut);
+    bezierToCatmullRomMatrix.transform4(convIn, convOut);
     for (int m = 0; m < 4; m++)
       control[m][0] = convOut[m];
 
     // transform the y points
     for (int m = 0; m < 4; m++)
       convIn[m] = ypoints[i+m];
-    transform4x4(conversionMatrix, convIn, convOut);
+    //transform4x4(bezierToCatmullRom, convIn, convOut);
+    bezierToCatmullRomMatrix.transform4(convIn, convOut);
     for (int m = 0; m < 4; m++)
       control[m][1] = convOut[m];
 
