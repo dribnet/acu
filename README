@@ -1,7 +1,10 @@
 about acu, sometimes a twice-weekly newsletter for the acu community
 
 [ whenever ]
-- acuLine functions have been modified and renamed slightly
+- acuLine functions have been modified and renamed slightly.
+- acx and ai stuff was added. these are not supported.
+- acMatrix4f has been added for 'thrill seekers', its api
+  may change and/or some of its functions may be removed
 
 [ august 10 1999 ]
 stuff from tom

@@ -9,22 +9,22 @@
 
 // CURVES
 
-float bezierBasis[4][4] = {
+static float bezierBasis[4][4] = {
   { -1,  3, -3,  1},
   {  3, -6,  3,  0},
   { -3,  3,  0,  0},
   {  1,  0,  0,  0},
 };
 
-float catmullRomBasis[4][4] = {
+static float catmullRomBasis[4][4] = {
     {-0.5f,  1.5f, -1.5f,  0.5f},
     { 1   , -2.5f,  2   , -0.5f},
     {-0.5f,  0   ,  0.5f,  0   },
     { 0   ,  1   ,  0   ,  0   }
 };
 
-float sixth = 1.0f / 6.0f;
-float bezierToCatmullRom[4][4] = {
+static float sixth = 1.0f / 6.0f;
+static float bezierToCatmullRom[4][4] = {
   {  0,     1,     0,      0     },
   { -sixth, 1,     sixth,  0     },
   {  0,     sixth, 1,     -sixth },
@@ -152,8 +152,8 @@ void acxDrawBezier(int pointCount, float *xpoints, float *ypoints) {
 // FRAME RATE
 
 // can't be used with multiple apps
-float acxFPS = 10.0f;
-int acxLastTime = 0;
+static float acxFPS = 10.0f;
+static int acxLastTime = 0;
 float acxFrameRate() {
   int currentTime = acuCurrentTimeMillis();
   if (acxLastTime != 0) {
@@ -164,7 +164,7 @@ float acxFrameRate() {
   return acxFPS;
 }
 
-int acxLastDelayTime = 0;
+static int acxLastDelayTime = 0;
 void acxFrameRateDelay(int targetFPS) {
   if (acxLastDelayTime == 0) {
     acxLastDelayTime = acuCurrentTimeMillis();
@@ -256,18 +256,38 @@ float acxReadFloat(FILE *fp) {
 
 // SPHERICAL / CARTESIAN COORDINATES
 
-
-void acxSphericalToCartesian(float x, float y, float z,
+/*
+void acxSphericalToCartesian(float sx, float sy, float sz,
 			     float *cx, float *cy, float *cz) {
-  float x0 = (x) * TWO_PI;
-  float y0 = (y) * PI;
-  float z0 = (z) * TWO_PI;
+}
+
+void acxSphericalToCartesian2(float *sx, float *sy, float *sz,
+			     float *cx, float *cy, float *cz) {
+
+  //printf("%f %f %f  ", *sx, *sy, *sz);
+
+  float x0 = *sx * TWO_PI;
+  float y0 = *sy * PI;
+  float z0 = *sz * TWO_PI;
   
   *cx = z0 * cos(x0) * sin(y0);
   *cy = z0 * sin(x0) * sin(y0);
   *cz = z0 * cos(y0);
+
+  //printf("%f %f %f\n", *cx, *cy, *cz);
 }
 
+void acxSphericalToCartesian3(float *s, float *c) {
+  //printf("%f %f %f  ", s[0], s[1], s[2]);
+  register float x0 = s[0] * TWO_PI;
+  register float y0 = s[1] * PI;
+  register float z0 = s[2] * TWO_PI;
+
+  c[0] = z0 * cos(x0) * sin(y0);
+  c[1] = z0 * sin(x0) * sin(y0);
+  c[2] = z0 * cos(y0);
+  //printf("%f %f %f\n", c[0], c[1], c[2]);
+}
 
 void acxCartesianToSpherical(float cx, float cy, float cz, 
 			     float *x, float *y, float *z) {
@@ -285,7 +305,7 @@ void acxCartesianToSpherical(float cx, float cy, float cz,
 
   //printf("%12.4f %12.4f %12.4f\n", *x, *y, *z);
 }
-
+*/
 
 ////////////////////////////////////////////////////////////
 
