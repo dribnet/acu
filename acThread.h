@@ -38,6 +38,8 @@ public:
 
   virtual void run();
 
+  static void sleep(int millis);  // hot mama java style
+
 private:
   unsigned long threadID;
   HANDLE threadHandle;

@@ -15,13 +15,11 @@ acThread::acThread() {
 
 
 acThread::~acThread() {
-  //printf("acThread::~acThread() called\n");
   stop();
 }
 
 
 void acThread::start() {
-  //printf("start() %8x\n", this);
   threadID = 0;
   threadHandle = CreateThread(NULL,   // no specific security settings
 			      0,      // use a regular stack size
@@ -31,30 +29,19 @@ void acThread::start() {
 			      (unsigned long) 0, // CREATE_SUSPENDED is false
 			      &threadID);  // unique integer ID for thread
   if (!threadHandle) {
-    //printf("App: SoundOut thread creation failed.\n");
     acuDebug(ACU_DEBUG_EMERGENCY, "could not create thread");
     // this will terminate the application
   } 
-  //printf("created %d\n", threadID);
-  //else {
-  //printf("App: SoundOut thread creation succeeded, ID %d.\n", id);
   SetThreadPriority(threadHandle, THREAD_PRIORITY_NORMAL);
-  //}	
 }
 
 
-// don't forget to call Sleep() in subclass
-
-void acThread::run() {
-  //while (TRUE) {
-  //printf("hello\n");
-  //Sleep(0);
-  //}
-  // default method, overriden by subclasses
-}
+void acThread::run() { }
 
 
-void acThread::stop() {
-  //printf("acThread::stop() called\n");
-  // duh.. what should i do here?
+void acThread::stop() { }
+
+
+void acThread::sleep(int millis) {
+  Sleep(millis);
 }
