@@ -19,7 +19,7 @@ OPTIONS=-g -DACU_IRIX
 	$(CC) $(OPTIONS) -c $<
 
 OBJS=\
-	acApp.o acVec3f.o \
+	acApp.o acVec3f.o acVec4f.o \
 	geometry.o jpeg.o main.o misc.o text.o video.o \
 	acBitmapFont.o acVectorFont.o # acFreeTypeFont.o 
 
