@@ -281,6 +281,7 @@ GLuint acuCurrentTimeMillis();
 GLfloat acuRandomf();
 
 /* Returns a random unsigned float between 0 and 1 */
+/* Tom says the random number f should be such that 0 <= f < 1 */
 GLfloat acuRandomuf();
 
 /* Does linear interpolation between a and b for a step size t */

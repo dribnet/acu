@@ -1,6 +1,5 @@
 #include "acu.h"
 
-
 /* internal state variables, used for acuGet/acuSet */
 GLint acuWindowWidth;
 GLint acuWindowHeight;
@@ -101,6 +100,9 @@ void acuOpen() {
   acuScreenGrabFormat = ACU_FILE_FORMAT_RAW;
 #endif
   /*acuTimeStep = 1;*/
+
+  /* seed random number generator (on irix) */
+  srandom(time(NULL));
 }
 
 

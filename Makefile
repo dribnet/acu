@@ -30,7 +30,7 @@ install: $(lib)
 	cp *.h /acg/include/.
 
 mine: lib
-	cp libacu.* /mas/u/$(USER)/lib
+	cp libacu.* /u/$(USER)/lib
 
 again: clean lib
 

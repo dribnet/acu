@@ -175,7 +175,8 @@ GLfloat acuRandomf() {
 #endif
 
 #ifdef ACU_IRIX
-    return ((GLfloat)rand() / 16384.0) - 1.0;
+    // tom irix patch return ((GLfloat)rand() / 16384.0) - 1.0;
+    return (GLfloat)random()*2.0 / (LONG_MAX+1.0) - 1.0;
 #endif
 }
 
@@ -188,7 +189,8 @@ GLfloat acuRandomuf() {
 #endif
 
 #ifdef ACU_IRIX
-  return (GLfloat)rand() / 32768.0;
+  // tom irix patch return (GLfloat)rand() / 32768.0;
+  return (GLfloat)random() / (LONG_MAX+1.0);
 #endif
 }
 
