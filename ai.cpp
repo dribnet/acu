@@ -78,6 +78,7 @@ void aiEnd() {
   fprintf(afp, "%%%%EOF%s", AI_EOL);
 
   //fwrite(aiFooterData, 1, aiFooterLength, afp);
+  fflush(afp);
   fclose(afp);
   afp = NULL;
   aiCapture = FALSE;
@@ -138,7 +139,7 @@ void aiStrokeWidthGet() {
 
 void aiStrokeWidth(float width) {
   // 0.25 w = setlinewidth
-  fprintf(afp, "%4.4f w%s", AI_EOL);
+  fprintf(afp, "%4.4f w%s", width, AI_EOL);
 }
 
 void aiBeginPath() {
