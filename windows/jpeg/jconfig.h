@@ -24,7 +24,8 @@
 //#endif
 //#include "acu.h"
 #ifndef boolean
-typedef int boolean;
+//typedef int boolean;
+typedef unsigned char boolean;
 #endif
 #define HAVE_BOOLEAN		/* prevent jmorecfg.h from redefining it */
 
