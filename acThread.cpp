@@ -29,7 +29,8 @@ void acThread::start() {
 			      (unsigned long) 0, // CREATE_SUSPENDED is false
 			      &threadID);  // unique integer ID for thread
   if (!threadHandle) {
-    acuDebug(ACU_DEBUG_EMERGENCY, "could not create thread");
+    //acuDebug(ACU_DEBUG_EMERGENCY, "could not create thread");
+    fprintf(stderr, "could not create thread\n");
     // this will terminate the application
   } 
   SetThreadPriority(threadHandle, THREAD_PRIORITY_NORMAL);

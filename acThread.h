@@ -2,16 +2,16 @@
 #define AC_THREAD_H
 
 // this includes acu constants
-#include "acApp.h"
+//#include "acApp.h"
 
-#ifdef ACU_WIN32
+#include <stdio.h>
+//#ifdef ACU_WIN32
 // this includes HANDLE, etc. for windows
 #include <wtypes.h>
-#endif
+//#endif
 
 
 /*
-
   notes about using acThread:
 
   you cannot start a thread until idle(), 
@@ -26,8 +26,8 @@
 
   stop() currently does nothing
   the destructor ~acThread() just calls stop (which does nothing)
-
  */
+
 class acThread {
 public:
   acThread();
