@@ -173,7 +173,9 @@ float acxFrameRate() {
   int currentTime = acuCurrentTimeMillis();
   if (acxLastTime != 0) {
     float elapsed = currentTime - acxLastTime;
-    acxFPS = (acxFPS * 0.9f) + ((1.0f / (elapsed / 1000.0f)) * 0.1f);
+    if (elapsed != 0.0) {
+      acxFPS = (acxFPS * 0.9f) + ((1.0f / (elapsed / 1000.0f)) * 0.1f);
+    }
   }
   acxLastTime = currentTime;
   return acxFPS;
