@@ -245,7 +245,7 @@ unsigned char* acuResizeArray2D(unsigned char *data,
 				int outWidth, int outHeight,
 				int components,
 				unsigned char background) {
-  int i, j, x, y;
+  int i, x, y;
   int src, dest;
   unsigned char *out;
     

@@ -205,7 +205,6 @@ void acuvGetProxyFrame(unsigned char *frame) {
   int srcOffset, srcIndex, destIndex;
   int i, j, iw, ih;
   unsigned char *data;
-  FILE *fp;
   
   /* load the current file into a buffer */
   sprintf(acuvFilename, acuvFilenameTemplate, acuvFrameIndex);
