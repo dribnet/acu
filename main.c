@@ -1,5 +1,6 @@
 #include "acu.h"
 
+
 /* internal state variables, used for acuGet/acuSet */
 GLint acuWindowWidth;
 GLint acuWindowHeight;
@@ -469,16 +470,27 @@ void acuSetMazoImage(GLubyte *newBuffer) {
 }
 */
 
+
 void acuScreenGrab(char *filename) {
   unsigned char *temp;
   int j, k;
   FILE *fp; /* for ppm */
 
+  if (acuScreenGrabFormat == ACU_FILE_FORMAT_SCRSAVE) {
+    char command[256];
+    sprintf(command, "scrsave %s %d %d %d %d", filename,
+	    0, acuWindowWidth, 0, acuWindowHeight);
+    printf("%s\n", command);
+    system(command);
+    return;
+  }
+
   if (acuScreenGrabBuffer == NULL) {
     acuScreenGrabBuffer = (unsigned char *) 
       malloc(acuWindowWidth * acuWindowHeight * 3);
   }
-  glReadPixels(0, 0, acuWindowWidth, acuWindowHeight, 
+
+  glReadPixels(0, 0, acuWindowWidth, acuWindowHeight,
 	       GL_RGB, GL_UNSIGNED_BYTE, acuScreenGrabBuffer);
 
   /* so it's really lazy of me to set up the algorithm this
@@ -501,6 +513,7 @@ void acuScreenGrab(char *filename) {
     acuScreenGrabBuffer = acuScreenGrabFlipper;
     acuScreenGrabFlipper = temp;
   }
+
   switch (acuScreenGrabFormat) {
 
   case ACU_FILE_FORMAT_JPEG:
@@ -662,8 +675,8 @@ void acuSetIntegerv(acuEnum pname, GLint *params) {
     glutReshapeWindow(acuWindowWidth, acuWindowHeight);
 
     /* these sizes will no longer be valid */
-    free(acuScreenGrabBuffer);
-    free(acuScreenGrabFlipper);
+    if (acuScreenGrabBuffer) free(acuScreenGrabBuffer);
+    if (acuScreenGrabFlipper) free(acuScreenGrabFlipper);
     acuScreenGrabBuffer = NULL;
     acuScreenGrabFlipper = NULL;
     break;

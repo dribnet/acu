@@ -24,6 +24,7 @@ extern "C" {
 /* some functions check aiCapture */
 #include "ai.h"
 
+extern int acuWindowWidth, acuWindowHeight;
 
 #define acxNextPowerOf2(x) ((int) pow(2, ceil(log(x) / log(2))))
 
@@ -38,6 +39,8 @@ void acxFrameRateDelay(int targetFPS);
 
 
 void acxNumberedFilename(char *dest, char *tmpl, int *num);
+    //void acxScreenGrabAss(char *filename);
+
 
 void acxReadToEOL(FILE *fp);
 void acxReadSpace(FILE *fp);

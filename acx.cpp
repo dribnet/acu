@@ -368,18 +368,19 @@ void acxZoomTransform() {
   glTranslatef(0, 0, acxFwdBackTrans);
 }
 
+
 /*
 // not sure why you'd want this
-  void screenGrabAss() {
-    char path[256];
-    char command[256];
-    sprintf(path, "/mas/u/fry/extra/sketchc-slides/sketchc%03d.rgb", 
-	    grabAssCount++);
-    sprintf(command, "scrsave %s %d %d %d %d", path,
-	    0, windowWidth, 0, windowHeight);
-    printf("%s\n", command);
-    system(command);
-  }
+void acxScreenGrabAss(char *filename) {
+  //char path[256];
+  char command[256];
+  //sprintf(path, "/mas/u/fry/extra/sketchc-slides/sketchc%03d.rgb", 
+  //  grabAssCount++);
+  sprintf(command, "scrsave %s %d %d %d %d", filename,
+	  0, acuWindowWidth, 0, acuWindowHeight);
+  printf("%s\n", command);
+  system(command);
+}
 */
 
 
