@@ -10,7 +10,7 @@ ACLIB_DIR = /acg/lib
 default: lib
 
 CC=CC
-OPTIONS=-g -DACU_IRIX
+OPTIONS=-g -DACU_IRIX -LANG:ansi-for-init-scope=ON
 
 .c.o:
 	$(CC) $(OPTIONS) -c $<
@@ -19,7 +19,7 @@ OPTIONS=-g -DACU_IRIX
 	$(CC) $(OPTIONS) -c $<
 
 OBJS=\
-	acApp.o acVec3f.o acVec4f.o \
+	acApp.o acVec3f.o acVec4f.o acMatrix4f.o ai.o acx.o \
 	geometry.o jpeg.o main.o misc.o text.o video.o \
 	acBitmapFont.o acVectorFont.o # acFreeTypeFont.o 
 

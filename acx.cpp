@@ -203,7 +203,7 @@ void acxFrameRateDelay(int targetFPS) {
 int acxLoadFontOrDie(char *filename) {
   int which = acuLoadFont(filename);
   if (which == ACU_ERROR) {
-    sprintf(acuDebugStr, "the font '%s' could not be found");
+    sprintf(acuDebugStr, "the font '%s' could not be found", filename);
     acuDebugString(ACU_DEBUG_EMERGENCY);
   }
   return which;
