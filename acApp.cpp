@@ -6,6 +6,9 @@ int aaLastMouseButton;
 boolean aaValidWindowSize;
 acApp* apps[10];
 
+int aahaveShrunk=FALSE, aafullScreen=TRUE, aafullWidth, aafullHeight;
+int aaWinH, aaWinW, aaWinX, aaWinY;
+
 /* for mouseCallback Y switcheroo and reshaping */
 extern "C" GLint acuWindowHeight;
 extern "C" GLint acuWindowWidth;
@@ -131,7 +134,41 @@ void acApp::keyDown(char c) {
   if (c == 27) // escape
     acuClose();
 }
-void acApp::specialKeyDown( int key) { }
+
+void acApp::specialKeyDown( int key) {
+  /* default behavior of SKD: toggle between fullscreen on F1
+   * if you override and want to keep, just call acApp::specialKeyDown(key) 
+   * on F1 (or even acApp::specialKeyDown(GLUT_KEY_F1) on a different key)
+   */
+  GLint size[2];
+  if(key == GLUT_KEY_F1) {
+     if(aafullScreen) {
+       if(aahaveShrunk == FALSE) {
+         aahaveShrunk = TRUE;
+         aafullWidth = acuWindowWidth;
+         aafullHeight = acuWindowHeight;
+         aaWinW = acuWindowWidth - 70;
+         aaWinH = acuWindowHeight - 90;
+         aaWinX = 35;
+         aaWinY = 55;
+       }
+       aafullScreen = FALSE;
+       aafullWidth = W;
+       aafullHeight = H;
+       size[0] = aaWinW; size[1] = aaWinH;
+       acuSetIntegerv(ACU_WINDOW_SIZE, size);
+       glutPositionWindow(aaWinX, aaWinY);
+     }
+     else {
+       aafullScreen = TRUE;
+       aaWinX = glutGet(GLUT_WINDOW_X);
+       aaWinY = glutGet(GLUT_WINDOW_Y);
+       aaWinW = W;
+       aaWinH = H;
+       glutFullScreen();
+     }
+  }
+}
  
 void acApp::draw() { }
 void acApp::idle() { }
