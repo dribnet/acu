@@ -4,6 +4,7 @@
 int aaGrabCount;
 int aaLastMouseButton;
 boolean aaValidWindowSize;
+acApp* apps[10];
 
 /* for mouseCallback Y switcheroo and reshaping */
 extern "C" GLint acuWindowHeight;

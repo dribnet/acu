@@ -105,7 +105,9 @@ public:
   //static acApp *theApp;
 };
 
-acApp* apps[10];
+// made "extern" by max, who had nothing better to do. 3/24/01
+extern acApp* apps[10];
+// ---- definition in acApp.cpp
 
 void display_cb(void);
 void mouse_cb(int button, int state, int x, int y);
