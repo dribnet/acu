@@ -33,7 +33,10 @@ long glUnwrapper::getBufferSize()
 }
 
 
-
+void glUnwrapper::clearBuffer()
+{
+  bufferSize = 0;
+}
 
 
 

@@ -7,6 +7,7 @@ public:
   glUnwrapper();
 
   void setBuffer( unsigned char* B, long Bsize );
+  void clearBuffer();
   void* getBuffer();
   long getBufferSize();
   
