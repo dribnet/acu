@@ -1,5 +1,11 @@
 about acu, sometimes a twice-weekly newsletter for the acu community
 
+[ october 31 2000 ] 
+- removed acx and ai, both of which were unsupported
+- removed acMatrix4f, it wasn't particularly well designed
+- removed acThread, it hasn't been used 
+- removed Makefile.cygnus, because i think it's way outta date
+
 [ whenever ]
 - acuLine functions have been modified and renamed slightly.
 - acx and ai stuff was added. these are not supported.
