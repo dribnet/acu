@@ -10,6 +10,7 @@ public:
   /* Your application can just have a simple 'main' in
    * a separate main.cpp file that looks something like this:
    * void main() {
+   *   acuOpen();
    *   acApp *myApp = makeApp();
    *   myApp->selfStart();
    * }
