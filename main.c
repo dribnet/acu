@@ -113,6 +113,8 @@ void acuOpen() {
   srandom(time(NULL));
 #elif defined(ACU_WIN32)
   srand(time(NULL));
+#elif defined(ACU_MAC)
+  srand(time(NULL));
 #endif
 
 }

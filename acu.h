@@ -352,6 +352,9 @@ GLfloat acuLerpf(GLfloat t, GLfloat a, GLfloat b);
 /* Just like acuLerpf, but squared to make a nice S-curve */
 GLfloat acuSerpf(GLfloat t, GLfloat a, GLfloat b);
 
+/* Just like acuSerpf, but computes t from begin, cur, and end */
+GLfloat acuSerpMapf(GLfloat begin, GLfloat cur, GLfloat end, GLfloat a, GLfloat b);
+
 /* Used internally, reads 4 bytes from a file and does the
  * appropriate endian-swapping based on what platform you're
  * using. This is used by the text routines.

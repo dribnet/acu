@@ -132,6 +132,8 @@ GLfloat acuRandomf() {
   return (GLfloat)random()*2.0 / (LONG_MAX+1.0) - 1.0;
 #elif defined(ACU_WIN32)
   return (GLfloat) ((float)(rand() >> 0) / 16384.0) - 1.0;
+#elif defined(ACU_MAC)
+  return (GLfloat) ((float)(rand() >> 0) / 16384.0) - 1.0;
 #else
   acuDebug(ACU_DEBUG_EMERGENCY, "Please implement acuRandom on your platform");
 #endif
@@ -145,6 +147,8 @@ GLfloat acuRandomuf() {
   return (GLfloat)random() / (LONG_MAX+1.0);
 #elif defined(ACU_WIN32)
   return (GLfloat) ((float)(rand() >> 0) / 32768.0);
+#elif defined(ACU_MAC)
+  return (GLfloat) ((float)(rand() >> 0) / 32768.0);
 #else
   acuDebug(ACU_DEBUG_EMERGENCY, "Please implement acuRandom on your platform");
 #endif
@@ -157,6 +161,8 @@ GLint acuRandomui() {
 #elif defined(ACU_LINUX)
   return random();
 #elif defined(ACU_WIN32)
+  return rand();
+#elif defined(ACU_MAC)
   return rand();
 #else
   acuDebug(ACU_DEBUG_EMERGENCY, "Please implement acuRandom on your platform");
@@ -175,6 +181,12 @@ GLfloat acuSerpf(GLfloat t, GLfloat a, GLfloat b) {
 	return (a + factor * (b - a));
 }
 
+GLfloat acuSerpMapf(GLfloat begin, GLfloat cur, GLfloat end, GLfloat a, GLfloat b) {
+  float t;
+
+  t = (cur-begin) / (end-begin);
+  return acuSerpf(t, a, b);
+}
 
 int acuReadInt(FILE *fp) {
   int c1 = fgetc(fp);
