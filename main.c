@@ -22,8 +22,8 @@ int acuScreenGrabFormat;
 
 /* These are all constants about mazo's view area */
 static float mazoDist = 100.0;
-static float mazoNearDist = 1.0;
-static float mazoFarDist = 10000.0;
+static float mazoNearDist = 10.0;
+static float mazoFarDist = 1000.0;
 static float mazoAspect = 4.0/3.0;
 static float mazoEyeX = 320;
 static float mazoEyeY = 240;
@@ -268,8 +268,8 @@ void updateMazoViewConstants() {
   halfFov = PI * acuScreenFov / 360.0;
   theTan = tanf(halfFov);
   mazoDist = mazoEyeY / theTan;
-  mazoNearDist = mazoDist / 100.0;
-  mazoFarDist = mazoDist * 100.0;
+  mazoNearDist = mazoDist / 10.0;
+  mazoFarDist = mazoDist * 10.0;
   mazoAspect = (float)acuWindowWidth/acuWindowHeight;
 } 
 
