@@ -60,10 +60,11 @@ void acxZoomTransform();
 void acxQuad2f(float x1, float y1, float x2, float y2,
 	       float x3, float y3, float x4, float y4);
 
-void acxOval2f(float x, float y, float w, float h);
+  //void acxOval2f(float x, float y, float w, float h);
+void acxOval2f(float cx, float cy, float wide, float high, boolean filled);
 
-void acxGolanLine2f(float x0, float y0, float x1, float y1, 
-		    float r0, float r1, int endcapCount);
+void acxLine2f(float x0, float y0, float x1, float y1, 
+	       float r0, float r1, int endcaps);
 
   /*
 void acxSphericalToCartesian3(float *s, float *c);

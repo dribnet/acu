@@ -400,13 +400,111 @@ void acxQuad2f(float x1, float y1, float x2, float y2,
 }
 
 
-void acxOval2f(float x, float y, float w, float h) {
+/* oval code contributed by goran rebin */
+
+boolean acxOvalInited = FALSE;
+//float* acxOvalX;
+//float* acxOvalY;
+int acxOvalCount = 30;
+acVec3f **cachedCircle = NULL;
+
+void acxOvalInit() {
+  cachedCircle = new acVec3f*[acxOvalCount];
+  for (int i = 0; i < acxOvalCount; i++) {
+    float t = (float)i/(float)acxOvalCount * TWO_PI;
+    cachedCircle[i] = new acVec3f(cos(t), sin(t), 0);
+  }
 }
 
+void acxOval2f(float cx, float cy, float wide, float high, boolean filled) {
+  if (!cachedCircle) acxOvalInit();
+
+  glPushMatrix();
+  glTranslatef(cx, cy, 0);
+  //glScalef(r, r, 1);
+  glScalef(wide, high, 1);
+
+  acVec3f **lastp = (acVec3f**) &cachedCircle[acxOvalCount-1];
+  acVec3f **p = cachedCircle;
+
+  if (filled) {
+    acVec3f **q = cachedCircle;
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex2f(0, 0);
+    while (p <= lastp) { 
+      glVertex2f((*p)->x, (*p)->y); *p++; 
+    }
+    glVertex2f((*q)->x, (*q)->y);
+    glEnd();
+
+  } else {
+    glBegin(GL_LINE_LOOP);
+    while (p <= lastp) { 
+      glVertex2f((*p)->x, (*p)->y); *p++; 
+    }
+    glEnd();
+  }
+  glPopMatrix();
+}
+
+/*
+// hi! i'm not optimized! because i don't need to be.
+void acxOvalInit(int count) {
+  acxOvalX = new float[count];
+  acxOvalY = new float[count];
+  acxOvalCount = count;
+  //int count1 = count + 1;
+  for (int i = 0; i < count; i++) {
+    float angle = ((float)i / (float)(count-1)) * TWO_PI;
+    acxOvalX[i] = cos(angle);
+    acxOvalY[i] = sin(angle);
+  }
+  acxOvalInited = TRUE;
+}
+
+void acxOval2f(float x, float y, float w, float h) {
+  if (!acxOvalInited) acxOvalInit(20);
+  
+  float radiusX = w/2;
+  float radiusY = h/2;
+  float centerX = x + radiusX;
+  float centerY = y + radiusY;
+
+  
+  glBegin(GL_POLYGON);
+  for (int i = 0; i < acxOvalCount; i++) {
+    glVertex2f(centerX + acxOvalX[i] * radiusX, 
+	       centerY + acxOvalY[i] * radiusY);
+    //printf("%f %f\n", radiusX + acxOvalX[i] * radiusX, 
+    //       radiusY + acxOvalY[i] * radiusY);
+  }
+  //printf("\n");
+  glEnd();
+  
+  
+  glBegin(GL_POLYGON);
+  float angle = 2.0*3.1415926536/(float)numDivs;
+
+  glBegin( GL_POLYGON );
+  glNormal3f( 0,0, 1 );
+  float rad = radius.getValue();
+  float cx = cX.getValue();
+  float cy = cY.getValue();
+  for (int i=0; i<numDivs; i++) {
+    float cosVal = cos(angle*(float)i);
+    float sinVal = sin(angle*(float)i);
+    glTexCoord2f( (cosVal+1.0)/2.0, (sinVal+1.0)/2.0 );
+    //glVertex3f( rad*cosVal+cx,
+    //	rad*sinVal+cy,
+    //	0.0 );
+  }
+  glEnd();
+}
+*/
 
 // uses radius instead of thickness
-void acxGolanLine2f(float x0, float y0, float x1, float y1, 
-		    float r0, float r1, int endcapCount) {
+void acxLine2f(float x0, float y0, float x1, float y1, 
+	       float r0, float r1, int endcapCount) {
     float dX = x1-x0 + 0.0001f;
     float dY = y1-y0 + 0.0001f;
     float len = sqrt(dX*dX + dY*dY);
