@@ -204,7 +204,7 @@ void acxNumberedFilename(char *dest, char *tmpl, int *num) {
       counter++;
     }
     sprintf(dest, tmpl, counter);
-    printf("trying %s\n", dest);
+    //printf("trying %s\n", dest);
   } while ((fd = open(dest, O_RDONLY)) != -1);
   sprintf(dest, tmpl, counter);
   *num = counter+1;

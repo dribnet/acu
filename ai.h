@@ -6,8 +6,8 @@ extern boolean aiCapture;
 void aiBegin(char *filename);
 void aiEnd();
 
-void aiFillColor(float r, float g, float b);
-void aiStrokeColor(float r, float g, float b);
+void aiFillColorRGB(float r, float g, float b);
+void aiStrokeColorRGB(float r, float g, float b);
 
 void aiBeginGroup();
 void aiEndGroup();
@@ -15,6 +15,7 @@ void aiEndGroup();
 void aiBeginLock();
 void aiEndLock();
 
+void aiLineWidth(float width);
 void aiBeginLine();
 void aiMoveTo(float x, float y);
 void aiLineTo(float x, float y);

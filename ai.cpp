@@ -65,7 +65,7 @@ void aiBegin(char *filename) {
 
   float bgColor[3];
   acuGetFloatv(ACU_WINDOW_BG_COLOR, bgColor);
-  aiFillColor(bgColor[0], bgColor[1], bgColor[2]);
+  aiFillColorRGB(bgColor[0], bgColor[1], bgColor[2]);
   aiBeginLock();
   aiFilledRectangleMacro(0, 0, (float)screenDim[0], 
 			 (float)screenDim[1]);
@@ -86,12 +86,12 @@ void aiEnd() {
 }
 
 
-void aiFillColor(float r, float g, float b) {
+void aiFillColorRGB(float r, float g, float b) {
   fprintf(afp, "%1.2f %1.2f %1.2f %1.2f k%s", 
 	  1.0-r, 1.0-g, 1.0-b, 0.0, AI_EOL);
 }
 
-void aiStrokeColor(float r, float g, float b) {
+void aiStrokeColorRGB(float r, float g, float b) {
   fprintf(afp, "%1.2f %1.2f %1.2f %1.2f K%s", 
 	  1.0-r, 1.0-g, 1.0-b, 0.0, AI_EOL);
 }
@@ -111,6 +111,11 @@ void aiBeginLock() {
 
 void aiEndLock() {
   fprintf(afp, "0 A%s", AI_EOL);
+}
+
+void aiLineWidth(float width) {
+  // 0.25 w = setlinewidth
+  fprintf(afp, "%4.4f w%s", AI_EOL);
 }
 
 void aiBeginLine() {
