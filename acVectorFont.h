@@ -21,7 +21,8 @@ public:
   boolean charExists(char c);
   //float kernWidth(char a, char b);
   void drawChar(char c, float x, float y);
-   
+  float getDefaultLeading();
+
 protected:
   float x[256][50];
   float y[256][50];
@@ -30,6 +31,7 @@ protected:
   float width[256];
   float height[256];
   
+  float leading;
   float descent;
   float maxHeight;
 };
