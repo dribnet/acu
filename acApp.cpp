@@ -18,7 +18,7 @@ acApp::acApp()
 
 void acApp::selfStart()
 {
-  int screenSize[2];
+  GLint screenSize[2];
   
   theApp = this;
 

@@ -66,7 +66,12 @@ extern "C" {
 
 #include <stdlib.h>
 #include <stdio.h>
+
+#ifdef ACU_MAC
+#include "glut.h"
+#else
 #include <GL/glut.h>
+#endif
 
 #include <math.h>
 #include <time.h>

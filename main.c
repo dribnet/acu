@@ -46,6 +46,8 @@ extern void textInit();
 void acuOpen() {
   int argc = 1;
   char *argv = "acu";
+  // this strangeness is because of the lameness of glutInit on Mac
+  char **vptr = &argv;
 
 //  printf("acuOpen called\n");
 
@@ -55,7 +57,7 @@ void acuOpen() {
   frameDepth = 0;
 
   // InitDisplayMode must appear before CreateWindow
-  glutInit(&argc, &argv);
+  glutInit(&argc, vptr);
   //glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_ALPHA);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 
