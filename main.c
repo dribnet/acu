@@ -33,15 +33,9 @@ int acuScreenGrabFormat;
 static float mazoDist = 100.0;
 static float mazoNearDist = 10.0;
 static float mazoFarDist = 1000.0;
-//static float mazoAspect = 4.0/3.0;
-//float mazoAspect = 4.0/3.0;
-static float mazoAspect = 4;
+static float mazoAspect = 4.0/3.0;
 static float mazoEyeX = 320;
 static float mazoEyeY = 240;
-/* REMOVED 11/99 
-static GLubyte *mazoBuffer = NULL;
-static int mazoDoBuffer = 0;
-*/
 
 /* this is a glut callback, set by acuOpen() */
 void reshape(int width, int height) {

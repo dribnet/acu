@@ -72,7 +72,7 @@ acBitmapFont::acBitmapFont(const char *filename) {
   //for (int m = 0; m < numChars; m++) {
   //printf("%d ", texNames[m]);
   //}
-    
+
   for (i = 0; i < numChars; i++) {
     glBindTexture(GL_TEXTURE_2D, texNames[i]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 64, 0,
