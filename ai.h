@@ -9,6 +9,7 @@
 
 
 extern boolean aiCapture;
+extern FILE *aifp;
 
 void aiBegin(char *filename);
 void aiEnd();
@@ -42,3 +43,7 @@ void aiSetMatrix(float *matrix);
 void aiSetMatrixGet();
 void aiMoveTo3f(float x, float y, float z);
 void aiLineTo3f(float x, float y, float z);
+
+void aiSetFont(char *fontFace, int fontSize);
+void aiDrawString(char *what, float x, float y);
+void aiDrawString3f(char *what, float x, float y, float z);

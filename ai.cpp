@@ -4,6 +4,8 @@
 /*
   THIS IS HIGHLY UNSUPPORTED CODE THAT CHANGES ALL THE TIME
   ben fry 99.12.19
+
+  why did i do this AI_EOL thing instead of just using \r\n?
 */
 
 
@@ -11,7 +13,7 @@ boolean aiCapture = FALSE;
 static char AI_EOL[] = { 13, 10, 0 };
 //static char aiFilenameTemplate[] = "illusfart-%03d.ai";
 //int aiCount = -1;
-FILE *afp;
+FILE *aifp;
 
 
 void aiBegin(char *filename) {
@@ -23,64 +25,64 @@ void aiBegin(char *filename) {
     sprintf(filename, aiFilenameTemplate, aiCount++);
   }
   */
-  afp = fopen(filename, "wb");
+  aifp = fopen(filename, "wb");
 
   int screenDim[2];
   acuGetIntegerv(ACU_WINDOW_SIZE, screenDim);
 
-  fprintf(afp, "%%!PS-Adobe-2.0 %s", AI_EOL);
-  fprintf(afp, "%%%%Creator:Adobe Illustrator(TM) 1.1%s", AI_EOL);
-  //fprintf(afp, "%%%%For: (Glen Nupert) (Zemo\(r\) Handbuzzers)%s", AI_EOL);
-  //fprintf(afp, "%%%%Title: (oneline-1.0.ai)%s", AI_EOL);
-  //fprintf(afp, "%%%%CreationDate: (7/26/99) (8:25 PM)%s", AI_EOL);
-  //fprintf(afp, "%%%%DocumentProcessColors: Black%s", AI_EOL);
-  //fprintf(afp, "%%%%DocumentProcSets: Adobe_Illustrator_1.1 0 0%s", AI_EOL);
-  //fprintf(afp, "%%%%DocumentSuppliedProcSets: Adobe_Illustrator_1.1 0 0%s", AI_EOL);
-  fprintf(afp, "%%%%BoundingBox:%d %d %d %d%s", 
+  fprintf(aifp, "%%!PS-Adobe-2.0 %s", AI_EOL);
+  fprintf(aifp, "%%%%Creator:Adobe Illustrator(TM) 1.1%s", AI_EOL);
+  //fprintf(aifp, "%%%%For: (Glen Nupert) (Zemo\(r\) Handbuzzers)%s", AI_EOL);
+  //fprintf(aifp, "%%%%Title: (oneline-1.0.ai)%s", AI_EOL);
+  //fprintf(aifp, "%%%%CreationDate: (7/26/99) (8:25 PM)%s", AI_EOL);
+  //fprintf(aifp, "%%%%DocumentProcessColors: Black%s", AI_EOL);
+  //fprintf(aifp, "%%%%DocumentProcSets: Adobe_Illustrator_1.1 0 0%s", AI_EOL);
+  //fprintf(aifp, "%%%%DocumentSuppliedProcSets: Adobe_Illustrator_1.1 0 0%s", AI_EOL);
+  fprintf(aifp, "%%%%BoundingBox:%d %d %d %d%s", 
 	  0, 0, screenDim[0], screenDim[1], AI_EOL);
-  //fprintf(afp, "%%%%TemplateBox:%d %d %d %d%s", 
+  //fprintf(aifp, "%%%%TemplateBox:%d %d %d %d%s", 
   //  0, 0, screenDim[0], screenDim[1], AI_EOL);
-  //fprintf(afp, "%%%%TileBox:%d %d %d %d%s", 
+  //fprintf(aifp, "%%%%TileBox:%d %d %d %d%s", 
   //  0, 0, screenDim[0], screenDim[1], AI_EOL);
 
-  //fprintf(afp, "%%%%ColorUsage: Black&White%s", AI_EOL);
-  //fprintf(afp, "%%%%TemplateBox:306 396 306 396%s", AI_EOL);
-  //fprintf(afp, "%%%%TileBox: 30 31 582 759%s", AI_EOL);
-  //fprintf(afp, "%%%%DocumentPreview: None%s", AI_EOL);
-  fprintf(afp, "%%%%EndComments%s", AI_EOL);
-  fprintf(afp, "%%%%EndProlog%s", AI_EOL);
-  fprintf(afp, "%%%%BeginSetup%s", AI_EOL);
-  fprintf(afp, "Adobe_Illustrator_1.1 begin%s", AI_EOL);
-  fprintf(afp, "n%s", AI_EOL);
-  fprintf(afp, "%%%%EndSetup%s", AI_EOL);
+  //fprintf(aifp, "%%%%ColorUsage: Black&White%s", AI_EOL);
+  //fprintf(aifp, "%%%%TemplateBox:306 396 306 396%s", AI_EOL);
+  //fprintf(aifp, "%%%%TileBox: 30 31 582 759%s", AI_EOL);
+  //fprintf(aifp, "%%%%DocumentPreview: None%s", AI_EOL);
+  fprintf(aifp, "%%%%EndComments%s", AI_EOL);
+  fprintf(aifp, "%%%%EndProlog%s", AI_EOL);
+  fprintf(aifp, "%%%%BeginSetup%s", AI_EOL);
+  fprintf(aifp, "Adobe_Illustrator_1.1 begin%s", AI_EOL);
+  fprintf(aifp, "n%s", AI_EOL);
+  fprintf(aifp, "%%%%EndSetup%s", AI_EOL);
 
   // k = cmyk fill color
-  //fprintf(afp, "0 0 0 0 k%s", AI_EOL);  
+  //fprintf(aifp, "0 0 0 0 k%s", AI_EOL);  
   // K = cmyk stroke color
-  //fprintf(afp, "0 0 0 1 K%s", AI_EOL);  
+  //fprintf(aifp, "0 0 0 1 K%s", AI_EOL);  
   // i = setflat
-  fprintf(afp, "0 i%s", AI_EOL);  
+  fprintf(aifp, "0 i%s", AI_EOL);  
   // 0 J = setlinecap
   // 0 j = setlinejoin
   // 0.25 w = setlinewidth
   // 4 M = setmiterlimit
   // []0 d = setdash
-  fprintf(afp, "0 J 0 j 0.25 w 4 M []0 d%s", AI_EOL);
+  fprintf(aifp, "0 J 0 j 0.25 w 4 M []0 d%s", AI_EOL);
 
   aiCapture = TRUE;
 }
 
 
 void aiEnd() {
-  fprintf(afp, "%%%%PageTrailer%s", AI_EOL);
-  fprintf(afp, "%%%%Trailer%s", AI_EOL);
-  fprintf(afp, "_E end%s", AI_EOL);
-  fprintf(afp, "%%%%EOF%s", AI_EOL);
+  fprintf(aifp, "%%%%PageTrailer%s", AI_EOL);
+  fprintf(aifp, "%%%%Trailer%s", AI_EOL);
+  fprintf(aifp, "_E end%s", AI_EOL);
+  fprintf(aifp, "%%%%EOF%s", AI_EOL);
 
-  //fwrite(aiFooterData, 1, aiFooterLength, afp);
-  fflush(afp);
-  fclose(afp);
-  afp = NULL;
+  //fwrite(aiFooterData, 1, aiFooterLength, aifp);
+  fflush(aifp);
+  fclose(aifp);
+  aifp = NULL;
   aiCapture = FALSE;
 }
 
@@ -99,12 +101,12 @@ void aiScreenShapeMacro() {
 
 
 void aiFillColorRGB(float r, float g, float b) {
-  fprintf(afp, "%1.2f %1.2f %1.2f %1.2f k%s", 
+  fprintf(aifp, "%1.2f %1.2f %1.2f %1.2f k%s", 
 	  1.0-r, 1.0-g, 1.0-b, 0.0, AI_EOL);
 }
 
 void aiStrokeColorRGB(float r, float g, float b) {
-  fprintf(afp, "%1.2f %1.2f %1.2f %1.2f K%s", 
+  fprintf(aifp, "%1.2f %1.2f %1.2f %1.2f K%s", 
 	  1.0-r, 1.0-g, 1.0-b, 0.0, AI_EOL);
 }
 
@@ -132,19 +134,19 @@ void aiStrokeColorGet() {
 }
 
 void aiBeginGroup() {
-  fprintf(afp, "u%s", AI_EOL);
+  fprintf(aifp, "u%s", AI_EOL);
 }
 
 void aiEndGroup() {
-  fprintf(afp, "U%s", AI_EOL);
+  fprintf(aifp, "U%s", AI_EOL);
 }
 
 void aiBeginLock() {
-  fprintf(afp, "1 A%s", AI_EOL);
+  fprintf(aifp, "1 A%s", AI_EOL);
 }
 
 void aiEndLock() {
-  fprintf(afp, "0 A%s", AI_EOL);
+  fprintf(aifp, "0 A%s", AI_EOL);
 }
 
 void aiStrokeWidthGet() {
@@ -155,30 +157,30 @@ void aiStrokeWidthGet() {
 
 void aiStrokeWidth(float width) {
   // 0.25 w = setlinewidth
-  fprintf(afp, "%4.4f w%s", width, AI_EOL);
+  fprintf(aifp, "%4.4f w%s", width, AI_EOL);
 }
 
 void aiBeginPath() {
 }
 
 void aiMoveTo(float x, float y) {
-  fprintf(afp, "%4.4f %4.4f m%s", x, y, AI_EOL);
+  fprintf(aifp, "%4.4f %4.4f m%s", x, y, AI_EOL);
 }
 
 // L and l seem to do same thing
 void aiLineTo(float x, float y) {
-  fprintf(afp, "%4.4f %4.4f l%s", x, y, AI_EOL);
+  fprintf(aifp, "%4.4f %4.4f l%s", x, y, AI_EOL);
 }
 
 void aiCurveTo(float x1, float y1, float x2, float y2, float x3, float y3) {
-  fprintf(afp, "%4.4f %4.4f %4.4f %4.4f %4.4f %4.4f c%s", 
+  fprintf(aifp, "%4.4f %4.4f %4.4f %4.4f %4.4f %4.4f c%s", 
 	  x1, y1, x2, y2, x3, y3, AI_EOL);
 }
 
 void aiEndPath() {
   // B - fill and stroke line
   // S - stroke line
-  fprintf(afp, "S%s", AI_EOL);
+  fprintf(aifp, "S%s", AI_EOL);
 }
 
 
@@ -197,7 +199,7 @@ void aiFilledRectangleMacro(float x1, float y1, float x2, float y2) {
   aiLineTo(x1, y2);
   aiLineTo(x1, y1);
   // f - close and fill path
-  fprintf(afp, "f%s", AI_EOL);
+  fprintf(aifp, "f%s", AI_EOL);
 }
 
 
@@ -241,7 +243,7 @@ void aiMoveTo3f(float x, float y, float z) {
   float xx = ctm[0]*x + ctm[4]*y + ctm[8]*z + ctm[12];
   float yy = ctm[1]*x + ctm[5]*y + ctm[9]*z + ctm[13];
 
-  fprintf(afp, "%4.4f %4.4f m%s", xx, yy, AI_EOL);
+  fprintf(aifp, "%4.4f %4.4f m%s", xx, yy, AI_EOL);
 }
 
 // L and l seem to do same thing
@@ -252,6 +254,104 @@ void aiLineTo3f(float x, float y, float z) {
   float xx = ctm[0]*x + ctm[4]*y + ctm[8]*z + ctm[12];
   float yy = ctm[1]*x + ctm[5]*y + ctm[9]*z + ctm[13];
 
-  fprintf(afp, "%4.4f %4.4f l%s", xx, yy, AI_EOL);
+  fprintf(aifp, "%4.4f %4.4f l%s", xx, yy, AI_EOL);
 }
 
+/*
+  /_Univers-BlackOblique 12 Tf
+
+  (blackoblique) Tx 1 0 Tk
+
+  # second time around
+0 To
+1 0 0 1 256.0259 253.666 0 Tp
+TP
+0 Tr
+(second) Tx 1 0 Tk
+(\r) TX 
+TO
+
+  # the minimum
+0 To
+1 0 0 1 256.0259 253.666 0 Tp
+TP
+0 Tr
+/_Univers-BlackOblique 12 Tfb
+(second) Tx 1 0 Tk
+(\r) TX 
+TO
+
+
+  0 A
+  0 To               # begin text object
+  1 0 0 1 106.0259 595.9741 0 Tp   # begin text path
+                     [1 0 106.0259]
+                     [0 1 595.9741]  startpt=0
+  TP                 # end text path (concats the above matrix)
+  0 Tr               # set text render mode (to fill)
+  0 O                # set overprint to false
+  0 0 0 1 k          # cmyk fill color (black)
+  0 i                # setflat     
+  0 J 0 j 1 w 4 M []0 d  # usual line stuff
+  %AI3_Note:         # a comment
+  0 D                # polarized fill style
+  /_Helvetica 12 Tf  # set the font to 12 point helvetica
+  0 Ts               # text super script false
+  100 Tz             # horizontal scaling 100%
+  0 Tt               # user tracking 0
+  1 TA               # pairwise kerning ON
+  0 0 5 TC           # text character spacing (min=0, opt=0, max=5)
+  100 100 200 TW     # word spacing (min=100, opt=100, max=200)
+  0 0 0 Ti           # set indent (firststart=0, otherstart=0, stop=0)
+  0 Ta               # set alignment left (0=left, 1=center, 2=right)
+  0 Tq               # hanging quotes false
+  0 0 Tl             # leading (leading=0, paragraphleading=0)
+  0 Tc               # set computed character spacing (charspacing=0)
+  0 Tw               # set computed word spacing (wordspacing=0)
+  (b) Tx 1 20 Tk     # Tx=non justified text, 
+  (la b) Tx 1 20 Tk  # Tk=auto kern (=1, where 0=manual, 1=auto) and kern (=20)
+  (lah) Tx 1 0 Tk
+  (\r) TX            # overflow text
+  TO                 # end text object
+*/
+
+// sets font by using a semi-bogus call to make 
+// a text object (usually a block of text)
+void aiSetFont(char *fontFace, int fontSize) {
+  fprintf(aifp, "0 To %s", AI_EOL);
+  fprintf(aifp, "1 0 0 1 0 0 0 Tp %s", AI_EOL);
+  fprintf(aifp, "TP %s", AI_EOL);
+  fprintf(aifp, "/_%s %d Tf %s", fontFace, fontSize, AI_EOL);
+  fprintf(aifp, "TO %s", AI_EOL);  
+}
+
+void aiDrawString(char *what, float x, float y) {
+  fprintf(aifp, "0 To %s", AI_EOL);
+  fprintf(aifp, "1 0 0 1 %4.4f %4.4f 0 Tp %s", x, y, AI_EOL);
+  fprintf(aifp, "TP %s", AI_EOL);
+  fprintf(aifp, "0 Tr %s", AI_EOL);
+  fprintf(aifp, "1 Ta %s", AI_EOL);  // TEMPORARY align center
+  fprintf(aifp, "(%s) Tx 1 0 Tk %s", what, AI_EOL);
+  fprintf(aifp, "(\\r) TX %s", AI_EOL);
+  fprintf(aifp, "TO %s", AI_EOL);
+}
+
+void aiDrawString3f(char *what, float x, float y, float z) {
+  float xx = ctm[0]*x + ctm[4]*y + ctm[8]*z + ctm[12];
+  float yy = ctm[1]*x + ctm[5]*y + ctm[9]*z + ctm[13];
+  float zz = ctm[2]*x + ctm[6]*y + ctm[10]*z + ctm[14];
+  //zz /= 30.0;
+  zz /= 35.0;
+  zz = ABS(zz);
+
+  fprintf(aifp, "0 To %s", AI_EOL);
+  fprintf(aifp, "%4.4f 0 0 %4.4f %4.4f %4.4f 0 Tp %s", 
+	  zz, zz, xx, yy, AI_EOL);
+	  //ctm[0], ctm[4], ctm[1], ctm[5], x, y, AI_EOL);
+  fprintf(aifp, "TP %s", AI_EOL);
+  fprintf(aifp, "0 Tr %s", AI_EOL);
+  fprintf(aifp, "1 Ta %s", AI_EOL);  // TEMPORARY align center
+  fprintf(aifp, "(%s) Tx 1 0 Tk %s", what, AI_EOL);
+  fprintf(aifp, "(\\r) TX %s", AI_EOL);
+  fprintf(aifp, "TO %s", AI_EOL);
+}
