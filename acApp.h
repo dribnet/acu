@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-
+#define AC_GLWRAP
 #ifdef AC_GLWRAP
 /* gak! could this be any uglier? which of these are actually needed? */
 #include "acGLWrapper.h"
