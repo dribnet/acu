@@ -1,0 +1,109 @@
+about acu, a twice-weekly newsletter for the acu community
+
+[ july 2 1999 ]
+stuff from ben 
+- acuScreenGrab (and subsequently acApp::screenGrab) can now write
+  (hold your breath) ppm, raw, and (drum roll) tiff files. death to
+  scrsave! die die die! documentation for using these fancy features
+  can be found in the acu online documentation (acu.h) or from the
+  forthcoming o'reilly book, now in draft form from our very own   
+  casey reas. 
+- fixed a number of bugs with the previously undocumented and unheard
+  of acuReadRawFile, acuWriteRawFile, acuRecomponentArray and others.
+  they're now briefly mentioned in the docs, read up, they could
+  save you time and money.
+- cleaned up acuTexRectf, which was having 'issues'.  
+- additional fistfuls of minor bug fixes, many found by bug magnets
+  jocelyn lin and bill keays.
+stuff from tom
+- theApp in acApp is now a static class member
+- moved callback function defs to .h instead of .cpp
+
+[ may 2 1999 ]
+stuff from ben and tom
+- more documentation and examples in acu.h
+- video proxy now works with a string of jpeg files
+- unified the sgi and windows codewarrior versions
+- lots of windows porting stuff ironed out
+- attempt to add jpeg to windows failed, will try again in a few weeks
+- objective c stuff (acoApp) no longer in the main acu distribution
+- added codewarrior project file
+- lots of little cleanup things
+
+[ mar 26 1999 ]
+stuff from ben
+- ABS(x) had a bug. oops.
+- added acuSetInteger(ACU_TIME_STEP, step) so that people
+  can slow down the time returned by acuCurrentTimeMillis.
+- merged in the changes for the windows version of acu.
+  these changes should make the mac version simpler as well.
+
+[ mar 18 1999 ]
+stuff from ben
+- acu.h and acApp.h are finally documented.
+- added acuColorHsb - fight the RGB tyranny!
+- did some fixes/changes to the font stuff to get that
+  behaving a little bit better (or failing more gracefully)
+- misc bug fixes
+
+[ feb 22 1999 ]
+MESS AND CLEAN UP by Ben
+- acApp function names all begin with lowercase.
+- made acuGet/acuSet methods for ACU_SCREEN_FOV.
+- removed acuSetMazoFov, acuMalloc, acuFree, acuRound 
+  because they were silly.
+- removed random comments and dead code.
+- removed twod.c, since it only contained the line functions,
+  and put it into 
+
+[ feb 21 1999 ]
+FIX by Tom
+- Switched CANNOT_BIND_TEXTURES on for Golan
+- Reorgainized /mas/acg/projects for stable acu development future
+
+
+[ feb 20 1999 ]
+ADDITION by Tom
+- Added acoApp to libacu.a, which is the objective-C version of acApp
+  * This adds libobjc to the things to link against, thought this should
+    only matter to people using acoApp. See Makefile for more documentation.
+
+
+[ feb 19 1999 ]
+ADDITIONS/FIXES by Tom
+
+- C/C++ cleanup. Made acu.h a straight C file, including extern C wrapper
+- changed straight C files to file.c, C++ files now file.C
+- moved acApp core into acu as that makes more sense
+
+
+[ jan 29 1999 ]
+
+ADDITIONS/FIXES IN THIS VERSION
+- drawing fonts now take x, y positions. this is
+  (hopefully) faster than calling glTranslatef for 
+  each individual character.
+- acVec3f has been modified and closer to its 
+  final resting place. be warned, however, to use
+  acVec3f at your own risk.
+
+
+[ jan 25 1999 ]
+
+ADDITIONS/FIXES IN THIS VERSION
+- font support is now included
+- reading & writing of jpeg files
+- acuScreenGrab (mmmm... tasty...)
+
+DEMOS/EXAMPLES/HOWTO
+included, though in sort of a mess, are a few of my 
+projects, rewritten for acu. among these are the following:
+hsvspace6 - live demo of the hsv color cone (uses video input)
+spinner2 - unfinished port of my java spinner applet (loads a jpeg file)
+disgrand2 - gradient-sorting of colors in video input (uses 2d)
+
+OTHER NOTES
+- you need to include -ljpeg in your Makefile, to include the
+jpeg library. look for a line that reads '-lGL -lXm -lglut' etc.
+- you might not want to use acVec3f unless you really need it and 
+are willing to rewrite code when its api changes over the next week
