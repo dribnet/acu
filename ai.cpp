@@ -15,6 +15,27 @@ static char AI_EOL[] = { 13, 10, 0 };
 //int aiCount = -1;
 FILE *aifp;
 
+float ctm[16];
+
+float TX(float x, float y, float z) {
+  int s[2];
+  acuGetIntegerv(ACU_WINDOW_SIZE, s);
+  
+  //float zz = ctm[2]*x + ctm[6]*y + ctm[10]*z + ctm[14];
+  float ww = ctm[3]*x + ctm[7]*y + ctm[11]*z + ctm[15];
+  return (ctm[0]*x + ctm[4]*y + ctm[8]*z + ctm[12]) / ww * s[0]/2 + s[0]/2;
+}
+
+float TY(float x, float y, float z) {
+  int s[2];
+  acuGetIntegerv(ACU_WINDOW_SIZE, s);
+
+  //float zz = ctm[2]*x + ctm[6]*y + ctm[10]*z + ctm[14];
+  float ww = ctm[3]*x + ctm[7]*y + ctm[11]*z + ctm[15];
+  //printf("ww is %4.4f\n", ww);
+  return (ctm[1]*x + ctm[5]*y + ctm[9]*z + ctm[13]) / ww * s[1]/2 + s[1]/2; // / ww;
+}
+
 
 void aiBegin(char *filename) {
   /*
@@ -32,23 +53,8 @@ void aiBegin(char *filename) {
 
   fprintf(aifp, "%%!PS-Adobe-2.0 %s", AI_EOL);
   fprintf(aifp, "%%%%Creator:Adobe Illustrator(TM) 1.1%s", AI_EOL);
-  //fprintf(aifp, "%%%%For: (Glen Nupert) (Zemo\(r\) Handbuzzers)%s", AI_EOL);
-  //fprintf(aifp, "%%%%Title: (oneline-1.0.ai)%s", AI_EOL);
-  //fprintf(aifp, "%%%%CreationDate: (7/26/99) (8:25 PM)%s", AI_EOL);
-  //fprintf(aifp, "%%%%DocumentProcessColors: Black%s", AI_EOL);
-  //fprintf(aifp, "%%%%DocumentProcSets: Adobe_Illustrator_1.1 0 0%s", AI_EOL);
-  //fprintf(aifp, "%%%%DocumentSuppliedProcSets: Adobe_Illustrator_1.1 0 0%s", AI_EOL);
   fprintf(aifp, "%%%%BoundingBox:%d %d %d %d%s", 
 	  0, 0, screenDim[0], screenDim[1], AI_EOL);
-  //fprintf(aifp, "%%%%TemplateBox:%d %d %d %d%s", 
-  //  0, 0, screenDim[0], screenDim[1], AI_EOL);
-  //fprintf(aifp, "%%%%TileBox:%d %d %d %d%s", 
-  //  0, 0, screenDim[0], screenDim[1], AI_EOL);
-
-  //fprintf(aifp, "%%%%ColorUsage: Black&White%s", AI_EOL);
-  //fprintf(aifp, "%%%%TemplateBox:306 396 306 396%s", AI_EOL);
-  //fprintf(aifp, "%%%%TileBox: 30 31 582 759%s", AI_EOL);
-  //fprintf(aifp, "%%%%DocumentPreview: None%s", AI_EOL);
   fprintf(aifp, "%%%%EndComments%s", AI_EOL);
   fprintf(aifp, "%%%%EndProlog%s", AI_EOL);
   fprintf(aifp, "%%%%BeginSetup%s", AI_EOL);
@@ -203,20 +209,46 @@ void aiFilledRectangleMacro(float x1, float y1, float x2, float y2) {
 }
 
 
-float ctm[16];
 void aiSetMatrix(float *matrix) {
   for (int i = 0; i < 16; i++) {
     ctm[i] = matrix[i];
   }
 }
 
+float modelMatrix[16];
+float projectionMatrix[16];
+
+#define CALC(a,b) ((a)+(b)*4)
+void MatrixMultMat( GLfloat Ma[16], GLfloat Mb[16], GLfloat Mout[16] )
+{
+  for( int i=0; i<4; i++ )  // row
+     {
+       for( int j=0; j<4; j++ )  // column
+        {
+          Mout[CALC(i,j)] = 0;
+          for( int k=0; k<4; k++ )
+            Mout[CALC(i,j)] += Ma[CALC(i,k)] * Mb[CALC(k,j)];
+        }
+    }
+}
+
 void aiSetMatrixGet() {
-  //glGetFloatv(GL_PROJECTION_MATRIX, ctm);
-  //acMatrix4f a; a.set(ctm);
-  glGetFloatv(GL_MODELVIEW_MATRIX, ctm);
-  //acMatrix4f b; b.set(ctm);
-  //a.multiplyBy(&b);
-  //a.get(ctm);
+  glGetFloatv(GL_PROJECTION_MATRIX, projectionMatrix);
+  glGetFloatv(GL_MODELVIEW_MATRIX, modelMatrix);
+
+  //MatrixMultMat(projectionMatrix, modelMatrix, ctm);
+  
+  for (int i = 0; i < 16; i++) {
+    ctm[i] = 0;
+  }
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) {
+      for (int k = 0; k < 4; k++) {
+	ctm[i + j*4] += projectionMatrix[i + k*4] * modelMatrix[k + j*4];
+      }
+    }
+  }
+  
   
   /*
   for (int i = 0; i < 16; i++) {
@@ -224,6 +256,18 @@ void aiSetMatrixGet() {
     printf("%f ", ctm[i]);
   }
   printf("\n"); 
+  */
+  /*
+  printf("%4.4f %4.4f %4.4f %4.4f\n", ctm[0], ctm[1], ctm[2], ctm[3]);
+  printf("%4.4f %4.4f %4.4f %4.4f\n", ctm[4], ctm[5], ctm[6], ctm[7]);
+  printf("%4.4f %4.4f %4.4f %4.4f\n", ctm[8], ctm[9], ctm[10], ctm[11]);
+  printf("%4.4f %4.4f %4.4f %4.4f\n\n", ctm[12], ctm[13], ctm[14], ctm[15]);
+  */
+  /*
+  printf("%4.4f %4.4f %4.4f %4.4f\n", ctm[0], ctm[4], ctm[8], ctm[12]);
+  printf("%4.4f %4.4f %4.4f %4.4f\n", ctm[1], ctm[5], ctm[9], ctm[13]);
+  printf("%4.4f %4.4f %4.4f %4.4f\n", ctm[2], ctm[6], ctm[10], ctm[14]);
+  printf("%4.4f %4.4f %4.4f %4.4f\n\n", ctm[3], ctm[7], ctm[11], ctm[15]);
   */
 }
 
@@ -240,10 +284,10 @@ void aiMoveTo3f(float x, float y, float z) {
   //float xx = ctm[0]*x + ctm[1]*y + ctm[2]*z + ctm[3];
   //float yy = ctm[4]*x + ctm[5]*y + ctm[6]*z + ctm[7];
 
-  float xx = ctm[0]*x + ctm[4]*y + ctm[8]*z + ctm[12];
-  float yy = ctm[1]*x + ctm[5]*y + ctm[9]*z + ctm[13];
+  //float xx = ctm[0]*x + ctm[4]*y + ctm[8]*z + ctm[12];
+  //float yy = ctm[1]*x + ctm[5]*y + ctm[9]*z + ctm[13];
 
-  fprintf(aifp, "%4.4f %4.4f m%s", xx, yy, AI_EOL);
+  fprintf(aifp, "%4.4f %4.4f m%s", TX(x,y,z), TY(x,y,z), AI_EOL);
 }
 
 // L and l seem to do same thing
@@ -251,10 +295,10 @@ void aiLineTo3f(float x, float y, float z) {
   //float xx = ctm[0]*x + ctm[1]*y + ctm[2]*z + ctm[3];
   //float yy = ctm[4]*x + ctm[5]*y + ctm[6]*z + ctm[7];
 
-  float xx = ctm[0]*x + ctm[4]*y + ctm[8]*z + ctm[12];
-  float yy = ctm[1]*x + ctm[5]*y + ctm[9]*z + ctm[13];
+  //float xx = ctm[0]*x + ctm[4]*y + ctm[8]*z + ctm[12];
+  //float yy = ctm[1]*x + ctm[5]*y + ctm[9]*z + ctm[13];
 
-  fprintf(aifp, "%4.4f %4.4f l%s", xx, yy, AI_EOL);
+  fprintf(aifp, "%4.4f %4.4f l%s", TX(x,y,z), TY(x,y,z), AI_EOL);
 }
 
 /*
@@ -354,4 +398,135 @@ void aiDrawString3f(char *what, float x, float y, float z) {
   fprintf(aifp, "(%s) Tx 1 0 Tk %s", what, AI_EOL);
   fprintf(aifp, "(\\r) TX %s", AI_EOL);
   fprintf(aifp, "TO %s", AI_EOL);
+}
+
+
+//aiGlyph aiGlyphs[94];
+aiGlyph aiGlyphs[128];
+
+void aigSetFont(char *filename) {
+  FILE *fp = fopen(filename, "r");
+  //char line[128];
+  int gindex = 33;  // go by ascii here
+  //aiGlyphs[gindex] = new aiGlyph();
+  //aiGlyph *current = aiGlyphs[gindex];
+  int oindex = 0;
+
+  aiGlyph *current;
+  char c;
+  while ((c = fgetc(fp)) != EOF) {
+    switch (c) {
+
+    case 'b': // first opcode, create the char
+      //aiGlyphs[gindex] = new aiGlyph();
+      current = &aiGlyphs[gindex];
+      fscanf(fp, "%f", &current->left);
+      current->left /= AIG_SCALE;
+      break;
+
+    case 'e':
+      fscanf(fp, "%f", &current->extent);
+      current->extent /= AIG_SCALE;
+      break;
+
+    case 'm':
+    case 'l':
+    case 'L':
+      current->opcode[oindex] = c;
+      fscanf(fp, "%f %f", &current->value[oindex][0], 
+	     &current->value[oindex][1]);
+      current->value[oindex][0] /= AIG_SCALE;
+      current->value[oindex][1] /= AIG_SCALE;
+      break;
+
+    case 'c':
+    case 'C':
+      current->opcode[oindex] = c;
+      fscanf(fp, "%f %f %f %f %f %f", 
+	     &current->value[oindex][0], &current->value[oindex][1],
+	     &current->value[oindex][2], &current->value[oindex][3],
+	     &current->value[oindex][4], &current->value[oindex][5]);
+      current->value[oindex][0] /= AIG_SCALE;
+      current->value[oindex][1] /= AIG_SCALE;
+      current->value[oindex][2] /= AIG_SCALE;
+      current->value[oindex][3] /= AIG_SCALE;
+      current->value[oindex][4] /= AIG_SCALE;
+      current->value[oindex][5] /= AIG_SCALE;
+      break;
+      
+    case 'f':
+      current->opcode[oindex] = c;
+      break;
+
+    case '*':
+      gindex++; // increment glyph index
+      current->count = oindex+1;
+      oindex = 0; // reset opcode index
+    }
+    oindex++;
+    if (oindex == AIG_OPCODE_MAX) {
+      acuDebug(ACU_DEBUG_EMERGENCY, "too many opcodes in font. exiting.");
+    }
+  }
+}
+
+//float aigCharWidth(char c) {
+//return aiGlyphs[c].extent;
+//}
+
+float aigStringWidth(char *s) {
+  float wide = 0;
+  char c;
+  while ((c = *s++) != 0) {
+    wide += aiGlyphs[c].extent;
+  }
+  return wide;
+}
+
+void aigDrawChar(char c, float x, float y) {
+  aiGlyphs[c].draw(aifp, x, y);
+}
+
+void aigDrawString(char *s, float x, float y) {
+  glPushMatrix();
+  char c;
+  while ((c = *s++) != 0) {
+    aigDrawChar(c, x, y);
+    x += aiGlyphs[c].extent;
+  }
+  glPopMatrix();
+}
+
+void aiGlyph::draw(FILE *fp, float x, float y) {
+  fprintf(fp, "*u %s", AI_EOL);
+
+  float x1, y1, x2, y2, x3, y3;
+  for (int i = 0; i < count; i++) {
+    switch (opcode[i]) {
+    case 'm':
+    case 'l':
+    case 'L':
+      x1 = TX(x + value[i][0], y + value[i][1], 0);
+      y1 = TY(x + value[i][0], y + value[i][1], 0);
+      fprintf(aifp, "%4.4f %4.4f %c%s", x1, y1, opcode[i], AI_EOL);
+      break;
+
+    case 'c':
+    case 'C':
+      x1 = TX(x + value[i][0], y + value[i][1], 0);
+      y1 = TY(x + value[i][0], y + value[i][1], 0);
+      x2 = TX(x + value[i][2], y + value[i][3], 0);
+      y2 = TY(x + value[i][2], y + value[i][3], 0);
+      x3 = TX(x + value[i][4], y + value[i][5], 0);
+      y3 = TY(x + value[i][4], y + value[i][5], 0);
+      fprintf(aifp, "%4.4f %4.4f %4.4f %4.4f %4.4f %4.4f %c%s", 
+	      x1, y1, x2, y2, x3, y3, opcode[i], AI_EOL);
+      break;
+
+    case 'f':
+      fprintf(aifp, "%c%s", opcode[i], AI_EOL);
+      break;
+    }
+  }
+  fprintf(fp, "*U %s", AI_EOL);
 }

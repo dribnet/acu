@@ -154,6 +154,9 @@ void acuPolygonOpen() {
 	     "Could not create tesselator object.");
   }
 
+  acuDebug(ACU_DEBUG_EMERGENCY,
+	   "Tesselator is broken under Codewarrior 6 for windows");
+  /*
   gluTessCallback(acuTesselator, (GLenum)GLU_BEGIN,    
 		  (void (*)())polygonBegin);
 
@@ -168,6 +171,7 @@ void acuPolygonOpen() {
 
   gluTessCallback(acuTesselator, (GLenum)GLU_VERTEX,   
 		  (void (*)())polygonVertex); 
+  */
 }
 
 /**
