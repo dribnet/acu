@@ -3,6 +3,7 @@
 acApp *acApp::theApp = NULL;
 int grabCount;
 boolean validWindowSize;
+int lastModifiers = 0;
 
 /* for mouseCallback Y switcheroo and reshaping */
 extern "C" GLint acuWindowHeight;
@@ -80,6 +81,7 @@ void acApp::screenGrab() {
   grabCount++;
 }
 
+int acApp::getModifiers() { return lastModifiers; }
 void acApp::mouseDown(float x, float y, int button) { }
 void acApp::mouseUp(float x, float y, int button) { }
 void acApp::mouseMove(float x, float y) { }
@@ -107,6 +109,7 @@ void display_cb(void) {
 }
 
 void mouse_cb(int button, int state, int x, int y) {
+  //lastModifiers = glutGetModifiers();
   if (state == GLUT_DOWN) {
     acApp::theApp->mouseDown(x, ((acuWindowHeight-1)-y), button);
   } else if (state == GLUT_UP) {
@@ -115,10 +118,12 @@ void mouse_cb(int button, int state, int x, int y) {
 }
 
 void motion_cb(int x, int y) {
+  //lastModifiers = glutGetModifiers();
   acApp::theApp->mouseDrag(x, ((acuWindowHeight-1)-y));
 }
 
 void passive_motion_cb(int x, int y) {
+  //lastModifiers = glutGetModifiers();
   acApp::theApp->mouseMove(x, ((acuWindowHeight-1)-y));
 }
 
@@ -128,10 +133,12 @@ void idle_cb(void) {
 }
 
 void keyboard_cb(unsigned char key, int x, int y) {
+  //lastModifiers = glutGetModifiers();
   acApp::theApp->keyDown(key);
 }
 
 void special_key_cb(int key, int x, int y) {
+  //lastModifiers = glutGetModifiers();
   acApp::theApp->specialKeyDown(key);
 }
 

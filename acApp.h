@@ -74,7 +74,10 @@ public:
   /* Override these functions to get mouse events.
    * for mouseDown and mouseUp, button is one of:
    * GLUT_LEFT_BUTTON, GLUT_MIDDLE_BUTTON, or GLUT_RIGHT_BUTTON
+   * Modifiers are one of:
+   * GLUT_ACTIVE_SHIFT, GLUT_ACTIVE_CTRL, GLUT_ACTIVE_ALT 
    */
+  int getModifiers();
   virtual void mouseDown(float x, float y, int button);
   virtual void mouseUp(float x, float y, int button);
   virtual void mouseMove(float x, float y);
