@@ -10,7 +10,7 @@
  * acu to other platforms. 
  */
 
-int acuTimeStep = 1;
+GLint acuTimeStep = 1;
 
 int acuCurrentTimeMillis() {
   /* exactly what you need, when you need it */

@@ -380,7 +380,7 @@ void updateMazoViewConstants() {
   mazoEyeX = acuWindowWidth / 2.0;
   mazoEyeY = acuWindowHeight / 2.0;
   halfFov = PI * acuScreenFov / 360.0;
-  theTan = tanf(halfFov);
+  theTan = tan(halfFov);
   mazoDist = mazoEyeY / theTan;
   mazoNearDist = mazoDist / 10.0;
   mazoFarDist = mazoDist * 10.0;

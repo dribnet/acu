@@ -73,7 +73,7 @@ extern "C" {
 #include <stdio.h>
 
 #ifdef ACU_MAC
-#include "glut.h"
+#include <GLUT/glut.h>
 #else
 #include <GL/glut.h>
 #endif
