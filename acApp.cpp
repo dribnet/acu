@@ -34,6 +34,7 @@ void acApp::selfStart()
 
   acuGetIntegerv(ACU_WINDOW_SIZE, screenSize);
   resize(0, 0, screenSize[0], screenSize[1]);
+  setFocus(true);
   glutMainLoop();
 }
 
@@ -97,8 +98,12 @@ void display_cb(void)
 {
   if (!validWindowSize)
     validWindowSize = (acuGetInteger(ACU_WINDOW_WIDTH) != 0);
-  if (validWindowSize)
+  if (validWindowSize) {
+    /* BENJAMIN FRY -- FIX ME!!! */
+    acuOpenMazoFrame();
     acApp::theApp->draw();
+    acuCloseMazoFrame();
+  }
 }
 
 void mouse_cb(int button, int state, int x, int y)
