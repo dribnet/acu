@@ -169,38 +169,36 @@ void acuRgbToHsb(GLfloat *rgb, GLfloat *hsb) {
 
 
 GLfloat acuRandomf() {
-#ifdef ACU_WIN32
+#if defined(ACU_IRIX)
+  return (GLfloat)random()*2.0 / (LONG_MAX+1.0) - 1.0;
+#elif defined(ACU_WIN32)
   return (GLfloat) ((float)(rand() >> 0) / 16384.0) - 1.0;
-#endif
-
-#ifdef ACU_IRIX
-    // tom irix patch return ((GLfloat)rand() / 16384.0) - 1.0;
-    return (GLfloat)random()*2.0 / (LONG_MAX+1.0) - 1.0;
+#else
+  acuDebug(ACU_DEBUG_EMERGENCY, "Please implement acuRandom on your platform");
 #endif
 }
 
 
 GLfloat acuRandomuf() {
-#ifdef ACU_WIN32
-  return (GLfloat) ((float)(rand() >> 0) / 32768.0);
-#endif
-
-#ifdef ACU_IRIX
+#if defined(ACU_IRIX)
   return (GLfloat)random() / (LONG_MAX+1.0);
+#elif defined(ACU_WIN32)
+  return (GLfloat) ((float)(rand() >> 0) / 32768.0);
+#else
+  acuDebug(ACU_DEBUG_EMERGENCY, "Please implement acuRandom on your platform");
 #endif
 }
 
 
 GLint acuRandomui() {
-#ifdef ACU_WIN32
-  return rand();
-#endif
-
-#ifdef ACU_IRIX
+#if defined(ACU_IRIX)
   return random();
+#elif defined(ACU_WIN32)
+  return rand();
+#else
+  acuDebug(ACU_DEBUG_EMERGENCY, "Please implement acuRandom on your platform");
 #endif
 }
-
 
 GLfloat acuLerpf(GLfloat t, GLfloat a, GLfloat b) {
   return (a + t * (b - a));
@@ -296,8 +294,6 @@ void acuWriteRawFile(char *filename, unsigned char *data, int count) {
   fwrite(data, count, 1, fp);
   fclose(fp);
 }
-
-
 
 #define NEW_SUBFILE_TYPE   254
 #define IMAGE_WIDTH        256
