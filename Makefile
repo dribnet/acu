@@ -7,7 +7,7 @@ ACINC_DIR = /acg/include
 MYLIB_DIR = /u/$(USER)/lib
 ACLIB_DIR = /acg/lib
 
-default: mine
+default: lib
 
 CC=CC
 OPTIONS=-g -DACU_IRIX

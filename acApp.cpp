@@ -4,16 +4,23 @@ acApp *acApp::theApp = NULL;
 int grabCount;
 boolean validWindowSize;
 
+/* for mouseCallback Y switcheroo and reshaping */
+extern GLint acuWindowHeight;
+extern GLint acuWindowWidth;
+
 acApp::acApp()
 {
   grabCount = -1;
   validWindowSize = FALSE;
+  X = Y = 0;
+  W = H = 100;
 }
 
 void acApp::selfStart()
 {
+  int screenSize[2];
+  
   theApp = this;
-  acuOpen();
 
   glutDisplayFunc(display_cb); 
   glutMouseFunc(mouse_cb);
@@ -22,11 +29,26 @@ void acApp::selfStart()
   glutIdleFunc(idle_cb);
   glutKeyboardFunc(keyboard_cb);
   glutSpecialFunc(special_key_cb);
+  glutReshapeFunc(NULL);
+  glutReshapeFunc(reshape_cb);
 
-  prepare();
+  acuGetIntegerv(ACU_WINDOW_SIZE, screenSize);
+  resize(0, 0, screenSize[0], screenSize[1]);
   glutMainLoop();
 }
 
+void acApp::setFocus(bool state) { }
+
+void acApp::resize( float posX, float posY, float width, float height) {
+  X = posX;
+  Y = posY;
+  W = width;
+  H = height;
+}
+
+bool acApp::pointInside( float x, float y ) {
+  return (x >= 0 && y >= 0 && x < W && y < H);
+}
 
 void acApp::screenGrab()
 {
@@ -56,11 +78,10 @@ void acApp::screenGrab()
   grabCount++;
 }
 
-
-void acApp::mouseDown(int x, int y, int button) { }
-void acApp::mouseUp(int x, int y, int button) { }
-void acApp::mouseMove(int x, int y) { }
-void acApp::mouseDrag(int x, int y) { }
+void acApp::mouseDown(float x, float y, int button) { }
+void acApp::mouseUp(float x, float y, int button) { }
+void acApp::mouseMove(float x, float y) { }
+void acApp::mouseDrag(float x, float y) { }
 
 void acApp::keyDown( char c ) { 
   // Default behavior, close program on escape
@@ -69,11 +90,8 @@ void acApp::keyDown( char c ) {
 }
 void acApp::specialKeyDown( int key) { }
  
-void acApp::prepare() { }
 void acApp::draw() { }
 void acApp::idle() { }
-void acApp::start() { }
-void acApp::stop() { }
 
 void display_cb(void)
 {
@@ -86,20 +104,20 @@ void display_cb(void)
 void mouse_cb(int button, int state, int x, int y)
 {
   if (state == GLUT_DOWN) {
-    acApp::theApp->mouseDown(x, y, button);
+    acApp::theApp->mouseDown(x, ((acuWindowHeight-1)-y), button);
   } else if (state == GLUT_UP) {
-    acApp::theApp->mouseUp(x, y, button);
+    acApp::theApp->mouseUp(x, ((acuWindowHeight-1)-y), button);
   }
 }
 
 void motion_cb(int x, int y)
 {
-  acApp::theApp->mouseDrag(x, y);
+  acApp::theApp->mouseDrag(x, ((acuWindowHeight-1)-y));
 }
 
 void passive_motion_cb(int x, int y)
 {
-  acApp::theApp->mouseMove(x, y);
+  acApp::theApp->mouseMove(x, ((acuWindowHeight-1)-y));
 }
 
 void idle_cb(void)
@@ -116,5 +134,11 @@ void keyboard_cb(unsigned char key, int x, int y)
 void special_key_cb(int key, int x, int y)
 {
   acApp::theApp->specialKeyDown(key);
+}
+
+void reshape_cb(int width, int height) {
+  acuWindowWidth = width;
+  acuWindowHeight = height;
+  acApp::theApp->resize(0, 0, width, height);
 }
 

@@ -10,6 +10,8 @@ float acuScreenFov;
 float acuScreenNear;
 float acuScreenFar;
 
+int frameDepth;
+
 GLint acuDebugLevel;
 char *acuDebugStr;
 
@@ -36,7 +38,6 @@ void reshape(int width, int height) {
   acuWindowHeight = height;
 }
 
-
 extern void textInit();
 
 /**
@@ -50,6 +51,8 @@ void acuOpen() {
 
   acuWindowWidth = 0;
   acuWindowHeight = 0;
+
+  frameDepth = 0;
 
   // InitDisplayMode must appear before CreateWindow
   glutInit(&argc, &argv);
@@ -116,6 +119,46 @@ void acuClose() {
 #endif
 }
 
+/* utility functions used by open/close Frames() */
+
+void frameStepUp();
+void frameStepUp() {
+  char errString[80];
+
+  /* already in an openFrame */
+  if(frameDepth > 10) {
+    sprintf(errString, "Warning, frameDepth already at %d\n", frameDepth);
+    acuDebug(ACU_DEBUG_PROBLEM, errString);
+  } 
+  if(frameDepth == 0) {
+    glViewport(0, 0, acuWindowWidth, acuWindowHeight);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+  }
+  else {
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+  }
+  ++frameDepth;
+}
+
+void frameStepDown();
+void frameStepDown() {
+  if(--frameDepth == 0) {
+    glutSwapBuffers();
+  }
+  else {
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+  }
+}
 
 /**
  * Call this at the beginning of your 
@@ -123,6 +166,12 @@ void acuClose() {
  */
 void acuOpenFrame() {
   float aspect;
+  boolean topLevel;
+
+  /* this handles nested openFrame calls */
+  if(frameDepth == 0) topLevel = TRUE;
+  else topLevel = FALSE;
+  frameStepUp();
 
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
@@ -131,28 +180,33 @@ void acuOpenFrame() {
   glDepthFunc(GL_LEQUAL);
   glShadeModel(GL_SMOOTH);
 
-  glViewport(0, 0, acuWindowWidth, acuWindowHeight);
-
-  if (acuWindowClear) {
-    glClearColor(acuWindowBgColor[0], acuWindowBgColor[1],
-		 acuWindowBgColor[2], 1);
+  if(topLevel && acuWindowClear) {
+    glClearColor(acuWindowBgColor[0], acuWindowBgColor[1], 
+      acuWindowBgColor[2], 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   }
+
   glEnable(GL_COLOR_MATERIAL);
   glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
   glDisable(GL_TEXTURE_2D); // no texture default
 
-  // sets up standard camera projection;
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
+  /* normally for an openFrame, we would change the projection
+   * matrix, but this openFrame is dependent on width, height --
+   * so I just do nothing 
+   */
+  if(topLevel) {
+    // sets up standard camera projection;
+    glMatrixMode(GL_PROJECTION);
+    // done already glLoadIdentity();
 
-  aspect = (float)acuWindowWidth / (float)acuWindowHeight;
-  /* don't set 'far' too high.. it destroys the resolution of 
-     the z-buffer. even 100 might be too high. */
-  gluPerspective(acuScreenFov, aspect, acuScreenNear, acuScreenFar);
+    aspect = (float)acuWindowWidth / (float)acuWindowHeight;
+    /* don't set 'far' too high.. it destroys the resolution of 
+       the z-buffer. even 100 might be too high. */
+    gluPerspective(acuScreenFov, aspect, acuScreenNear, acuScreenFar);
   
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    // done already glLoadIdentity();
+  }
 }
 
 
@@ -160,7 +214,8 @@ void acuOpenFrame() {
  * Call this at the end of your display function.
  */
 void acuCloseFrame() {
-  glutSwapBuffers();
+  //glutSwapBuffers();
+  frameStepDown();
 }
 
 
@@ -168,29 +223,40 @@ void acuCloseFrame() {
  * Call this at the beginning of a display function.
  */
 void acuOpenFrame2D() {
-  glLoadIdentity();
-  glViewport(0, 0, acuWindowWidth, acuWindowHeight);
-  glOrtho(0, acuWindowWidth, 0, acuWindowHeight, -1, 1);
+  boolean topLevel;
+
+  /* this handles nested openFrame calls */
+  if(frameDepth == 0) topLevel = TRUE;
+  else topLevel = FALSE;
+  frameStepUp();
+
+  // done already glLoadIdentity();
+  // done already glViewport(0, 0, acuWindowWidth, acuWindowHeight);
+
+  /* this should not be based on acuWindowSize, but whatever */
+  if(topLevel) {
+    glOrtho(0, acuWindowWidth, 0, acuWindowHeight, -1, 1);
+  }
   glShadeModel(GL_FLAT);
 
-  if (acuWindowClear) {
+  if(topLevel && acuWindowClear) {
     glClearColor(acuWindowBgColor[0], acuWindowBgColor[1],
 		 acuWindowBgColor[2], 1);
     glClear(GL_COLOR_BUFFER_BIT);
   }
-  /* this is needed to clear projection matrix after
-     calling acuOpenFrame() */
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glMatrixMode(GL_MODELVIEW);
+  // done already /* this is needed to clear projection matrix after
+  // done already    calling acuOpenFrame() */
+  // done already glMatrixMode(GL_PROJECTION);
+  // done already glLoadIdentity();
+  // done already glMatrixMode(GL_MODELVIEW);
 }
-
 
 /**
  * Call this at the end of a 2D display function.
  */
 void acuCloseFrame2D() {
-  glutSwapBuffers();
+  //glutSwapBuffers();
+  frameStepDown();
 }
 
 
@@ -201,18 +267,19 @@ void acuCloseFrame2D() {
  */
 void acuOpenGeoFrame() {
   float aspect;
-  GLfloat fov, clearColor[3];
+  GLfloat fov;
   GLint wSize[2];
   GLfloat sNear, sFar;
-//  GLfloat dist = 1.1547; // 2 / sqr(3) = dist away for 60 degree fov
-	GLfloat dist = 2.0;
-	fov = 60.0f;
+  //  GLfloat dist = 1.1547; // 2 / sqr(3) = dist away for 60 degree fov
+  GLfloat dist = 2.0;
+  fov = 60.0f;
+  boolean topLevel;
 
-  acuGetIntegerv(ACU_WINDOW_SIZE, wSize);
-	acuGetFloatv(ACU_WINDOW_BG_COLOR, clearColor);
-	//acuGetFloatv(ACU_SCREEN_FOV, &fov);
-  //acuGetFloatv(ACU_SCREEN_NEAR, &sNear);
-  //acuGetFloatv(ACU_SCREEN_FAR, &sFar);
+  /* this handles nested openFrame calls */
+  if(frameDepth == 0) topLevel = TRUE;
+  else topLevel = FALSE;
+  frameStepUp();
+
   sNear = dist - 1.0;
   sFar = 1.0 + dist;
 	//sFar = 50.0;
@@ -224,38 +291,45 @@ void acuOpenGeoFrame() {
   glDepthFunc(GL_LEQUAL);
   glShadeModel(GL_SMOOTH);
 
-  glViewport(0, 0, wSize[0], wSize[1]);
-
-  if (acuGetBoolean(ACU_WINDOW_CLEAR)) {
-    glClearColor(clearColor[0], clearColor[1], clearColor[2], 1);
+  if(topLevel && acuWindowClear) {
+    glClearColor(acuWindowBgColor[0], acuWindowBgColor[1],
+      acuWindowBgColor[2], 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   }
+  // done already glViewport(0, 0, wSize[0], wSize[1]);
+
   glEnable(GL_COLOR_MATERIAL);
   glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
   glDisable(GL_TEXTURE_2D); // no texture default
 
-  // sets up standard camera projection;
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
+  /* normally for an openFrame, we would change the projection
+   * matrix, but this openGeoFrame is dependent on width, height --
+   * so I just do nothing 
+   */
+  if(topLevel) {
+    // sets up standard camera projection;
+    glMatrixMode(GL_PROJECTION);
+    // done already glLoadIdentity();
 
-  aspect = (float)wSize[0] / (float)wSize[1];
-  /* don't set 'far' too high.. it destroys the resolution of 
-     the z-buffer. even 100 might be too high. */
-  gluPerspective(fov, aspect, sNear, sFar);
-  gluLookAt(0, 0, dist, 0, 0, 0, 0.0, 1.0, 0.0);
+    // NO aspect = (float)wSize[0] / (float)wSize[1];
+    aspect = (float)acuWindowWidth / (float)acuWindowHeight;
+    /* don't set 'far' too high.. it destroys the resolution of 
+       the z-buffer. even 100 might be too high. */
+    gluPerspective(fov, aspect, sNear, sFar);
+    gluLookAt(0, 0, dist, 0, 0, 0, 0.0, 1.0, 0.0);
   
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    // done already glLoadIdentity();
+  }
 }
 
 /**
  * Call this at the end of a Geo display function.
  */
 void acuCloseGeoFrame() {
-  glutSwapBuffers();
+  //glutSwapBuffers();
+  frameStepDown();
 }
-
-
 
 /* mazo internal function to set viewing constants 
    depeding on field of view */
@@ -272,34 +346,39 @@ void updateMazoViewConstants() {
   mazoAspect = (float)acuWindowWidth/acuWindowHeight;
 } 
 
-
 /**
  * Call this before display in a mazo app
  */
 void acuOpenMazoFrame() {
   static int lastMazoHeight = 0;
   static int lastMazoWidth = 0;
+  boolean topLevel;
 
-  if ((lastMazoHeight != acuWindowHeight) || 
-      (lastMazoWidth != acuWindowWidth)) {
-    if(mazoBuffer != NULL) free((void *)mazoBuffer);
-    mazoBuffer = (GLubyte *)
-      malloc(sizeof(GLubyte)*acuWindowHeight*acuWindowWidth*4);
-    lastMazoHeight = acuWindowHeight;
-    lastMazoWidth = acuWindowWidth;
-    updateMazoViewConstants();
+  /* this handles nested openFrame calls */
+  if(frameDepth == 0) topLevel = TRUE;
+  else topLevel = FALSE;
+  frameStepUp();
+
+  if(topLevel) {
+    if ((lastMazoHeight != acuWindowHeight) ||
+        (lastMazoWidth != acuWindowWidth)) {
+      lastMazoHeight = acuWindowHeight;
+      lastMazoWidth = acuWindowWidth;
+      
+      updateMazoViewConstants();
+    }
   }
 
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
- 
+
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
   glShadeModel(GL_SMOOTH);
 
-  glViewport(0, 0, acuWindowWidth, acuWindowHeight);
+  // done already glViewport(0, 0, acuWindowWidth, acuWindowHeight);
 
-  if (acuWindowClear) {
+  if (topLevel && acuWindowClear) {
     glClearColor(acuWindowBgColor[0], acuWindowBgColor[1],
                  acuWindowBgColor[2], 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -308,36 +387,51 @@ void acuOpenMazoFrame() {
   glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
   glDisable(GL_TEXTURE_2D); // no texture default
 
-  // sets up standard camera projection;
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
+  /* normally for an openFrame, we would change the projection
+   * matrix, but this openGeoFrame is dependent on width, height --
+   * so I just do nothing 
+   */
+  if(topLevel) {
+    GLfloat params[] = { mazoEyeX, mazoEyeY, mazoDist, 0 };
+    glLightfv(GL_LIGHT0, GL_POSITION, params);
 
-  gluPerspective(acuScreenFov, mazoAspect, mazoNearDist, mazoFarDist);
-  //printf("(%f, %f, %f, %f)\n", acuScreenFov, mazoAspect, 
-  //	   mazoNearDist, mazoFarDist);
-  gluLookAt(mazoEyeX, mazoEyeY, mazoDist, 
-	    mazoEyeX, mazoEyeY, 0.0, 0.0, 1.0, 0.0);
-  //printf("(%f, %f, %f), (%f, %f, %f)\n", mazoEyeX, mazoEyeY, 
-  //	   mazoDist, mazoEyeX, mazoEyeY, 0.0);
+    // sets up standard camera projection;
+    glMatrixMode(GL_PROJECTION);
+    // done already glLoadIdentity();
+
+    gluPerspective(acuScreenFov, mazoAspect, mazoNearDist, mazoFarDist);
+    //printf("(%f, %f, %f, %f)\n", acuScreenFov, mazoAspect, 
+    //	   mazoNearDist, mazoFarDist);
+    gluLookAt(mazoEyeX, mazoEyeY, mazoDist, 
+	      mazoEyeX, mazoEyeY, 0.0, 0.0, 1.0, 0.0);
+    //printf("(%f, %f, %f), (%f, %f, %f)\n", mazoEyeX, mazoEyeY, 
+    //	   mazoDist, mazoEyeX, mazoEyeY, 0.0);
   
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    // done already glLoadIdentity();
+  }
+ 
 }
 
-
 void acuCloseMazoFrame() {
+  /*
   if(mazoDoBuffer) {
     glRasterPos2f(0.4, 0.4);
     glDrawPixels(acuWindowWidth, acuWindowHeight, 
 	       GL_RGBA, GL_UNSIGNED_BYTE, mazoBuffer);
   }
   glutSwapBuffers();
+  */
+  frameStepDown();
 }
 
 
 GLubyte *acuGetMazoImage() {
+  return NULL;
+  /*
   mazoDoBuffer = 1;
   return mazoBuffer;
+  */
 }
 
 

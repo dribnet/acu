@@ -210,7 +210,7 @@ void acuvGetProxyFrame(unsigned char *frame) {
   sprintf(acuvFilename, acuvFilenameTemplate, acuvFrameIndex);
   if (acuvProxyRaw) {
     int ignored;
-    data = acuReadRawFile(acuvFilename, &ignored);
+    data = (unsigned char *)acuReadRawFile(acuvFilename, &ignored);
     //acuVideoWidth*acuVideoHeight*3);
   } else {
     data = acuReadJpegFile(acuvFilename, &iw, &ih);

@@ -1,24 +1,15 @@
-#ifndef _AC_APP_H_
-#define _AC_APP_H_
+#ifndef _AC_CRAPP_H_
+#define _AC_CRAPP_H_
 
-/*
-#include <GL/glut.h>
-#include <GL/glu.h>
-*/
-// TOM (some kinda ERROR directive went off) #include <sys/types.h>
-// TOM (NOT GOOD IN WINDOWS) #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
 
 #include "acu.h"
 
-
-class acApp
-{
+class acApp {
 public:
-
-  /* Your application should just have a simple 'main' 
-   * that looks something like this:
+  /* Your application can just have a simple 'main' in
+   * a separate main.cpp file that looks something like this:
    * void main() {
    *   MyAcApp *myApp = new MyAcApp();
    *   myApp->selfStart();
@@ -30,25 +21,30 @@ public:
   acApp();
   virtual void selfStart();
 
-  /* Called once at the beginning of your application.
-   * Do all acu-oriented initialization here, because
-   * acuOpen() will have already been called by selfStart().
-   */
-  virtual void prepare();
+  /* Called to let you know your program is (or isn't) getting attention. */
+  virtual void setFocus(bool state);
 
-  /* When your acApp is made visible, start will be called */
-  virtual void start();
+  /* The X, Y, W, H variables are the position and size of the window */
+  float X, Y, W, H;
 
-  /* If your acApp is backgrounded, stop will be called */
-  virtual void stop();
+  /* Called when you are resized.
+     Default implementation is to update X, Y, W, H
+     If you override resize(), call acApp::resize() or do 
+     this yourself */
+  virtual void resize( float posX, float posY, float width, float height);
 
-  /* Called once every frame, just before draw().
+  /* Someone is asking you if (x,y) is your responsibility */
+  virtual bool pointInside( float x, float y );
+
+  /* (Generally) called once every frame, just before draw().
    * This is automatically called repeatedly as your
-   * application 'idles'. 
+   * application 'idles'. Move things around here.
    */
   virtual void idle();
 
   /* Override this to do your actual drawing to the screen */
+  /* A good acApp should draw the same thing if draw is called */
+  /* twice in succession since idle(), not draw(), changes the model */
   virtual void draw();
 
   /* Writes the current GL buffer (your application's window)
@@ -77,10 +73,10 @@ public:
    * for mouseDown and mouseUp, button is one of:
    * GLUT_LEFT_BUTTON, GLUT_MIDDLE_BUTTON, or GLUT_RIGHT_BUTTON
    */
-  virtual void mouseDown(int x, int y, int button);
-  virtual void mouseUp(int x, int y, int button);
-  virtual void mouseMove(int x, int y);
-  virtual void mouseDrag(int x, int y);
+  virtual void mouseDown(float x, float y, int button);
+  virtual void mouseUp(float x, float y, int button);
+  virtual void mouseMove(float x, float y);
+  virtual void mouseDrag(float x, float y);
 
   /* Override to get keys from the keyboard. */
   virtual void keyDown(char c);
@@ -105,5 +101,6 @@ void passive_motion_cb(int x, int y);
 void idle_cb(void);
 void keyboard_cb(unsigned char key, int x, int y);
 void special_key_cb(int key, int x, int y);
+void reshape_cb(int x, int y);
 
 #endif
