@@ -74,15 +74,15 @@ acVectorFont::acVectorFont(const char* filename) {
 }
 
 
-void acVectorFont::drawChar(char c, float x, float y) {
+void acVectorFont::drawChar(char c, float tx, float ty) {
   glBegin(GL_LINE_STRIP);
   for (int i = 0; i < numPoints[c]; i++) {
     if (kind[c][i] == MOVETO) {
       glEnd();
       glBegin(GL_LINE_STRIP);
     }
-    acuDebug(ACU_DEBUG_PROBLEM, "vecfont not finished yet!\n");
-    //glVertex3f(x[c][i], y[c][i], 0);
+    //acuDebug(ACU_DEBUG_PROBLEM, "vecfont not finished yet!\n");
+    glVertex2f(tx + x[c][i], ty + y[c][i]);
   }
   glEnd();
 }
