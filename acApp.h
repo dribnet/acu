@@ -6,7 +6,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-
 #ifdef AC_GLWRAP
 #include "acGLWrapper.h"
 #include "acGLEventWrapper.h"
@@ -32,6 +31,7 @@
 #include        <pthread.h>
 #endif
 
+
 class acApp {
 public:
   /* Your application can just have a simple 'main' in
@@ -46,7 +46,9 @@ public:
    */
   acApp();
   virtual void selfStart();
+#ifdef AC_GLWRAP
   virtual void wrapStart();
+#endif
 
   /* Called to let you know your program is (or isn't) getting attention. */
   virtual void setFocus(bool state);
