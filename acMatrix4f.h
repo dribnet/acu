@@ -1,3 +1,6 @@
+#ifndef _ACMATRIX4F_
+#define _ACMATRIX4F_
+
 #include "acu.h"
 #include "acVec3f.h"
 #include <math.h>
@@ -43,4 +46,4 @@ public:
   void print();
 };
 
-
+#endif
