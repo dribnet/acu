@@ -1,8 +1,9 @@
 #!gmake
+include $(ROOT)/usr/include/make/commondefs
 
 default: lib
 
-CC=gcc
+CC=CC
 OPTIONS=-g -DACU_IRIX
 
 .c.o:
@@ -12,27 +13,20 @@ OPTIONS=-g -DACU_IRIX
 	$(CC) $(OPTIONS) -c $<
 
 OBJS=\
-	acApp.o \
-	acFont.o \
-	acVec3f.o \
-	geometry.o \
-	jpeg.o \
-	main.o \
-	misc.o \
-	text.o \
-	video.o 
-
+	acApp.o acBitmapFont.o acVectorFont.o acVec3f.o \
+	geometry.o jpeg.o main.o misc.o text.o video.o 
 
 lib:	$(OBJS)
 	/usr/bin/ar ruv libacu.a $?
+	/usr/bin/ld -n32 -shared $(OBJS) -o libacu.so
 
 clean:
-	rm -f *.o libacu.a *~
+	rm -f *.o libacu.a libacu.so *~
 
 install: $(lib)
-	rm -f /acg/lib/libacu.a
-	cp libacu.a /acg/lib/.
-	chmod 555 /acg/lib/libacu.a
+	rm -f /acg/lib/libacu.a /acg/lib/libacu.so
+	cp libacu.a libacu.so /acg/lib/.
+	chmod 555 /acg/lib/libacu.a /acg/lib/libacu.so
 	cp *.h /acg/include/.
 
 again: clean lib

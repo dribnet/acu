@@ -2,6 +2,7 @@
 
 
 acBitmapFont::acBitmapFont(const char *filename) {
+  int i;
   valid = FALSE;
   FILE *fp = fopen(filename, "rb");
   if (fp == NULL) {
@@ -27,7 +28,7 @@ acBitmapFont::acBitmapFont(const char *filename) {
   leftExtent = new int[numChars];
 
   // read the information about the individual characters
-  for (int i = 0; i < numChars; i++) {
+  for (i = 0; i < numChars; i++) {
     value[i] = acuReadInt(fp);
     height[i] = acuReadInt(fp);
     width[i] = acuReadInt(fp);
@@ -40,7 +41,7 @@ acBitmapFont::acBitmapFont(const char *filename) {
   // read in the bitmap data
   //images = new unsigned char[numChars][64*64*4];
   images = new unsigned char*[numChars];
-  for (int i = 0; i < numChars; i++) {
+  for (i = 0; i < numChars; i++) {
     images[i] = new unsigned char[64*64*4];
     int bitmapSize = height[i] * width[i];
     //printf("bitmap size is %d\n", bitmapSize);
@@ -72,7 +73,7 @@ acBitmapFont::acBitmapFont(const char *filename) {
   //printf("%d ", texNames[m]);
   //}
     
-  for (int i = 0; i < numChars; i++) {
+  for (i = 0; i < numChars; i++) {
     glBindTexture(GL_TEXTURE_2D, texNames[i]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 64, 0,
 		 GL_RGBA, GL_UNSIGNED_BYTE, images[i]);

@@ -3,8 +3,9 @@
 
 acVectorFont::acVectorFont(const char* filename) {
   valid = FALSE;
+  int i;
 
-  for (int i = 0; i < 256; i++) {
+  for (i = 0; i < 256; i++) {
     numPoints[i] = 0;
     width[i] = 0;
     height[i] = 0;
@@ -63,7 +64,7 @@ acVectorFont::acVectorFont(const char* filename) {
 
   descent = 0;
   maxHeight = 0;
-  for (int i = 0; i < 256; i++) {
+  for (i = 0; i < 256; i++) {
     for (int p = 0; p < numPoints[i]; p++) {
       if (y[i][p] < descent) descent = y[i][p];
       if (y[i][p] > maxHeight) maxHeight = y[i][p];
