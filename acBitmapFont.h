@@ -7,6 +7,7 @@
 
 class acBitmapFont : public acFont {
 public:
+  acBitmapFont() { }  // for subclasses.. grr.
   acBitmapFont(const char *filename);
 
   float getDescent();
@@ -18,7 +19,7 @@ public:
   int getFormat();
   unsigned char* getCharData(char c, float *x, float *y, 
 			     float *w, float *h);
-protected:
+  //protected:
   int numChars;
   int numBits;
   int mboxX;

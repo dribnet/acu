@@ -69,7 +69,8 @@ void acuOpen() {
 #if defined(ACU_IRIX)
   strcpy(acuResourceLocation, "/acg/data/");
 #elif defined(ACU_WIN32)
-  strcpy(acuResourceLocation, "//di/acg/data/");
+  strcpy(acuResourceLocation, "C:/acWindow/");
+  //strcpy(acuResourceLocation, "//di/acg/data/");
 #elif defined(ACU_MAC)
   strcpy(acuResourceLocation, "/whatever/");
 #else
